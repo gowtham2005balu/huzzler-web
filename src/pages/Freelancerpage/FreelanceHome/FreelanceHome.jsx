@@ -4,10 +4,11 @@ import {
   collection,
   doc,
   onSnapshot,
-  updateDoc,
+  setDoc,
   query,
   where,
   getDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
@@ -502,7 +503,7 @@ export default function FreelanceHome() {
       ? savedJobs.filter((x) => x !== jobId)
       : [...savedJobs, jobId];
     setSavedJobs(newList);
-    await updateDoc(ref, { favoriteJobs: newList });
+    await setDoc(ref, { favoriteJobs: newList }, { merge: true });
   }
 
   function onViewJob(job) {

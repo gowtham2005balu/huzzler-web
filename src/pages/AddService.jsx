@@ -935,10 +935,28 @@ export default function AddService() {
                   className="add-service-select"
                 >
                   <option value="">Select Category</option>
-                  <option value="Design">Design</option>
-                  <option value="Development">Development</option>
-                  <option value="Writing">Writing</option>
-                  <option value="Marketing">Marketing</option>
+                  <option value="Graphics & Design">Graphics & Design</option>
+                  <option value="Programming & Tech">Programming & Tech</option>
+                  <option value="Writing & Translation">Writing & Translation</option>
+                  <option value="Video & Animation">Video & Animation</option>
+                  <option value="Music & Audio">Music & Audio</option>
+                  <option value="AI Services">AI Services</option>
+                  <option value="Data">Data</option>
+                  <option value="Business">Business</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Photography">Photography</option>
+                  <option value="Lifestyle">Lifestyle</option>
+                  <option value="Consulting">Consulting</option>
+                  <option value="Personal Growth & Hobbies">Personal Growth & Hobbies</option>
+                  <option value="Advertising & Media Buying">Advertising & Media Buying</option>
+                  <option value="Education & E-Learning Services">Education & E-Learning Services</option>
+                  <option value="Health & Wellness Services">Health & Wellness Services</option>
+                  <option value="Real Estate & Property Services">Real Estate & Property Services</option>
+                  <option value="Customer Support & Experience (CX)">Customer Support & Experience (CX)</option>
+                  <option value="T-Shirts & Merchandise">T-Shirts & Merchandise</option>
+                  <option value="Packaging & Label Design">Packaging & Label Design</option>
+                  <option value="Book & Editorial Design">Book & Editorial Design</option>
+                  <option value="Album & Podcast Art">Album & Podcast Art</option>
                 </select>
               </div>
               <div>

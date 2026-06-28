@@ -22,8 +22,9 @@ import {
 } from "lucide-react";
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { auth, db } from "../../../firbase/Firebase";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { auth, db, rtdb } from "../../../firbase/Firebase";
+import { doc, getDoc, onSnapshot, collection, query, where } from "firebase/firestore";
+import { ref as dbRef, onValue, get, query as dbQuery, orderByChild, limitToLast } from "firebase/database";
 import { onAuthStateChanged, getAuth, signOut } from "firebase/auth";
 
 export default function FreelanceSideBar() {
@@ -42,6 +43,9 @@ export default function FreelanceSideBar() {
     role: "",
   });
 
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+
   const fireSignOut = async () => {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
     if (!confirmLogout) return;
@@ -55,6 +59,63 @@ export default function FreelanceSideBar() {
       console.error("Logout error:", error);
     }
   };
+
+  useEffect(() => {
+    let unsubMsg;
+    let unsubNotif;
+
+    const unsubAuth = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        setUnreadMessages(0);
+        setUnreadNotifications(0);
+        return;
+      }
+
+      const uid = user.uid;
+
+      if (rtdb) {
+        const chatsRef = dbRef(rtdb, `userChats/${uid}`);
+        unsubMsg = onValue(chatsRef, async (snapshot) => {
+          const val = snapshot.val();
+          if (val && typeof val === "object") {
+            const entries = Object.keys(val);
+            let unread = 0;
+            for (let chatId of entries) {
+              try {
+                const msgSnap = await get(dbQuery(dbRef(rtdb, `chats/${chatId}/messages`), orderByChild("timestamp"), limitToLast(1)));
+                if (msgSnap.exists()) {
+                  const first = Object.values(msgSnap.val())[0];
+                  if (first.receiverId === uid && first.status !== "seen") {
+                    unread++;
+                  }
+                }
+              } catch (e) {
+                console.error("Error fetching message status for sidebar:", e);
+              }
+            }
+            setUnreadMessages(unread);
+          } else {
+            setUnreadMessages(0);
+          }
+        });
+      }
+
+      const notifQuery = query(
+        collection(db, "freelancer_notifications"),
+        where("freelancerId", "==", uid),
+        where("read", "==", false)
+      );
+      unsubNotif = onSnapshot(notifQuery, (snap) => {
+        setUnreadNotifications(snap.size);
+      });
+    });
+
+    return () => {
+      if (unsubMsg) unsubMsg();
+      if (unsubNotif) unsubNotif();
+      unsubAuth();
+    };
+  }, []);
 
   useEffect(() => {
     let unsubSnapshot;
@@ -198,7 +259,7 @@ export default function FreelanceSideBar() {
           >
             <MessageSquare size={18} className="icon-lucide" />
             {!collapsed && <span className="btn-text">Messages</span>}
-            {!collapsed && <span className="badge-count">3</span>}
+            {!collapsed && unreadMessages > 0 && <span className="badge-count">{unreadMessages}</span>}
           </button>
 
           <button
@@ -207,7 +268,7 @@ export default function FreelanceSideBar() {
           >
             <Bell size={18} className="icon-lucide" />
             {!collapsed && <span className="btn-text">Notifications</span>}
-            {!collapsed && <span className="badge-count">5</span>}
+            {!collapsed && unreadNotifications > 0 && <span className="badge-count">{unreadNotifications}</span>}
           </button>
 
           <div className="hz-section-title">{!collapsed && "SERVICES"}</div>
@@ -482,9 +543,13 @@ export default function FreelanceSideBar() {
           color: white;
           font-size: 11px;
           font-weight: 700;
-          padding: 2px 6px;
-          border-radius: 12px;
-          line-height: 1.2;
+          width: 20px;
+          height: 20px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
         }
         .active-btn .badge-count {
           background: white;

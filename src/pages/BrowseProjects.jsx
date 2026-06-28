@@ -12,7 +12,7 @@ import {
   ChevronRight
 } from "lucide-react";
 
-import { collection, onSnapshot, orderBy, query, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, doc, updateDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../firbase/Firebase";
 import { categoriesData } from "../data/categoriesData";
@@ -96,6 +96,14 @@ export default function BrowseProjects() {
     });
     return unsub;
   }, [auth]);
+
+  useEffect(() => {
+    if (!user) return;
+    const unsub = onSnapshot(doc(db, "users", user.uid), (snap) => {
+      setSavedJobs(snap.data()?.favoriteJobs || []);
+    });
+    return unsub;
+  }, [user]);
 
   useEffect(() => {
     const qJobs = query(collection(db, "jobs"), orderBy("created_at", "desc"));
@@ -189,12 +197,23 @@ export default function BrowseProjects() {
     return () => document.removeEventListener("keydown", onKey);
   }, [showModal, showSort]);
 
-  const handleSaveJob = (e, job) => {
+  const handleSaveJob = async (e, job) => {
     e.stopPropagation();
-    if (savedJobs.includes(job.id)) {
-      setSavedJobs(prev => prev.filter(id => id !== job.id));
-    } else {
-      setSavedJobs(prev => [...prev, job.id]);
+    if (!user) {
+      alert("Please login to save jobs");
+      return;
+    }
+    const ref = doc(db, "users", user.uid);
+    const newList = savedJobs.includes(job.id)
+      ? savedJobs.filter(id => id !== job.id)
+      : [...savedJobs, job.id];
+
+    setSavedJobs(newList);
+
+    try {
+      await setDoc(ref, { favoriteJobs: newList }, { merge: true });
+    } catch (err) {
+      console.error("Save job error", err);
     }
   };
 

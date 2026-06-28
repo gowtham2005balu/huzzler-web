@@ -9,6 +9,7 @@ import {
   onSnapshot,
   getDocs,
   updateDoc,
+  setDoc,
   query,
   orderBy,
   where,
@@ -758,9 +759,9 @@ function SkillUsersScreenInline({ skill, onBack, isMobile }) {
     }));
 
     try {
-      await updateDoc(userRef, {
+      await setDoc(userRef, {
         favoriteJobs: updatedFav,
-      });
+      }, { merge: true });
     } catch (err) {
       console.error("toggleFavorite error", err);
     }

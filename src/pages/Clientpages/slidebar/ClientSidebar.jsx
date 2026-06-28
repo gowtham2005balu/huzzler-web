@@ -936,7 +936,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { auth, db, rtdb } from "../../../firbase/Firebase";
 import { doc, onSnapshot, query, collection, where } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { ref as dbRef, onValue } from "firebase/database";
+import { ref as dbRef, onValue, get, query as dbQuery, orderByChild, limitToLast } from "firebase/database";
 
 export default function ClientSidebar() {
   const navigate = useNavigate();
@@ -1044,11 +1044,25 @@ export default function ClientSidebar() {
       // 1. Unread Messages count (RTDB userChats room count / status)
       if (rtdb) {
         const chatsRef = dbRef(rtdb, `userChats/${clientUid}`);
-        unsubMsg = onValue(chatsRef, (snapshot) => {
+        unsubMsg = onValue(chatsRef, async (snapshot) => {
           const val = snapshot.val();
           if (val && typeof val === "object") {
-            // Count total active rooms/chats
-            setUnreadMessages(Object.keys(val).length);
+            const entries = Object.keys(val);
+            let unread = 0;
+            for (let chatId of entries) {
+              try {
+                const msgSnap = await get(dbQuery(dbRef(rtdb, `chats/${chatId}/messages`), orderByChild("timestamp"), limitToLast(1)));
+                if (msgSnap.exists()) {
+                  const first = Object.values(msgSnap.val())[0];
+                  if (first.receiverId === clientUid && first.status !== "seen") {
+                    unread++;
+                  }
+                }
+              } catch (e) {
+                console.error("Error fetching message status for sidebar:", e);
+              }
+            }
+            setUnreadMessages(unread);
           } else {
             setUnreadMessages(0);
           }
@@ -1436,6 +1450,7 @@ export default function ClientSidebar() {
           display: flex;
           align-items: center;
           justify-content: center;
+          line-height: 1;
         }
 
         /* HOVER & ACTIVE */
