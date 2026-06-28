@@ -647,6 +647,7 @@ export default function ConnectPopup({
         clientName,
         freelancerId,
         freelancerName,
+        requestedBy:    freelancerId,   // ← freelancer initiated this request
         serviceId:      requestRef.id,
         jobId:          finalJobId,
         jobType,

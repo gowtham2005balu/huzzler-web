@@ -57,31 +57,31 @@ export default function ServiceFullDetailScreen() {
 
 
   const handleShare = async () => {
-  const shareUrl = window.location.href;
-  const shareData = {
-    title: service?.title || "Service Details",
-    text: "Check out this service",
-    url: shareUrl,
-  };
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: service?.title || "Service Details",
+      text: "Check out this service",
+      url: shareUrl,
+    };
 
-  // ✅ Modern browsers & mobile
-  if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-    } catch (err) {
-      console.error("Share cancelled or failed", err);
+    // ✅ Modern browsers & mobile
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Share cancelled or failed", err);
+      }
     }
-  } 
-  // ✅ Fallback for desktop
-  else {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      alert("Link copied to clipboard 📋");
-    } catch (err) {
-      alert("Unable to copy link");
+    // ✅ Fallback for desktop
+    else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Link copied to clipboard 📋");
+      } catch (err) {
+        alert("Unable to copy link");
+      }
     }
-  }
-};
+  };
 
 
 
@@ -206,7 +206,7 @@ const card = {
   boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
   display: "flex",
   flexDirection: "column",
-  marginTop:'60px'
+  marginTop: '60px'
 };
 
 const topBar = {

@@ -9,7 +9,9 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "../../firbase/Firebase";
+import { db, storage } from "../../firbase/Firebase";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useRef } from "react";
 
 const SCREENING_QUESTIONS_MAP = {
   "Logo Design": [
@@ -75,6 +77,11 @@ export default function PostJobScreen(props) {
 
   const [screeningQuestions, setScreeningQuestions] = useState([]);
   const [activeScreeningSkill, setActiveScreeningSkill] = useState(null);
+
+  // File Upload State
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [attachment, setAttachment]     = useState(null); // { url, name, size }
+  const fileInputRef = useRef(null);
 
   // -------------------- CONSTANTS -------------------- //
   const expertiseOptions = {
@@ -142,6 +149,16 @@ export default function PostJobScreen(props) {
       setSelectedTime(`${hh}:${min}`);
       setSelectedTab("24 hours");
     }
+
+    if (jobDataProp.attachmentUrl) {
+      setAttachment({
+        url: jobDataProp.attachmentUrl,
+        name: jobDataProp.attachmentName || "Attached Brief",
+        size: jobDataProp.attachmentSize || 0,
+      });
+    } else {
+      setAttachment(null);
+    }
   }, [jobDataProp]);
 
   // -------------------- HELPERS -------------------- //
@@ -184,6 +201,38 @@ export default function PostJobScreen(props) {
       }
       setDeliverableInput("");
     }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File size exceeds the 10MB limit.");
+      return;
+    }
+
+    setSelectedFile(file);
+    setAttachment({
+      name: file.name,
+      size: file.size,
+      url: null, // to be uploaded on save
+    });
+  };
+
+  const removeAttachment = () => {
+    setSelectedFile(null);
+    setAttachment(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const formatBytes = (bytes, decimals = 2) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   };
 
   // -------------------- SAVE -------------------- //
@@ -232,6 +281,27 @@ export default function PostJobScreen(props) {
         updated_at: serverTimestamp(),
       };
 
+      // Upload file to storage if a new local file is selected
+      if (selectedFile) {
+        const fileRef = storageRef(storage, `job_attachments/${currentUser.uid}_${Date.now()}_${selectedFile.name}`);
+        const uploadResult = await uploadBytes(fileRef, selectedFile);
+        const downloadUrl = await getDownloadURL(uploadResult.ref);
+        
+        jobPayload.attachmentUrl = downloadUrl;
+        jobPayload.attachmentName = selectedFile.name;
+        jobPayload.attachmentSize = selectedFile.size;
+      } else if (attachment) {
+        // Keep existing attachment URL
+        jobPayload.attachmentUrl = attachment.url;
+        jobPayload.attachmentName = attachment.name;
+        jobPayload.attachmentSize = attachment.size;
+      } else {
+        // Attachment was removed
+        jobPayload.attachmentUrl = null;
+        jobPayload.attachmentName = null;
+        jobPayload.attachmentSize = null;
+      }
+
       if (selectedTab === "Works") {
         if (!selectedTimeline) return showError("Please select a timeline");
         jobPayload.timeline = selectedTimeline;
@@ -246,6 +316,18 @@ export default function PostJobScreen(props) {
 
       if (jobIdProp && jobDataProp) {
         await updateDoc(doc(db, collectionName, jobIdProp), jobPayload);
+
+        // Create client notification for job update
+        await addDoc(collection(db, "notifications"), {
+          clientUid: currentUser.uid,
+          type: "create_post",
+          title: "Job Post Updated 📝",
+          body: `Your job listing "${trimmedTitle}" has been updated successfully.`,
+          timestamp: serverTimestamp(),
+          read: false,
+          jobId: jobIdProp,
+        });
+
         alert("Job updated successfully");
       } else {
         const docRef = await addDoc(jobsRef, {
@@ -255,6 +337,18 @@ export default function PostJobScreen(props) {
           viewedBy: [],
         });
         await updateDoc(docRef, { id: docRef.id });
+
+        // Create client notification for job posting
+        await addDoc(collection(db, "notifications"), {
+          clientUid: currentUser.uid,
+          type: "create_post",
+          title: "Job Post Published 🚀",
+          body: `Your job listing "${trimmedTitle}" is now live and accepting applications.`,
+          timestamp: serverTimestamp(),
+          read: false,
+          jobId: docRef.id,
+        });
+
         alert("Job posted successfully");
       }
 
@@ -507,11 +601,48 @@ export default function PostJobScreen(props) {
 
         <div style={styles.formGroup}>
           <label style={styles.label}>Attachments <span style={{color: "#9CA3AF", fontWeight: 400}}>(Optional)</span></label>
-          <div style={styles.uploadBox}>
-            <div style={styles.uploadIcon}>⬆️</div>
-            <div style={styles.uploadTextMain}>Upload brief or reference files</div>
-            <div style={styles.uploadTextSub}>PDF, PNG, JPG up to 10MB</div>
-          </div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+            accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+          />
+          {!attachment ? (
+            <div style={styles.uploadBox} onClick={() => fileInputRef.current?.click()}>
+              <div style={styles.uploadIcon}>⬆️</div>
+              <div style={styles.uploadTextMain}>Upload brief or reference files</div>
+              <div style={styles.uploadTextSub}>PDF, PNG, JPG up to 10MB</div>
+            </div>
+          ) : (
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "16px 20px", border: "1.5px dashed #C4B5FD", borderRadius: 12,
+              background: "#F4F0FF"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 24 }}>📄</span>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#1A1433" }}>{attachment.name}</div>
+                  <div style={{ fontSize: 12, color: "#8C84A8" }}>
+                    {formatBytes(attachment.size)} {selectedFile && <span style={{ color: "#7C4EF5", fontWeight: 600 }}>(Ready to upload)</span>}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={removeAttachment}
+                style={{
+                  background: "#FFEBEB", color: "#FF5A5A", border: "none",
+                  borderRadius: "50%", width: 32, height: 32, cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 16, fontWeight: 700
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Screening Questions Section (kept visually similar but clean) */}

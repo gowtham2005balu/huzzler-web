@@ -10,8 +10,13 @@ import {
   where,
   doc,
   getDoc,
+  updateDoc,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../../../firbase/Firebase";
+import { ref as dbRef, set as dbSet, update as dbUpdate } from "firebase/database";
+import { db, rtdb } from "../../../firbase/Firebase";
+import { v4 as uuidv4 } from "uuid";
 
 export default function MyHiresScreen() {
   const { jobId } = useParams();
@@ -87,10 +92,21 @@ export default function MyHiresScreen() {
         }
 
         const unsub = onSnapshot(q, (snap) => {
-          const data = snap.docs.map((d) => ({
+          const allData = snap.docs.map((d) => ({
             id: d.id,
             ...d.data(),
           }));
+
+          // Only keep requests where the FREELANCER sent the request to the client.
+          // Exclude notifications where requestedBy === clientUid (those are client-initiated hires).
+          const data = allData.filter((item) => {
+            // If requestedBy field exists, use it to determine sender
+            if (item.requestedBy) {
+              return item.requestedBy !== user.uid; // freelancer sent it
+            }
+            // Fallback: if freelancerId is set and differs from clientUid, it's a freelancer request
+            return item.freelancerId && item.freelancerId !== user.uid;
+          });
 
           setRequests(data);
           data.forEach((item) => {
@@ -114,24 +130,29 @@ export default function MyHiresScreen() {
     let nameStr = typeof req.freelancerName === 'string' ? req.freelancerName : (profile.first_name ? profile.first_name + " " + (profile.last_name||"") : "Freelancer");
     if (!nameStr || nameStr.trim() === "") nameStr = "Unknown";
     
-    const initials = nameStr.substring(0, 2).toUpperCase();
+    const initials = nameStr.split(" ").map(w => w[0]).filter(Boolean).join("").toUpperCase().slice(0, 2);
     const colors = ["#8B5CF6", "#10B981", "#F59E0B", "#EF4444"];
     const color = colors[index % colors.length];
     
-    let roleStr = profile.role || (typeof service.category === 'string' ? service.category : "UI/UX Designer");
-    const rate = `₹${service.from || profile.budget || 900}/day`; 
-    const rating = profile.rating || 4.8;
-    const reviews = profile.reviewsCount || 42;
-    const projects = profile.projectsCount || 28;
-    const exp = profile.experience || "3yr";
+    const roleStr = profile.professional_title || profile.role || service.category || "Freelancer";
+    const budgetFrom = service.budget_from || service.from || profile.budget_from || 0;
+    const rate = budgetFrom ? `₹${Number(budgetFrom).toLocaleString("en-IN")}/day` : "—";
+    const rating  = profile.rating || profile.averageRating || null;
+    const reviews = profile.reviewsCount  || profile.reviews_count  || 0;
+    const projects = profile.completedProjects || profile.projectsCount || profile.completed_projects || 0;
+    const exp = profile.experience || profile.yearsOfExperience || "";
     
-    let skillsList = Array.isArray(service.skills) ? service.skills : (profile.skills || []);
-    if (skillsList.length === 0) {
-       skillsList = ["Figma", "UX", "Web Design", "UI Design", "Graphic Design", "Prototyping"];
-    }
+    // Skills: prefer service skills, then profile skills — no hardcoded fallbacks
+    const skillsList = Array.isArray(service.skills) && service.skills.length > 0
+      ? service.skills
+      : Array.isArray(profile.skills) && profile.skills.length > 0
+        ? profile.skills
+        : [];
 
-    const coverNote = req.coverNote || profile.coverNote || "Hi! I'd love to work on your mobile app project. I have 3 years of experience designing intuitive mobile interfaces...";
-    const profileUrl = profile.profileUrl || req.profileUrl || null;
+    // Cover note from the notification or profile — no hardcoded fallback
+    const coverNote = req.coverNote || req.body || profile.bio || profile.about || "";
+
+    const profileUrl = profile.profile_image || profile.profileImage || profile.profileUrl || profile.photoURL || req.profileUrl || null;
     
     return {
       id: req.id,
@@ -148,18 +169,232 @@ export default function MyHiresScreen() {
       exp,
       skills: skillsList,
       coverNote,
+      status: req.status || "sent",
       _originalReq: req,
     };
   });
 
-  const filteredApplicants = applicants.filter(app => {
+  const handleAcceptApplicant = async (app) => {
+    if (!app) return;
+    const currentClient = auth.currentUser;
+    if (!currentClient) {
+      alert("Please log in first.");
+      return;
+    }
+
+    const defaultMsg = `Hi, I have accepted your application for the job "${jobTitle}". Let's chat!`;
+    const messageText = window.prompt("Enter a message to send to the freelancer:", defaultMsg);
+    if (messageText === null) return; // Client cancelled
+
+    try {
+      // 1. Update the notification status in Firestore
+      await updateDoc(doc(db, "notifications", app.id), {
+        status: "accepted",
+        read: true,
+      });
+
+      // 2. Add to accepted_jobs collection
+      await addDoc(collection(db, "accepted_jobs"), {
+        jobId: jobId || app._originalReq?.jobId || "",
+        freelancerId: app.freelancerId,
+        freelancerName: app.name,
+        freelancerImage: app.profileUrl || "",
+        acceptedAt: serverTimestamp(),
+        status: "accepted",
+      });
+
+      // 3. Add to freelancer_notifications collection
+      await addDoc(collection(db, "freelancer_notifications"), {
+        freelancerId: app.freelancerId,
+        freelancerName: app.name,
+        freelancerAvatar: app.profileUrl || "",
+        jobId: jobId || app._originalReq?.jobId || "",
+        jobTitle: jobTitle,
+        status: "accepted",
+        createdAt: serverTimestamp(),
+        isRead: false,
+      });
+
+      // 4. Fetch current client's profile from Firestore to get accurate name/avatar for RTDB chat metadata
+      let clientName = currentClient.displayName || "Client";
+      let clientImage = currentClient.photoURL || "https://i.ibb.co/sqsJwP0/user.png";
+      try {
+        const clientDoc = await getDoc(doc(db, "users", currentClient.uid));
+        if (clientDoc.exists()) {
+          const clientData = clientDoc.data();
+          if (clientData.name) {
+            clientName = clientData.name;
+          } else if (clientData.first_name) {
+            clientName = `${clientData.first_name} ${clientData.last_name || ""}`.trim();
+          }
+          clientImage = clientData.profileImage || clientData.profileUrl || clientImage;
+        }
+      } catch (profileErr) {
+        console.error("Error fetching client profile details for chat:", profileErr);
+      }
+
+      // 5. Generate chat ID and message ID
+      const chatId = currentClient.uid < app.freelancerId 
+        ? `${currentClient.uid}_${app.freelancerId}` 
+        : `${app.freelancerId}_${currentClient.uid}`;
+      const msgId = uuidv4();
+      const now = Date.now();
+
+      // 6. Write welcome message to RTDB
+      await dbSet(dbRef(rtdb, `chats/${chatId}/messages/${msgId}`), {
+        id: msgId,
+        senderId: currentClient.uid,
+        receiverId: app.freelancerId,
+        type: "text",
+        text: messageText,
+        timestamp: now,
+        status: "sent",
+        reactions: {},
+      });
+
+      // 7. Update RTDB chat metadata for both client and freelancer
+      await dbUpdate(dbRef(rtdb, `userChats/${currentClient.uid}/${chatId}`), {
+        withUid: app.freelancerId,
+        otherName: app.name,
+        otherImage: app.profileUrl || "",
+        lastMessage: messageText,
+        lastMessageTime: now,
+      });
+
+      await dbUpdate(dbRef(rtdb, `userChats/${app.freelancerId}/${chatId}`), {
+        withUid: currentClient.uid,
+        otherName: clientName,
+        otherImage: clientImage,
+        lastMessage: messageText,
+        lastMessageTime: now,
+      });
+
+      alert("Applicant Accepted successfully!");
+    } catch (error) {
+      console.error("Error accepting applicant:", error);
+      alert("Failed to accept applicant: " + error.message);
+    }
+  };
+
+  const handleDeclineApplicant = async (app) => {
+    if (!app) return;
+    const currentClient = auth.currentUser;
+    if (!currentClient) {
+      alert("Please log in first.");
+      return;
+    }
+
+    const confirmed = window.confirm(`Are you sure you want to decline ${app.name}'s application?`);
+    if (!confirmed) return;
+
+    try {
+      // 1. Update the notification status in Firestore to declined
+      await updateDoc(doc(db, "notifications", app.id), {
+        status: "declined",
+        read: true,
+      });
+
+      // 2. Add to freelancer_notifications collection
+      await addDoc(collection(db, "freelancer_notifications"), {
+        freelancerId: app.freelancerId,
+        freelancerName: app.name,
+        freelancerAvatar: app.profileUrl || "",
+        jobId: jobId || app._originalReq?.jobId || "",
+        jobTitle: jobTitle,
+        status: "declined",
+        createdAt: serverTimestamp(),
+        isRead: false,
+      });
+
+      // 3. Fetch current client's profile from Firestore to get accurate name/avatar for RTDB chat metadata
+      let clientName = currentClient.displayName || "Client";
+      let clientImage = currentClient.photoURL || "https://i.ibb.co/sqsJwP0/user.png";
+      try {
+        const clientDoc = await getDoc(doc(db, "users", currentClient.uid));
+        if (clientDoc.exists()) {
+          const clientData = clientDoc.data();
+          if (clientData.name) {
+            clientName = clientData.name;
+          } else if (clientData.first_name) {
+            clientName = `${clientData.first_name} ${clientData.last_name || ""}`.trim();
+          }
+          clientImage = clientData.profileImage || clientData.profileUrl || clientImage;
+        }
+      } catch (profileErr) {
+        console.error("Error fetching client profile details for chat:", profileErr);
+      }
+
+      // 4. Generate chat ID and message ID
+      const chatId = currentClient.uid < app.freelancerId 
+        ? `${currentClient.uid}_${app.freelancerId}` 
+        : `${app.freelancerId}_${currentClient.uid}`;
+      const msgId = uuidv4();
+      const now = Date.now();
+      const messageText = `Hi, thank you for your interest in the job "${jobTitle}". Unfortunately, we have decided to proceed with other applicants.`;
+
+      // 5. Write decline message to RTDB
+      await dbSet(dbRef(rtdb, `chats/${chatId}/messages/${msgId}`), {
+        id: msgId,
+        senderId: currentClient.uid,
+        receiverId: app.freelancerId,
+        type: "text",
+        text: messageText,
+        timestamp: now,
+        status: "sent",
+        reactions: {},
+      });
+
+      // 6. Update RTDB chat metadata for both client and freelancer
+      await dbUpdate(dbRef(rtdb, `userChats/${currentClient.uid}/${chatId}`), {
+        withUid: app.freelancerId,
+        otherName: app.name,
+        otherImage: app.profileUrl || "",
+        lastMessage: messageText,
+        lastMessageTime: now,
+      });
+
+      await dbUpdate(dbRef(rtdb, `userChats/${app.freelancerId}/${chatId}`), {
+        withUid: currentClient.uid,
+        otherName: clientName,
+        otherImage: clientImage,
+        lastMessage: messageText,
+        lastMessageTime: now,
+      });
+
+      alert("Applicant Declined successfully.");
+    } catch (error) {
+      console.error("Error declining applicant:", error);
+      alert("Failed to decline applicant: " + error.message);
+    }
+  };
+
+  const allCount = applicants.length;
+  const shortlistedCount = applicants.filter(a => a.status === "accepted").length;
+  const declinedCount = applicants.filter(a => a.status === "declined").length;
+
+  const tabFilteredApplicants = applicants.filter(app => {
+    if (activeTab === "shortlisted") {
+      return app.status === "accepted";
+    }
+    if (activeTab === "declined") {
+      return app.status === "declined";
+    }
+    return true;
+  });
+
+  const filteredApplicants = tabFilteredApplicants.filter(app => {
      if (search && !app.name.toLowerCase().includes(search.toLowerCase())) return false;
      return true;
   });
 
   useEffect(() => {
-    if (filteredApplicants.length > 0 && !selectedApplicantId) {
-       setSelectedApplicantId(filteredApplicants[0].id);
+    if (filteredApplicants.length > 0) {
+      const exists = filteredApplicants.some(a => a.id === selectedApplicantId);
+      if (!exists) {
+        setSelectedApplicantId(filteredApplicants[0].id);
+      }
+    } else {
+      setSelectedApplicantId(null);
     }
   }, [filteredApplicants, selectedApplicantId]);
 
@@ -207,9 +442,9 @@ export default function MyHiresScreen() {
         </div>
 
         <div className="app-tabs">
-          <button className={`app-tab ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>All ({filteredApplicants.length})</button>
-          <button className={`app-tab ${activeTab === 'shortlisted' ? 'active' : ''}`} onClick={() => setActiveTab('shortlisted')}>Shortlisted (3)</button>
-          <button className={`app-tab ${activeTab === 'declined' ? 'active' : ''}`} onClick={() => setActiveTab('declined')}>Declined (1)</button>
+          <button className={`app-tab ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>All ({allCount})</button>
+          <button className={`app-tab ${activeTab === 'shortlisted' ? 'active' : ''}`} onClick={() => setActiveTab('shortlisted')}>Shortlisted ({shortlistedCount})</button>
+          <button className={`app-tab ${activeTab === 'declined' ? 'active' : ''}`} onClick={() => setActiveTab('declined')}>Declined ({declinedCount})</button>
         </div>
 
         <div className="app-two-column-layout">
@@ -242,12 +477,20 @@ export default function MyHiresScreen() {
                 </div>
                 
                 <div className="app-list-actions">
-                  <button className="btn-accept" onClick={(e) => { e.stopPropagation(); alert("Applicant Accepted!"); }}>
-                    <Check size={14} /> Accept
-                  </button>
-                  <button className="btn-decline" onClick={(e) => { e.stopPropagation(); alert("Applicant Declined."); }}>
-                    <X size={14} />
-                  </button>
+                  {app.status === "accepted" ? (
+                    <span className="badge-accepted-status">Accepted</span>
+                  ) : app.status === "declined" ? (
+                    <span className="badge-declined-status">Declined</span>
+                  ) : (
+                    <>
+                      <button className="btn-accept" onClick={(e) => { e.stopPropagation(); handleAcceptApplicant(app); }}>
+                        <Check size={14} /> Accept
+                      </button>
+                      <button className="btn-decline" onClick={(e) => { e.stopPropagation(); handleDeclineApplicant(app); }}>
+                        <X size={14} />
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             ))}
@@ -323,8 +566,16 @@ export default function MyHiresScreen() {
                 </div>
 
                 <div className="app-bottom-actions">
-                  <button className="btn-bottom-decline">Decline</button>
-                  <button className="btn-bottom-hire">Hire →</button>
+                  {selectedApplicant.status === "accepted" ? (
+                    <span className="badge-accepted-status" style={{ textAlign: "center", width: "100%", padding: "12px", borderRadius: "8px" }}>Hired / Accepted</span>
+                  ) : selectedApplicant.status === "declined" ? (
+                    <span className="badge-declined-status" style={{ textAlign: "center", width: "100%", padding: "12px", borderRadius: "8px" }}>Declined</span>
+                  ) : (
+                    <>
+                      <button className="btn-bottom-decline" onClick={() => handleDeclineApplicant(selectedApplicant)}>Decline</button>
+                      <button className="btn-bottom-hire" onClick={() => handleAcceptApplicant(selectedApplicant)}>Hire →</button>
+                    </>
+                  )}
                 </div>
 
               </div>
@@ -734,6 +985,24 @@ export default function MyHiresScreen() {
           cursor: pointer;
         }
         
+        .badge-accepted-status {
+          background: #ECFDF5;
+          color: #059669;
+          font-size: 12px;
+          padding: 6px 12px;
+          border-radius: 12px;
+          font-weight: 600;
+          display: inline-block;
+        }
+        .badge-declined-status {
+          background: #FEF2F2;
+          color: #EF4444;
+          font-size: 12px;
+          padding: 6px 12px;
+          border-radius: 12px;
+          font-weight: 600;
+          display: inline-block;
+        }
         @media (max-width: 1100px) {
           .app-two-column-layout {
             flex-direction: column;

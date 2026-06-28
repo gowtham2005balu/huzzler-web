@@ -1030,11 +1030,11 @@ export default function CategoryPage({ initialTab = "Work" }) {
     if (!user) return;
 
     const unsub1 = onSnapshot(collection(db, "services"), (snap) => {
-      setServices(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setServices(snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter(s => !s.isPaused));
     });
 
     const unsub2 = onSnapshot(collection(db, "service_24h"), (snap) => {
-      setServices24(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setServices24(snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter(s => !s.isPaused));
     });
 
     const unsubUser = onSnapshot(doc(db, "users", user.uid), (snap) => {
@@ -1225,27 +1225,18 @@ export default function CategoryPage({ initialTab = "Work" }) {
     let filtered = jobs;
     if (activeCategory !== "All Jobs") {
       filtered = jobs.filter(j => {
-        // Simple mapping from category pill to actual categories or skills
         const cat = j.category?.toLowerCase() || "";
         const skills = j.skills?.map(s => s.toLowerCase()) || [];
         const target = activeCategory.toLowerCase();
-        
         if (target === "remote only") {
-           return j.locationType?.toLowerCase() === "remote" || j.location?.toLowerCase() === "remote";
+          return j.locationType?.toLowerCase() === "remote" || j.location?.toLowerCase() === "remote";
         }
-        
         return cat.includes(target) || skills.some(s => s.includes(target));
       });
     }
-    
-    // ❌ FILTER OUT JOBS WITH NO NAME
-    filtered = filtered.filter(j => {
-      const nameStr = j.company || j.companyName || j.company_name || j.clientName || "";
-      return nameStr && nameStr.trim() !== "";
-    });
-
     return filtered;
   }, [jobs, activeCategory]);
+
 
   const getSkillStyle = (skill) => {
     const themes = [
@@ -1465,7 +1456,7 @@ export default function CategoryPage({ initialTab = "Work" }) {
 
                 {/* Skills */}
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                  {(job.skills?.length > 0 ? job.skills : ["Figma", "UX Research", "Prototyping"]).map((s, idx) => {
+                  {[...(job.skills || []), ...(job.tools || [])].map((s, idx) => {
                     const theme = getSkillStyle(s);
                     return (
                       <span key={idx} style={{ 

@@ -933,9 +933,10 @@ import {
 } from "lucide-react";
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { auth, db } from "../../../firbase/Firebase";
-import { doc, onSnapshot } from "firebase/firestore";
+import { auth, db, rtdb } from "../../../firbase/Firebase";
+import { doc, onSnapshot, query, collection, where } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { ref as dbRef, onValue } from "firebase/database";
 
 export default function ClientSidebar() {
   const navigate = useNavigate();
@@ -951,6 +952,12 @@ export default function ClientSidebar() {
     first_name: "",
     last_name: "",
   });
+
+  // Real-time tab counters
+  const [unreadMessages, setUnreadMessages]           = useState(0);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [listingsCount, setListingsCount]             = useState(0);
+  const [applicantsCount, setApplicantsCount]         = useState(0);
 
   useEffect(() => {
     let unsubSnapshot;
@@ -1012,6 +1019,94 @@ export default function ClientSidebar() {
       unsubAuth();
       if (unsubSnapshot) unsubSnapshot();
       if (unsubSnapshot2) unsubSnapshot2();
+    };
+  }, []);
+
+  // Real-time listeners for tab counts
+  useEffect(() => {
+    let unsubMsg;
+    let unsubNotif;
+    let unsubJobs;
+    let unsubJobs24h;
+    let unsubApps;
+
+    const unsubAuth = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        setUnreadMessages(0);
+        setUnreadNotifications(0);
+        setListingsCount(0);
+        setApplicantsCount(0);
+        return;
+      }
+
+      const clientUid = user.uid;
+
+      // 1. Unread Messages count (RTDB userChats room count / status)
+      if (rtdb) {
+        const chatsRef = dbRef(rtdb, `userChats/${clientUid}`);
+        unsubMsg = onValue(chatsRef, (snapshot) => {
+          const val = snapshot.val();
+          if (val && typeof val === "object") {
+            // Count total active rooms/chats
+            setUnreadMessages(Object.keys(val).length);
+          } else {
+            setUnreadMessages(0);
+          }
+        });
+      }
+
+      // 2. Unread Notifications count (Firestore notifications read === false)
+      const notifQuery = query(
+        collection(db, "notifications"),
+        where("clientUid", "==", clientUid),
+        where("read", "==", false)
+      );
+      unsubNotif = onSnapshot(notifQuery, (snap) => {
+        setUnreadNotifications(snap.size);
+      });
+
+      // 3. My Listings count (Firestore jobs + jobs_24h owned by client)
+      let jobsCount = 0;
+      let jobs24Count = 0;
+
+      const jobsQuery = query(collection(db, "jobs"), where("userId", "==", clientUid));
+      unsubJobs = onSnapshot(jobsQuery, (snap) => {
+        jobsCount = snap.size;
+        setListingsCount(jobsCount + jobs24Count);
+      });
+
+      const jobs24Query = query(collection(db, "jobs_24h"), where("userId", "==", clientUid));
+      unsubJobs24h = onSnapshot(jobs24Query, (snap) => {
+        jobs24Count = snap.size;
+        setListingsCount(jobsCount + jobs24Count);
+      });
+
+      // 4. Applicants count (notifications where clientUid == clientUid && type == hire_request && freelancer is sender)
+      const appsQuery = query(
+        collection(db, "notifications"),
+        where("clientUid", "==", clientUid),
+        where("type", "==", "hire_request")
+      );
+      unsubApps = onSnapshot(appsQuery, (snap) => {
+        const allData = snap.docs.map((d) => d.data());
+        // Filter out client-initiated hires
+        const flRequests = allData.filter((item) => {
+          if (item.requestedBy) {
+            return item.requestedBy !== clientUid;
+          }
+          return item.freelancerId && item.freelancerId !== clientUid;
+        });
+        setApplicantsCount(flRequests.length);
+      });
+    });
+
+    return () => {
+      unsubAuth();
+      if (unsubMsg) unsubMsg();
+      if (unsubNotif) unsubNotif();
+      if (unsubJobs) unsubJobs();
+      if (unsubJobs24h) unsubJobs24h();
+      if (unsubApps) unsubApps();
     };
   }, []);
 
@@ -1090,11 +1185,21 @@ export default function ClientSidebar() {
             </button>
             <button className={`hz-menu-btn ${isActive("/client-dashbroad2/messages") ? "active-btn" : ""}`} onClick={() => handleNav("/client-dashbroad2/messages")}>
               <MessageSquare size={18} className="icon" />
-              {!collapsed && <div className="btn-content"><span className="btn-text">Messages</span><span className="badge">4</span></div>}
+              {!collapsed && (
+                <div className="btn-content">
+                  <span className="btn-text">Messages</span>
+                  {unreadMessages > 0 && <span className="badge">{unreadMessages}</span>}
+                </div>
+              )}
             </button>
             <button className={`hz-menu-btn ${isActive("/client-dashbroad2/clientNotification") ? "active-btn" : ""}`} onClick={() => handleNav("/client-dashbroad2/clientNotification")}>
               <Bell size={18} className="icon" />
-              {!collapsed && <div className="btn-content"><span className="btn-text">Notifications</span><span className="badge">3</span></div>}
+              {!collapsed && (
+                <div className="btn-content">
+                  <span className="btn-text">Notifications</span>
+                  {unreadNotifications > 0 && <span className="badge">{unreadNotifications}</span>}
+                </div>
+              )}
             </button>
           </div>
 
@@ -1104,7 +1209,12 @@ export default function ClientSidebar() {
 
             <button className={`hz-menu-btn ${isActive("/client-dashbroad2/AddJobScreen") ? "active-btn" : ""}`} onClick={() => handleNav("/client-dashbroad2/AddJobScreen")}>
               <FileText size={18} className="icon" />
-              {!collapsed && <div className="btn-content"><span className="btn-text">My Listings</span><span className="badge">3</span></div>}
+              {!collapsed && (
+                <div className="btn-content">
+                  <span className="btn-text">My Listings</span>
+                  {listingsCount > 0 && <span className="badge">{listingsCount}</span>}
+                </div>
+              )}
             </button>
             <button className={`hz-menu-btn ${isActive("/client-dashbroad2/Clientsaved") ? "active-btn" : ""}`} onClick={() => handleNav("/client-dashbroad2/Clientsaved")}>
               <Tag size={18} className="icon" />
@@ -1116,7 +1226,12 @@ export default function ClientSidebar() {
             </button>
             <button className={`hz-menu-btn ${isActive("/client-dashbroad2/my-hires") ? "active-btn" : ""}`} onClick={() => handleNav("/client-dashbroad2/my-hires")}>
               <Users size={18} className="icon" />
-              {!collapsed && <div className="btn-content"><span className="btn-text">Applicants</span><span className="badge">8</span></div>}
+              {!collapsed && (
+                <div className="btn-content">
+                  <span className="btn-text">Applicants</span>
+                  {applicantsCount > 0 && <span className="badge">{applicantsCount}</span>}
+                </div>
+              )}
             </button>
           </div>
 

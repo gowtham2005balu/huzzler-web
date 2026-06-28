@@ -567,7 +567,7 @@ export default function ClientHomeUI() {
               
               <div style={{ width: "100%", maxWidth: "1336px", position: "relative", zIndex: 60 }}>
                 {/* Header */}
-                <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "24px" }}>
+                <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "4px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "6px" }}>
                       <div style={{ color: "#8C84A8", fontSize: "16px", fontFamily: "'DM Sans', sans-serif" }}>Welcome back,</div>
@@ -969,7 +969,7 @@ export default function ClientHomeUI() {
               {/* Top Talent This Week & Trending Skills */}
               <div style={{ display: "flex", gap: "24px", width: "100%", maxWidth: "1336px", marginTop: "24px", paddingBottom: "40px" }}>
                 {/* Left Column: Top Talent This Week */}
-                <div style={{ flex: 0.85, display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h3 style={{ fontSize: "18px", fontWeight: 700, margin: 0, fontFamily: "'Sora', sans-serif", color: "#1A1433" }}>Top Talent This Week</h3>
                     <span style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>See all →</span>

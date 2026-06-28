@@ -158,6 +158,7 @@ export default function MessagesUI() {
           const withUid = raw.withUid || raw.with || "";
           let lastMessage = raw.lastMessage || "";
           let isUnread = false;
+          let lastMessageTime = raw.lastMessageTime || 0;
           try {
             const msgSnap = await get(dbQuery(dbRef(rtdb, `chats/${chatId}/messages`), orderByChild("timestamp"), limitToLast(1)));
             if (msgSnap.exists()) {
@@ -171,7 +172,9 @@ export default function MessagesUI() {
               lastMessageTime = first.timestamp || lastMessageTime;
               isUnread = first.receiverId === currentUid && first.status !== "seen";
             }
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error fetching message:", e);
+          }
           return { chatId, withUid, lastMessage, lastMessageTime, isUnread };
         })
       );
@@ -190,7 +193,12 @@ export default function MessagesUI() {
           if (!chat.withUid) return null;
           if (!userCacheRef.current[chat.withUid]) {
              const snap = await getDoc(doc(firestoreDb, "users", chat.withUid));
-             userCacheRef.current[chat.withUid] = snap.exists() ? snap.data() : {};
+             if (snap.exists()) {
+               userCacheRef.current[chat.withUid] = snap.data();
+             } else {
+               const fSnap = await getDoc(doc(firestoreDb, "freelancers", chat.withUid));
+               userCacheRef.current[chat.withUid] = fSnap.exists() ? fSnap.data() : {};
+             }
           }
           return { chat, userData: userCacheRef.current[chat.withUid] };
         })
@@ -421,16 +429,8 @@ export default function MessagesUI() {
     <div className="msg-page-container">
       {/* Top Navigation Bar */}
       <div className="msg-topbar">
-        <div className="msg-search-container">
-          <Search size={16} color="#9CA3AF" />
-          <input 
-            type="text" 
-            placeholder="Search freelancers, jobs, services..." 
-            className="msg-search-input"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+        {/* Search bar removed per user request */}
+        <div></div>
         
         <div className="msg-topbar-right">
           <button className="msg-ai-btn" onClick={() => navigate("/freelance-dashboard/aigenerator")}>
@@ -565,7 +565,45 @@ export default function MessagesUI() {
                                 <span className="chat-project-label">PROJECT</span>
                               </div>
                               <span className="chat-project-title">{jobData.title || jobData.category || "Job Request"}</span>
-                              <button className="chat-view-more-btn">View more</button>
+                              <button 
+                                className="chat-view-more-btn"
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  let fullJob = null;
+                                  try {
+                                    let snap = await getDoc(doc(firestoreDb, "jobs", jobData.id));
+                                    if (snap.exists()) {
+                                      fullJob = snap.data();
+                                    } else {
+                                      snap = await getDoc(doc(firestoreDb, "jobs_24h", jobData.id));
+                                      if (snap.exists()) fullJob = { ...snap.data(), is24h: true };
+                                    }
+                                  } catch (err) {
+                                    console.error("Error fetching full job:", err);
+                                  }
+
+                                  // Fallback to the embedded job data inside the message if the job was deleted
+                                  // or cannot be found in the database.
+                                  if (!fullJob) {
+                                    fullJob = jobData;
+                                  }
+
+                                  if (!fullJob) {
+                                    alert("Job not found");
+                                    return;
+                                  }
+
+                                  navigate(`/work-details/${jobData.id}`, {
+                                    state: {
+                                      job: fullJob,
+                                      currentUid,
+                                      otherUid,
+                                    },
+                                  });
+                                }}
+                              >
+                                View more
+                              </button>
                             </div>
                             
                             {!isMe && (!statusText || statusText === "sent") && currentUserRole === 'freelancer' && (
