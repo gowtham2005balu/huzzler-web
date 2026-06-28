@@ -954,13 +954,18 @@ export default function ClientSidebar() {
 
   useEffect(() => {
     let unsubSnapshot;
+    let unsubSnapshot2;
     const unsubAuth = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) return;
 
       const userRef = doc(db, "users", currentUser.uid);
       unsubSnapshot = onSnapshot(userRef, (snap) => {
-        if (snap.exists()) {
-          const data = snap.data();
+        let data = {};
+        if (snap.exists()) data = snap.data();
+        
+        const hasValidData = data.Company_name || data.companyName || data.first_name || data.name || data.firstName;
+
+        if (snap.exists() && hasValidData) {
           let localData = {};
           try {
             const stored = localStorage.getItem("clientOtpUser") || localStorage.getItem("freelancerOtpUser");
@@ -976,6 +981,29 @@ export default function ClientSidebar() {
             last_name: data.last_name || data.lastName || data.lastname || authLast || localData.last_name || localData.lastName || "",
             company_name: data.Company_name || data.companyName || "",
           });
+        } else {
+          const clientRef = doc(db, "clients", currentUser.uid);
+          if (unsubSnapshot2) unsubSnapshot2();
+          unsubSnapshot2 = onSnapshot(clientRef, (cSnap) => {
+            if (cSnap.exists()) {
+              const cData = cSnap.data();
+              let localData = {};
+              try {
+                const stored = localStorage.getItem("clientOtpUser") || localStorage.getItem("freelancerOtpUser");
+                if (stored) localData = JSON.parse(stored);
+              } catch (e) {}
+
+              const authDisplayName = currentUser.displayName || "";
+              const authFirst = authDisplayName.split(" ")[0] || "";
+              const authLast = authDisplayName.split(" ").slice(1).join(" ") || "";
+
+              setUserInfo({
+                first_name: cData.first_name || cData.firstName || cData.firstname || cData.displayName || cData.name || authFirst || localData.first_name || localData.firstName || "",
+                last_name: cData.last_name || cData.lastName || cData.lastname || authLast || localData.last_name || localData.lastName || "",
+                company_name: cData.Company_name || cData.companyName || "",
+              });
+            }
+          });
         }
       });
     });
@@ -983,6 +1011,7 @@ export default function ClientSidebar() {
     return () => {
       unsubAuth();
       if (unsubSnapshot) unsubSnapshot();
+      if (unsubSnapshot2) unsubSnapshot2();
     };
   }, []);
 

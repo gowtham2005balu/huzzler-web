@@ -1,7 +1,7 @@
 // MessagesUI.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { Search, Bell, Star, MessageSquare, ArrowRight, Phone, Video, Monitor, Paperclip, Smile, Send, PenSquare, Edit } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { db as firestoreDb, auth, rtdb } from "../firbase/Firebase";
 import {
   ref as dbRef,
@@ -45,6 +45,7 @@ function formatTimeLabel(ts) {
 export default function MessagesUI() {
   const currentUid = auth.currentUser?.uid;
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [activeChat, setActiveChat] = useState(null); 
   const [currentView, setCurrentView] = useState("chats"); 
@@ -61,12 +62,50 @@ export default function MessagesUI() {
   const [listSearch, setListSearch] = useState("");
   const [inputText, setInputText] = useState("");
   const [activeTab, setActiveTab] = useState("All");
+  const [otherPresence, setOtherPresence] = useState(null);
 
   const [myWorkStatuses, setMyWorkStatuses] = useState({});
   const myWorkUnsubRef = useRef({});
 
   const userCacheRef = useRef({});
   const scrollRef = useRef(null);
+
+  // 0. Handle opening a chat from another page via location.state
+  useEffect(() => {
+    if (!currentUid || !location.state?.startChatWith) return;
+    const targetUid = location.state.startChatWith;
+    
+    if (activeChat?.chat?.withUid === targetUid) return;
+
+    const setupInitialChat = async () => {
+      const chatId = currentUid > targetUid ? `${currentUid}_${targetUid}` : `${targetUid}_${currentUid}`;
+      
+      const existing = chatItems.find(c => c.chat.withUid === targetUid);
+      if (existing) {
+        setActiveChat(existing);
+        navigate(location.pathname, { replace: true, state: {} });
+        return;
+      }
+
+      if (!userCacheRef.current[targetUid]) {
+        const snap = await getDoc(doc(firestoreDb, "users", targetUid));
+        if (snap.exists()) {
+          userCacheRef.current[targetUid] = snap.data();
+        } else {
+           const fSnap = await getDoc(doc(firestoreDb, "freelancers", targetUid));
+           if (fSnap.exists()) userCacheRef.current[targetUid] = fSnap.data();
+           else userCacheRef.current[targetUid] = {};
+        }
+      }
+      
+      setActiveChat({
+        chat: { chatId, withUid: targetUid, lastMessage: "", lastMessageTime: Date.now() },
+        userData: userCacheRef.current[targetUid]
+      });
+      navigate(location.pathname, { replace: true, state: {} });
+    };
+    setupInitialChat();
+  }, [currentUid, location.state, chatItems, activeChat, navigate, location.pathname]);
 
   // 1. Load user role & requests
   useEffect(() => {
@@ -118,7 +157,7 @@ export default function MessagesUI() {
         entries.map(async ([chatId, raw]) => {
           const withUid = raw.withUid || raw.with || "";
           let lastMessage = raw.lastMessage || "";
-          let lastMessageTime = raw.lastMessageTime || 0;
+          let isUnread = false;
           try {
             const msgSnap = await get(dbQuery(dbRef(rtdb, `chats/${chatId}/messages`), orderByChild("timestamp"), limitToLast(1)));
             if (msgSnap.exists()) {
@@ -130,9 +169,10 @@ export default function MessagesUI() {
                 lastMessage = first.text || "[Attachment]";
               }
               lastMessageTime = first.timestamp || lastMessageTime;
+              isUnread = first.receiverId === currentUid && first.status !== "seen";
             }
           } catch (e) {}
-          return { chatId, withUid, lastMessage, lastMessageTime };
+          return { chatId, withUid, lastMessage, lastMessageTime, isUnread };
         })
       );
       const sorted = list.sort((a, b) => (b.lastMessageTime || 0) - (a.lastMessageTime || 0));
@@ -164,6 +204,16 @@ export default function MessagesUI() {
   const activeChatId = activeChat?.chat?.chatId;
   const otherUid = activeChat?.chat?.withUid;
   const otherUserData = activeChat?.userData;
+
+  useEffect(() => {
+    if (!otherUid) {
+      setOtherPresence(null);
+      return;
+    }
+    const presRef = dbRef(rtdb, `status/${otherUid}`);
+    const unsub = onValue(presRef, (snap) => setOtherPresence(snap.val()));
+    return () => unsub();
+  }, [otherUid]);
 
   useEffect(() => {
     if (!activeChatId) return;
@@ -290,6 +340,12 @@ export default function MessagesUI() {
     return name.includes(listSearch.toLowerCase());
   });
 
+  const filteredSidebarItems = chatItems.filter(i => {
+    if (!sidebarSearch.trim()) return true;
+    const name = `${i.userData.firstName || i.userData.first_name || ""} ${i.userData.lastName || i.userData.last_name || ""}`.toLowerCase();
+    return name.includes(sidebarSearch.toLowerCase());
+  });
+
   const getInitials = (first, last) => {
     return `${(first || "U").substring(0,1)}${(last || "").substring(0,1)}`.toUpperCase();
   };
@@ -299,12 +355,14 @@ export default function MessagesUI() {
 
   // Layout Renders
   const renderFullList = () => {
+    const unreadCount = chatItems.filter(c => c.chat.isUnread).length;
+    
     return (
       <div className="msg-full-list-container">
         <div className="msg-list-header-row">
           <div>
             <h1 className="msg-main-title">Messages</h1>
-            <p className="msg-main-subtitle">4 unread conversations</p>
+            <p className="msg-main-subtitle">{unreadCount} unread conversations</p>
           </div>
           <button className="msg-new-btn">
             New Message
@@ -324,16 +382,19 @@ export default function MessagesUI() {
 
         <div className="msg-list-tabs">
           <button className={`msg-list-tab ${activeTab === 'All' ? 'active' : ''}`} onClick={() => setActiveTab('All')}>All ({chatItems.length})</button>
-          <button className={`msg-list-tab ${activeTab === 'Unread' ? 'active' : ''}`} onClick={() => setActiveTab('Unread')}>Unread (4)</button>
+          <button className={`msg-list-tab ${activeTab === 'Unread' ? 'active' : ''}`} onClick={() => setActiveTab('Unread')}>Unread ({unreadCount})</button>
           <button className={`msg-list-tab ${activeTab === 'Archived' ? 'active' : ''}`} onClick={() => setActiveTab('Archived')}>Archived</button>
         </div>
 
         <div className="msg-list-items-wrapper">
-          {filteredListItems.map((item, index) => {
+          {filteredListItems.filter(item => {
+            if (activeTab === 'Unread') return item.chat.isUnread;
+            return true;
+          }).map((item, index) => {
             const { chat, userData } = item;
             const name = `${userData.firstName || userData.first_name || ""} ${userData.lastName || userData.last_name || ""}`.trim() || "Unknown";
             const avatarText = getInitials(userData.firstName || userData.first_name, userData.lastName || userData.last_name);
-            const isUnread = index < 2; // Mocking unread status visually
+            const isUnread = chat.isUnread; // Dynamic unread status
             
             return (
               <div key={chat.chatId} className={`msg-list-row ${isUnread ? 'unread-row' : ''}`} onClick={() => setActiveChat(item)}>
@@ -423,7 +484,7 @@ export default function MessagesUI() {
               </div>
 
               <div className="msg-chat-list">
-                {chatItems.map((item) => {
+                {filteredSidebarItems.map((item) => {
                   const { chat, userData } = item;
                   const isActive = activeChatId === chat.chatId;
                   const name = `${userData.firstName || userData.first_name || ""} ${userData.lastName || userData.last_name || ""}`.trim() || "Unknown";
@@ -466,16 +527,15 @@ export default function MessagesUI() {
                     <div className="msg-chat-header-info">
                       <span className="msg-chat-header-name">{activeName}</span>
                       <span className="msg-chat-header-status">
-                        <span className="msg-online-dot-small"></span> Online
+                        {otherPresence?.state === "online" && (
+                          <>
+                            <span className="msg-online-dot-small"></span> Online
+                          </>
+                        )}
                       </span>
                     </div>
                   </div>
                   <div className="msg-chat-header-right">
-                    <button className="chat-icon-btn"><Phone size={18} color="#6B7280" /></button>
-                    <button className="chat-icon-btn"><Video size={18} color="#6B7280" /></button>
-                    <button className="chat-ai-btn">
-                      <Star size={14} color="#7C4EF5" fill="transparent" /> AI Summarize
-                    </button>
                   </div>
                 </div>
 
@@ -941,7 +1001,7 @@ export default function MessagesUI() {
           align-items: center;
           background: #F9FAFB;
           border-radius: 8px;
-          padding: 10px 14px;
+          padding: 6px 12px;
           border: 1px solid #E5E7EB;
         }
         

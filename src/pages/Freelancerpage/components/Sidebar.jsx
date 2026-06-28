@@ -85,6 +85,7 @@ export default function FreelanceSideBar() {
             last_name: data.lastName || data.last_name || data.lastname || authLast || localData.last_name || localData.lastName || "",
             role: data.professional_title || data.profession || data.role || data.category || "",
             profileImage: data.profileImage || "",
+            company_name: data.Company_name || data.companyName || "",
           });
         } else {
           const freelancerRef = doc(db, "freelancers", currentUser.uid);
@@ -108,6 +109,7 @@ export default function FreelanceSideBar() {
                 last_name: fData.lastName || fData.last_name || fData.lastname || authLast || localData.last_name || localData.lastName || "",
                 role: fData.professional_title || fData.profession || fData.role || fData.category || "",
                 profileImage: fData.profileImage || "",
+                company_name: fData.Company_name || fData.companyName || "",
               });
             }
           });
@@ -280,7 +282,7 @@ export default function FreelanceSideBar() {
           {!collapsed && (
             <div className="hz-user-info">
               <p className="hz-user-name">
-                {userInfo.first_name || "Freelancer"} {userInfo.last_name || ""}
+                {userInfo.company_name || `${userInfo.first_name || "Freelancer"} ${userInfo.last_name || ""}`.trim()}
               </p>
               <p className="hz-user-role">{userInfo.role || "UI/UX Designer"}</p>
             </div>

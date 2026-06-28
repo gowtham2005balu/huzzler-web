@@ -41,6 +41,32 @@ export default function Settings() {
   const [deleteDesc, setDeleteDesc] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [toast, setToast] = useState("");
+  const [showLangModal, setShowLangModal] = useState(false);
+  const [showCurrencyModal, setShowCurrencyModal] = useState(false);
+  const [currentCurrency, setCurrentCurrency] = useState("Indian Rupee (₹)");
+  const [currentLang, setCurrentLang] = useState(() => {
+    if (document.cookie.includes("googtrans=/en/ta")) return "Tamil (தமிழ்)";
+    if (document.cookie.includes("googtrans=/en/hi")) return "Hindi (हिन्दी)";
+    return "English (India)";
+  });
+
+  const changeLanguage = (langCode, langName) => {
+    // Clear old cookies
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname + ";";
+    // Set new cookie if not english
+    if (langCode !== 'en') {
+      document.cookie = `googtrans=/en/${langCode}; path=/;`;
+    }
+    setCurrentLang(langName);
+    setShowLangModal(false);
+    window.location.reload();
+  };
+
+  const changeCurrency = (currencyStr) => {
+    setCurrentCurrency(currencyStr);
+    setShowCurrencyModal(false);
+  };
 
   const showToast = (m) => {
     setToast(m);
@@ -205,41 +231,23 @@ export default function Settings() {
                 
                 <ActionItem 
                   title="Language" 
-                  desc="English (India)" 
+                  desc={currentLang} 
                   btnText="Change" 
+                  onClick={() => setShowLangModal(true)}
                 />
                 
                 <ActionItem 
                   title="Currency" 
-                  desc="Indian Rupee (₹)" 
+                  desc={currentCurrency} 
                   btnText="Change" 
+                  onClick={() => setShowCurrencyModal(true)}
                   isLast
                 />
 
               </div>
             </div>
 
-            {/* Billing Card */}
-            <div className="hz-settings-card-wrapper">
-              <h3 className="hz-settings-card-heading">Billing</h3>
-              <div className="hz-settings-card">
-                
-                <ActionItem 
-                  title="Current Plan" 
-                  desc="Huzzler Pro - ₹2,999/month" 
-                  btnText="Upgrade" 
-                  btnOutline
-                />
-                
-                <ActionItem 
-                  title="Payment Method" 
-                  desc="Visa •••• 4242" 
-                  btnText="Edit" 
-                  isLast
-                />
 
-              </div>
-            </div>
 
             {/* Danger Zone Card */}
             <div className="hz-settings-card-wrapper">
@@ -318,6 +326,36 @@ export default function Settings() {
                 </button>
               </div>
 
+            </div>
+          </div>
+        )}
+
+        {/* Language Modal */}
+        {showLangModal && (
+          <div className="del-modal-overlay" onClick={() => setShowLangModal(false)}>
+            <div className="del-modal-box" onClick={(e) => e.stopPropagation()}>
+              <h2 className="del-modal-title">Select Language</h2>
+              <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
+                <button onClick={() => changeLanguage('en', 'English (India)')} style={{ padding: "12px", borderRadius: "10px", border: "1px solid #E8E6F0", background: "#F7F7F9", cursor: "pointer", fontWeight: "600", fontSize: "14px" }}>English (India)</button>
+                <button onClick={() => changeLanguage('ta', 'Tamil (தமிழ்)')} style={{ padding: "12px", borderRadius: "10px", border: "1px solid #E8E6F0", background: "#F7F7F9", cursor: "pointer", fontWeight: "600", fontSize: "14px" }}>Tamil (தமிழ்)</button>
+                <button onClick={() => changeLanguage('hi', 'Hindi (हिन्दी)')} style={{ padding: "12px", borderRadius: "10px", border: "1px solid #E8E6F0", background: "#F7F7F9", cursor: "pointer", fontWeight: "600", fontSize: "14px" }}>Hindi (हिन्दी)</button>
+              </div>
+              <button onClick={() => setShowLangModal(false)} style={{ marginTop: "20px", background: "none", border: "none", color: "#5E5A7A", fontWeight: "600", cursor: "pointer", fontSize: "14px" }}>Cancel</button>
+            </div>
+          </div>
+        )}
+
+        {/* Currency Modal */}
+        {showCurrencyModal && (
+          <div className="del-modal-overlay" onClick={() => setShowCurrencyModal(false)}>
+            <div className="del-modal-box" onClick={(e) => e.stopPropagation()}>
+              <h2 className="del-modal-title">Select Currency</h2>
+              <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
+                <button onClick={() => changeCurrency('Indian Rupee (₹)')} style={{ padding: "12px", borderRadius: "10px", border: "1px solid #E8E6F0", background: "#F7F7F9", cursor: "pointer", fontWeight: "600", fontSize: "14px" }}>Indian Rupee (₹)</button>
+                <button onClick={() => changeCurrency('US Dollar ($)')} style={{ padding: "12px", borderRadius: "10px", border: "1px solid #E8E6F0", background: "#F7F7F9", cursor: "pointer", fontWeight: "600", fontSize: "14px" }}>US Dollar ($)</button>
+                <button onClick={() => changeCurrency('Euro (€)')} style={{ padding: "12px", borderRadius: "10px", border: "1px solid #E8E6F0", background: "#F7F7F9", cursor: "pointer", fontWeight: "600", fontSize: "14px" }}>Euro (€)</button>
+              </div>
+              <button onClick={() => setShowCurrencyModal(false)} style={{ marginTop: "20px", background: "none", border: "none", color: "#5E5A7A", fontWeight: "600", cursor: "pointer", fontSize: "14px" }}>Cancel</button>
             </div>
           </div>
         )}
@@ -685,14 +723,14 @@ function ToggleItem({ title, desc, checked, onChange, isLast }) {
   );
 }
 
-function ActionItem({ title, desc, btnText, btnOutline, isLast }) {
+function ActionItem({ title, desc, btnText, btnOutline, isLast, onClick }) {
   return (
     <div className={`hz-action-row ${!isLast ? 'hz-border-bottom' : ''}`}>
       <div className="hz-action-text">
         <div className="hz-action-title">{title}</div>
         <div className="hz-action-desc">{desc}</div>
       </div>
-      <button className={btnOutline ? "hz-btn-outline" : "hz-btn-default"}>
+      <button className={btnOutline ? "hz-btn-outline" : "hz-btn-default"} onClick={onClick}>
         {btnText}
       </button>
     </div>

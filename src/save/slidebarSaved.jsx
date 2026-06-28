@@ -29,7 +29,7 @@ import TopNavbar from "../components/TopNavbar";
 
 const timeAgo = (date) => {
   if (!date) return "";
-  const diff = Date.now() - date.getTime();
+  const diff = Math.abs(Date.now() - date.getTime());
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return "just now";
   if (mins < 60) return `${mins}m ago`;
@@ -334,7 +334,7 @@ export default function Sidebarsave() {
                                    {jobInitials}
                                  </div>
                                  <div>
-                                   <h3 style={{ fontSize: 15, fontWeight: 700, color: "#111", margin: "0 0 2px" }}>{job.company_name || job.company || "Client Opportunity"}</h3>
+                                   <h3 style={{ fontSize: 15, fontWeight: 700, color: "#111", margin: "0 0 2px" }}>{job.company_name || job.company || ""}</h3>
                                    <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>{job.category || "General Opportunity"}</p>
                                  </div>
                                </div>

@@ -1,5 +1,3 @@
-
-
 // Service24hDetailScreen.jsx
 // Fully ported from servicefullDetailScreen.dart — feature-for-feature parity
 // UI design kept exactly as original web version
@@ -111,7 +109,7 @@ function Spinner() {
 export default function ServiceFullDetailScreen({ jobId: propJobId }) {
   const navigate = useNavigate();
   const params = useParams();
-const jobId = propJobId || params.id;
+  const jobId = propJobId || params.id;
 
   const currentUser = auth.currentUser;
   const currentUid = currentUser?.uid;
@@ -225,26 +223,8 @@ const jobId = propJobId || params.id;
     setSavingInProgress(false);
   };
 
-  // ── Share ──────────────────────────────────────────────────────────────────
-  const shareService = async () => {
-    const url = "https://play.google.com/store/apps/details?id=com.huzzler.app";
-    if (navigator.share) {
-      navigator.share({ title: "Huzzler App", url });
-    } else {
-      await navigator.clipboard.writeText(url);
-      showSnack("Link copied!", "green");
-    }
-  };
-
-  // ─── Render ─────────────────────────────────────────────────────────────────
   if (loading) return <Spinner />;
-  if (notFound || !serviceData) return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", fontFamily: "Rubik, sans-serif", color: "#555" }}>
-      <div style={{ fontSize: 48, marginBottom: 16 }}>❌</div>
-      <div style={{ fontSize: 16 }}>Service not found</div>
-      <button onClick={() => navigate(-1)} style={{ marginTop: 20, background: "#7C3CFF", color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px", cursor: "pointer" }}>Go Back</button>
-    </div>
-  );
+  if (notFound || !serviceData) return <div style={{ textAlign: "center", marginTop: 50 }}>Service not found.</div>;
 
   const {
     title = "",
@@ -258,6 +238,8 @@ const jobId = propJobId || params.id;
     location: serviceLocation = "Remote",
     budget_from,
     budget_to,
+    image,
+    faqs = []
   } = serviceData;
 
   const budgetFrom = Number(budget_from) || 0;
@@ -265,155 +247,81 @@ const jobId = propJobId || params.id;
   const createdDate = createdAt?.toDate ? createdAt.toDate() : createdAt ? new Date(createdAt) : null;
   const timeText = timeAgo(createdDate);
 
-  const posterFirstName = userData?.firstName || "";
-  const posterLastName = userData?.lastName || "";
-  const posterFullName = `${posterFirstName} ${posterLastName}`.trim() || "User";
-  const posterInitials = [posterFirstName[0], posterLastName[0]].filter(Boolean).join("").toUpperCase() || "U";
-  const professionalTitle = userData?.professional_title || "Freelancer";
-  const completedProjects = userData?.completedProjects || 0;
-
   return (
-    <div style={{ maxWidth: 680, margin: "0 auto", background: "#fff", minHeight: "100vh", fontFamily: "Rubik, sans-serif" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-      {/* ── HEADER ────────────────────────────────────────────────────── */}
-      <div style={{
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        padding: "14px 16px", position: "sticky", top: 0, background: "#fff",
-        zIndex: 100, borderBottom: "1px solid #f0f0f0",
-      }}>
-        <button onClick={() => navigate(-1)} style={iconBtn}>
+    <div style={{ background: "#fff", paddingBottom: 80, fontFamily: "Rubik, sans-serif" }}>
+      <div style={{ background: "#FDFD96", padding: 25, borderRadius: "0 0 30px 30px", position: "relative" }}>
+        <button
+          onClick={() => navigate(-1)}
+          style={{ position: "absolute", left: 20, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }}
+        >
           <ArrowLeft size={22} color="#000" />
         </button>
-        <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-          <button onClick={toggleSave} disabled={savingInProgress} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
-            {isSaved
-              ? <Bookmark size={26} fill="#000" color="#000" />
-              : <Bookmark size={26} color="#000" />
-            }
-          </button>
-          <button onClick={shareService} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
-            <Share2 size={26} color="#000" />
-          </button>
-        </div>
+        <h2 style={{ textAlign: "center", margin: 0 }}>Explore jobs</h2>
       </div>
 
-      <div style={{ height: 10 }} />
+      <div style={{ marginTop: 20, padding: 16 }}>
+        <h3 style={{ cursor: "pointer", margin: "0 0 8px 0" }}>Works</h3>
+        <hr style={{ border: "none", borderTop: "1px solid #eee", margin: 0 }} />
 
-      {/* ── MAIN CARD (Budget / Timeline / Location) ───────────────────── */}
-      <div style={{ margin: "0 16px" }}>
-        <div style={{
-          background: "#FFFFEA", borderRadius: 20, padding: 20,
-          border: "1.2px solid #e0e0e0",
-        }}>
-          {/* Title */}
-          <div style={{ fontSize: 20, fontWeight: 500, color: "#1A1A1A", marginBottom: 12 }}>{title}</div>
+        {image && (
+          <img src={image} alt="job" style={{ width: "100%", borderRadius: 10, marginTop: 12 }} />
+        )}
 
-          {/* Budget / Timeline / Location row */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-            <InfoColumn label="Budget" value={`₹${formatAmount(budgetFrom)} – ₹${formatAmount(budgetTo)}`} valueColor="#6200EE" />
-            <InfoColumn label="Timeline" value={deliveryDuration} />
-            <InfoColumn label="Location" value={serviceLocation} />
-          </div>
+        <h2 style={{ marginTop: 15, fontSize: "22px", fontWeight: 700 }}>{title}</h2>
+        <p style={{ color: "#6B7280", fontSize: "14px" }}>
+          👁 {impressions} views • ⏱ {createdDate ? timeAgo(createdDate) : ""}
+        </p>
+        <p style={{ marginTop: 10, fontSize: "15px", lineHeight: "1.6", color: "#333" }}>{description}</p>
 
-          {/* Proposed + TimeAgo */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#333" }}>
-              <User size={18} />
-              <span>{impressions} Proposed</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#333" }}>
-              <Clock size={18} />
-              <span>{timeText}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ height: 20 }} />
-
-      {/* ── SKILLS REQUIRED ──────────────────────────────────────────────── */}
-      <div style={{ padding: "0 16px" }}>
-        <div style={{ fontSize: 18, fontWeight: 500, color: "#1A1A1A", marginBottom: 10 }}>Skills Required</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-          {[...skills, ...tools].map((s, i) => <TagChip key={i} label={s} />)}
+        <h3 style={{ marginTop: 20, fontSize: "18px", fontWeight: 600 }}>Skills & Tools</h3>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 10 }}>
+          {skills.map((s, i) => (
+            <span key={i} style={{ padding: "6px 14px", border: "1px solid #ccc", borderRadius: 20, fontSize: "13px" }}>{s}</span>
+          ))}
+          {tools.map((t, i) => (
+            <span key={i} style={{ padding: "6px 14px", border: "1px solid #ccc", borderRadius: 20, fontSize: "13px" }}>{t}</span>
+          ))}
           {skills.length === 0 && tools.length === 0 && (
-            <span style={{ fontSize: 14, color: "#999" }}>No skills listed</span>
+            <span style={{ fontSize: "14px", color: "#999" }}>No skills listed</span>
           )}
         </div>
-      </div>
 
-      <div style={{ height: 24 }} />
-
-      {/* ── DESCRIPTION ──────────────────────────────────────────────────── */}
-      <div style={{ padding: "0 16px" }}>
-        <div style={{ fontSize: 18, fontWeight: 500, color: "#1A1A1A", marginBottom: 10 }}>Project Description</div>
-        <p style={{ fontSize: 15, lineHeight: 1.6, color: "#333", margin: 0 }}>
-          {description || "No description provided."}
-        </p>
-      </div>
-
-      <div style={{ height: 24 }} />
-
-      {/* ── ABOUT FREELANCER ─────────────────────────────────────────────── */}
-      {userData && (
-        <div style={{ padding: "0 16px" }}>
-          <div style={{ fontSize: 18, fontWeight: 500, color: "#1A1A1A", marginBottom: 14 }}>About the Freelancers</div>
-
-          {/* Avatar + Name + Profile Button */}
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
-            {/* Avatar */}
-            <div style={{
-              width: 55, height: 55, background: "#5359FF", borderRadius: 10,
-              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-            }}>
-              {userData.profileImage
-                ? <img src={userData.profileImage} alt="" style={{ width: 55, height: 55, borderRadius: 10, objectFit: "cover" }} />
-                : <span style={{ fontSize: 20, fontWeight: 500, color: "#C4C6FF" }}>{posterInitials}</span>
-              }
+        {/* FAQ SECTION */}
+        {faqs && faqs.length > 0 && (
+          <div style={{ marginTop: 25 }}>
+            <h3 style={{ fontSize: "18px", fontWeight: 600 }}>FAQ</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+              {faqs.map((faq, index) => (
+                <div key={index} style={{ background: "#FDFD96", padding: "12px 16px", borderRadius: "12px", border: "1px solid #FFE066" }}>
+                  <div style={{ fontWeight: 600, fontSize: "14px" }}>Q: {faq.question}</div>
+                  <div style={{ fontSize: "13px", color: "#4B5563", marginTop: "4px" }}>A: {faq.answer}</div>
+                </div>
+              ))}
             </div>
-
-            {/* Name + Title */}
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 500, color: "#1A1A1A" }}>{posterFullName}</div>
-              <div style={{ height: 6 }} />
-              <div style={{ fontSize: 15, fontWeight: 500, color: "#7C3CFF" }}>{professionalTitle}</div>
-            </div>
-
-            {/* View Profile */}
-            <button
-  style={{
-    padding: "8px 14px",
-    background: "#7C3CFF",
-    color: "#fff",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer"
-  }}
-  onClick={() => {
-    console.log("USER ID:", serviceData?.userId);
-
-    if (!serviceData?.userId) {
-      alert("User ID missing");
-      return;
-    }
-
-    navigate(`/freelance-dashboard/freelancer-profile/${userId}/${jobId}`);
-  }}
->
-  View Profile
-</button>
           </div>
+        )}
 
-          {/* Stats */}
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, color: "#333" }}>
-            <span>Service Posted: {servicePostedCount}</span>
+        <div style={{ marginTop: 30, padding: 20, background: "#FFFFF1", border: "2px solid #FFE066", borderRadius: 20 }}>
+          <h2>₹{budgetFrom.toLocaleString()} - ₹{budgetTo.toLocaleString()}</h2>
+          <p style={{ margin: "4px 0 12px 0", color: "#4B5563" }}>Delivery in {deliveryDuration}</p>
+
+          <div style={{ display: "flex", gap: 20, marginTop: 10 }}>
+            <button
+              onClick={() => navigate(`/freelancer/${userId}`)}
+              style={{ padding: "10px 20px", borderRadius: 30, background: "#FFEB3B", border: 0, fontWeight: "600", cursor: "pointer" }}
+            >
+              Get In Touch
+            </button>
+
+            <button
+              onClick={toggleSave}
+              style={{ padding: "10px 20px", borderRadius: 30, border: `2px solid ${isSaved ? "red" : "gray"}`, background: "#fff", fontWeight: "600", cursor: "pointer" }}
+            >
+              {isSaved ? "❤️ Saved" : "🤍 Save"}
+            </button>
           </div>
         </div>
-      )}
-
-      <div style={{ height: 40 }} />
-
+      </div>
       <Snackbar message={snack.msg} color={snack.color} onDone={() => setSnack({ msg: "", color: "#333" })} />
     </div>
   );

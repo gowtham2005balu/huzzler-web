@@ -35,7 +35,7 @@ export default function JbfullDetailScreen() {
   }, [jobId]);
 
   const timeAgo = (d) => {
-    const diff = Date.now() - d.getTime();
+    const diff = Math.abs(Date.now() - d.getTime());
     const mins = Math.floor(diff / 60000);
     if (mins < 1) return "just now";
     if (mins < 60) return `${mins} min ago`;

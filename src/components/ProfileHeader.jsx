@@ -4,14 +4,23 @@ import { useNavigate } from "react-router-dom";
 export default function ProfileHeader({ profile, projectCount, onEditProfile }) {
   const navigate = useNavigate();
 
-  const fullName = profile?.first_name 
-    ? `${profile.first_name} ${profile.last_name || ""}`.trim() 
-    : (profile?.name || "Gowtham B");
+  const fName = profile?.first_name || profile?.firstName || "";
+  const lName = profile?.last_name || profile?.lastName || "";
+  const combinedName = `${fName} ${lName}`.trim();
+  const fullName = combinedName || profile?.name || profile?.fullName || "User";
   
   const roleDisplay = profile?.professional_title || "UI/UX Designer • Freelancer";
   const location = profile?.location || profile?.city || "Chennai, India";
   const rating = profile?.rating || "4.9";
-  const initials = fullName.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2) || "GG";
+  let initials = "U";
+  if (fullName && fullName !== "User") {
+    const parts = fullName.split(" ");
+    if (parts.length >= 2) {
+      initials = (parts[0][0] + parts[1][0]).toUpperCase();
+    } else {
+      initials = fullName.substring(0, 2).toUpperCase();
+    }
+  }
 
   return (
     <>
@@ -78,9 +87,7 @@ export default function ProfileHeader({ profile, projectCount, onEditProfile }) 
               <div style={{ background: "rgba(255,255,255,0.2)", padding: "4px 12px", borderRadius: 20, fontSize: 12 }}>
                 <strong>{projectCount || 0}</strong> Projects
               </div>
-              <div style={{ background: "#FDE047", color: "#854D0E", padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
-                ⭐ {rating} Rating
-              </div>
+
             </div>
           </div>
         </div>

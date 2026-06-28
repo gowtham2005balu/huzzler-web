@@ -140,7 +140,7 @@ export default function FreelancerMyjob() {
             ))}
             {allChips.length > 4 && <span className="chip">+{allChips.length - 4}</span>}
           </div>
-          <button className="view-more-btn" onClick={() => navigate(is24h ? "/freelance-dashboard/24h-service-detail" : "/freelance-dashboard/service-detail", { state: { job } })}>
+          <button className="view-more-btn" onClick={() => navigate(is24h ? `/freelance-dashboard/services24details/${job.id}` : `/freelance-dashboard/serviceviewdetails/${job.id}`, { state: { job } })}>
             View details
           </button>
         </div>

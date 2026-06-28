@@ -473,12 +473,26 @@ export default function FreelanceHome() {
   }, [user]);
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "users"), (snap) => {
-      const map = {};
-      snap.docs.forEach((u) => (map[u.id] = u.data()));
-      setUserMap(map);
+    const unsubUsers = onSnapshot(collection(db, "users"), (snap) => {
+      setUserMap(prev => {
+        const map = { ...prev };
+        snap.docs.forEach((u) => (map[u.id] = { ...map[u.id], ...u.data() }));
+        return map;
+      });
     });
-    return unsub;
+
+    const unsubClients = onSnapshot(collection(db, "clients"), (snap) => {
+      setUserMap(prev => {
+        const map = { ...prev };
+        snap.docs.forEach((u) => (map[u.id] = { ...map[u.id], ...u.data() }));
+        return map;
+      });
+    });
+
+    return () => {
+      unsubUsers();
+      unsubClients();
+    };
   }, []);
 
   async function toggleSave(jobId) {
@@ -504,6 +518,15 @@ export default function FreelanceHome() {
     // ❌ BLOCKED USER JOB REMOVE
     if (blockedUserIds.includes(job.userId)) return false;
 
+    // ❌ FILTER OUT JOBS WITH NO NAME
+    const client = userMap?.[job.userId];
+    const fName = client?.first_name || client?.firstName || client?.name || client?.displayName || "";
+    const lName = client?.last_name || client?.lastName || "";
+    const fullName = fName ? `${fName} ${lName}`.trim() : "";
+    const nameStr = client?.Company_name || client?.companyName || job.company_name || job.company || job.companyName || job.clientName || fullName;
+    
+    if (!nameStr || nameStr.trim() === "") return false;
+
     const txt = searchText.toLowerCase();
 
     const matchSearch =
@@ -519,7 +542,19 @@ export default function FreelanceHome() {
     return matchSearch && matchCategory;
   });
 
-  const filteredTopRecJobs = topRecJobs.filter((job) => !blockedUserIds.includes(job.userId));
+  const filteredTopRecJobs = topRecJobs.filter((job) => {
+    if (blockedUserIds.includes(job.userId)) return false;
+    
+    const client = userMap?.[job.userId];
+    const fName = client?.first_name || client?.firstName || client?.name || client?.displayName || "";
+    const lName = client?.last_name || client?.lastName || "";
+    const fullName = fName ? `${fName} ${lName}`.trim() : "";
+    const nameStr = client?.Company_name || client?.companyName || job.company_name || job.company || job.companyName || job.clientName || fullName;
+    
+    if (!nameStr || nameStr.trim() === "") return false;
+    
+    return true;
+  });
   const displayTopRecJob = filteredTopRecJobs.length > 0 ? filteredTopRecJobs[0] : null;
 
   const timeAgo = (input) => {
@@ -539,7 +574,7 @@ export default function FreelanceHome() {
 
     if (!date || isNaN(date.getTime())) return "";
 
-    const diff = Date.now() - date.getTime();
+    const diff = Math.abs(Date.now() - date.getTime());
 
     if (diff < 60000) return "1m ago";
 
@@ -963,9 +998,10 @@ export default function FreelanceHome() {
                             const client = userMap?.[job.userId];
                             const fName = client?.first_name || client?.firstName || client?.name || client?.displayName || "";
                             const lName = client?.last_name || client?.lastName || "";
-                            const fullName = fName ? `${fName} ${lName}`.trim() : "Unknown";
-                            const compName = client?.Company_name || client?.companyName || job.company_name || fullName;
-                            return compName.substring(0, 2).toUpperCase();
+                            const fullName = fName ? `${fName} ${lName}`.trim() : "";
+                            let compName = client?.Company_name || client?.companyName || job.company_name || job.company || job.companyName || job.clientName;
+                            if (!compName || compName.trim().toLowerCase() === "unknown") compName = fullName;
+                            return compName ? compName.substring(0, 2).toUpperCase() : "";
                           })()}
                         </div>
                         <div style={{ minWidth: 0 }}>
@@ -974,8 +1010,10 @@ export default function FreelanceHome() {
                               const client = userMap?.[job.userId];
                               const fName = client?.first_name || client?.firstName || client?.name || client?.displayName || "";
                               const lName = client?.last_name || client?.lastName || "";
-                              const fullName = fName ? `${fName} ${lName}`.trim() : "Unknown Company";
-                              return client?.Company_name || client?.companyName || job.company_name || fullName;
+                              const fullName = fName ? `${fName} ${lName}`.trim() : "";
+                              let compName = client?.Company_name || client?.companyName || job.company_name || job.company || job.companyName || job.clientName;
+                              if (!compName || compName.trim().toLowerCase() === "unknown") compName = fullName;
+                              return compName || "";
                             })()}
                           </div>
                           <div style={{ fontSize: "12px", color: "#A39DBA", fontFamily: "'DM Sans', sans-serif", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{job.category || "Design Agency"}</div>
@@ -1210,8 +1248,17 @@ export default function FreelanceHome() {
                 const avatarColors = ["#34C77B", "#FFB020", "#3D8BDD", "#E0245E", "#6C3EEB"];
                 const colorHex = avatarColors[index % avatarColors.length];
 
-                const companyName = job.company || job.clientName || "Unknown";
-                const initials = companyName.substring(0, 2).toUpperCase() || "J";
+                const client = userMap?.[job.userId];
+                const fName = client?.first_name || client?.firstName || client?.name || client?.displayName || "";
+                const lName = client?.last_name || client?.lastName || "";
+                const fullName = fName ? `${fName} ${lName}`.trim() : "";
+                let companyName = job.company || job.clientName || job.companyName || job.company_name;
+                if (!companyName || companyName.trim().toLowerCase() === "unknown") {
+                  companyName = fullName;
+                }
+                
+                // Use project title for initials
+                const initials = job.title ? job.title.substring(0, 1).toUpperCase() : "P";
 
                 const skillColors = [
                   { bg: "#FFF0F4", color: "#E0245E" },

@@ -67,7 +67,7 @@ export default function WorkDetail() {
       ? new Date(date.seconds * 1000)
       : new Date(date);
 
-    const diff = Date.now() - raw.getTime();
+    const diff = Math.abs(Date.now() - raw.getTime());
 
     const mins = Math.floor(diff / 60000);
     const hrs = Math.floor(mins / 60);

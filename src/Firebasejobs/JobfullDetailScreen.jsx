@@ -20,6 +20,11 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { db } from "../firbase/Firebase";
+import { 
+  Target, FileText, CheckCircle, Package, Sparkles, 
+  Smartphone, Monitor, Palette, MousePointerClick, Folder, Layout, Zap, Star,
+  Bookmark, Share2, MessageSquare, Rocket, Lightbulb
+} from "lucide-react";
 
 import { FiX, FiBookmark } from "react-icons/fi";
 import { MdAccessTime } from "react-icons/md";
@@ -450,21 +455,27 @@ export default function JobFullDetailJobScreen() {
                 {(() => {
                   const fName = client?.first_name || client?.firstName || client?.name || client?.displayName || "";
                   const lName = client?.last_name || client?.lastName || "";
-                  const fullName = fName ? `${fName} ${lName}`.trim() : "Unknown";
-                  const compName = client?.Company_name || client?.companyName || job.company_name || fullName;
-                  return compName.substring(0, 2).toUpperCase() || "J";
+                  const fullName = fName ? `${fName} ${lName}`.trim() : "";
+                  const compName = client?.Company_name || client?.companyName || job.company_name || job.company || job.companyName || job.clientName || fullName;
+                  
+                  const initialSource = compName || job.title || "JB";
+                  return initialSource.substring(0, 2).toUpperCase();
                 })()}
               </div>
               <div>
                 <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1A1A1A", margin: "0 0 4px 0", fontFamily: "'Sora', sans-serif" }}>
+                  {job.title || "Project Detail"}
+                </h1>
+                <div style={{ fontSize: 14, color: "#8A8A8A", fontFamily: "'DM Sans', sans-serif" }}>
                   {(() => {
                     const fName = client?.first_name || client?.firstName || client?.name || client?.displayName || "";
                     const lName = client?.last_name || client?.lastName || "";
-                    const fullName = fName ? `${fName} ${lName}`.trim() : "Unknown Company";
-                    return client?.Company_name || client?.companyName || job.company_name || fullName;
+                    const fullName = fName ? `${fName} ${lName}`.trim() : "";
+                    const compName = client?.Company_name || client?.companyName || job.company_name || job.company || job.companyName || job.clientName || fullName;
+                    return compName ? `${compName} • ` : "";
                   })()}
-                </h1>
-                <div style={{ fontSize: 14, color: "#8A8A8A", fontFamily: "'DM Sans', sans-serif" }}>{job.category || "General"}</div>
+                  {job.category || "General"}
+                </div>
               </div>
             </div>
 
@@ -493,14 +504,14 @@ export default function JobFullDetailJobScreen() {
 
             <div style={{ marginTop: 20 }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", background: "#FFFBF0", color: "#B8860B", borderRadius: 20, fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
-                ⚡ Immediate Start
+                <Zap size={14} color="#B8860B" /> Immediate Start
               </span>
             </div>
           </div>
 
           {/* Skills Required */}
           <div style={{ background: "white", borderRadius: 16, border: "1px solid #EAEAEA", padding: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 16px 0", color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}><span style={{ color: "#FF4500" }}>🎯</span> Skills Required</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 16px 0", color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}><Target size={18} color="#FF4500" /> Skills Required</h3>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
               {(job.skills?.length > 0 ? job.skills : ["UI Design", "Web Design", "UX", "Figma", "Visual Design", "Interactive Design", "Adobe XD", "Prototyping", "Design Systems", "Mobile UI", "Wireframing", "User Research"]).map((s, i) => {
                 const colors = [
@@ -522,7 +533,7 @@ export default function JobFullDetailJobScreen() {
 
           {/* Project Description */}
           <div style={{ background: "white", borderRadius: 16, border: "1px solid #EAEAEA", padding: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 16px 0", color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}>📝 Project Description</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 16px 0", color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}><FileText size={18} color="#6C3EEB" /> Project Description</h3>
             <p style={{ fontSize: 14, color: "#666", lineHeight: 1.6, margin: 0, whiteSpace: "pre-line", fontFamily: "'DM Sans', sans-serif" }}>
               {job.description || "We are seeking an experienced UI/UX designer to create modern and intuitive mobile app designs for our startup platform. The project involves designing a complete mobile and web application with approximately 15-20 screens, including onboarding, dashboard, messaging, and analytics interfaces.\n\nThe ideal candidate should have experience creating scalable design systems, user-centered experiences, and responsive layouts optimized for both Android and iOS platforms."}
             </p>
@@ -530,7 +541,7 @@ export default function JobFullDetailJobScreen() {
 
           {/* Project Requirements */}
           <div style={{ background: "white", borderRadius: 16, border: "1px solid #EAEAEA", padding: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 16px 0", color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}><span style={{ color: "#32CD32" }}>✅</span> Project Requirements</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 16px 0", color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}><CheckCircle size={18} color="#32CD32" /> Project Requirements</h3>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "16px 32px" }}>
               {[
                 "Modern and clean design aesthetic",
@@ -554,15 +565,15 @@ export default function JobFullDetailJobScreen() {
 
           {/* Deliverables */}
           <div style={{ background: "white", borderRadius: 16, border: "1px solid #EAEAEA", padding: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 16px 0", color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}>📦 Deliverables</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 16px 0", color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}><Package size={18} color="#FF9F43" /> Deliverables</h3>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
               {[
-                { title: "Mobile App UI Screens", desc: "15-20 high-fidelity screens", icon: "📱", color: "#6C3EEB" },
-                { title: "Responsive Web Dashboard", desc: "Full desktop layout", icon: "💻", color: "#6C3EEB" },
-                { title: "Design System Library", desc: "Reusable Figma components", icon: "🎨", color: "#6C3EEB" },
-                { title: "Interactive Prototype", desc: "Linked Figma prototype", icon: "✨", color: "#6C3EEB" },
-                { title: "Developer Handoff Assets", desc: "Annotated specs & exports", icon: "📁", color: "#6C3EEB" },
-                { title: "Export-ready UI Kit", desc: "SVG / PNG / Figma", icon: "🎯", color: "#6C3EEB" }
+                { title: "Mobile App UI Screens", desc: "15-20 high-fidelity screens", icon: <Smartphone size={20} color="#6C3EEB" />, color: "#6C3EEB" },
+                { title: "Responsive Web Dashboard", desc: "Full desktop layout", icon: <Monitor size={20} color="#6C3EEB" />, color: "#6C3EEB" },
+                { title: "Design System Library", desc: "Reusable Figma components", icon: <Palette size={20} color="#6C3EEB" />, color: "#6C3EEB" },
+                { title: "Interactive Prototype", desc: "Linked Figma prototype", icon: <MousePointerClick size={20} color="#6C3EEB" />, color: "#6C3EEB" },
+                { title: "Developer Handoff Assets", desc: "Annotated specs & exports", icon: <Folder size={20} color="#6C3EEB" />, color: "#6C3EEB" },
+                { title: "Export-ready UI Kit", desc: "SVG / PNG / Figma", icon: <Layout size={20} color="#6C3EEB" />, color: "#6C3EEB" }
               ].map((del, i) => (
                 <div key={i} style={{ background: "#FDFDFD", border: "1px solid #F0F0F0", borderRadius: 12, padding: "16px", display: "flex", alignItems: "center", gap: 12 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 8, background: "#F5F2FF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, border: `1px solid ${del.color}30` }}>
@@ -582,7 +593,7 @@ export default function JobFullDetailJobScreen() {
           {similarProjects.length > 0 && (
             <div style={{ marginTop: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}>✨ Similar Projects</h3>
+                <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: "#1A1A1A", display: "flex", alignItems: "center", gap: 8, fontFamily: "'Sora', sans-serif" }}><Sparkles size={20} color="#F59E0B" /> Similar Projects</h3>
                 <span onClick={() => navigate("/freelance-dashboard/browse-projects")} style={{ color: "#6C3EEB", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>View all &rarr;</span>
               </div>
 
@@ -733,7 +744,7 @@ export default function JobFullDetailJobScreen() {
                     }}
                     style={{ width: "100%", padding: 14, background: applicationStatus === "none" ? "linear-gradient(90deg,#8D5CFA,#6C3EEB)" : (applicationStatus === "accepted" ? "#34C77B" : "#A3A3A3"), color: "white", borderRadius: 24, border: "none", fontSize: 14, fontWeight: 700, cursor: applicationStatus === "none" ? "pointer" : "not-allowed", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12, fontFamily: "'DM Sans', sans-serif" }}
                   >
-                    🚀 {applicationStatus === "accepted" ? "Accepted 🎉" : applicationStatus === "applied" ? "Application Sent" : "Apply Now"}
+                    <Rocket size={16} /> {applicationStatus === "accepted" ? "Accepted 🎉" : applicationStatus === "applied" ? "Application Sent" : "Apply Now"}
                   </button>
                 </>
               );
@@ -749,13 +760,13 @@ export default function JobFullDetailJobScreen() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div onClick={handleSave} style={{ background: "#FDFDFD", border: "1px solid #F0F0F0", borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#1A1A1A", fontFamily: "'DM Sans', sans-serif" }}>
-                <span style={{ color: isFavorite ? "#6C3EEB" : "#8A8A8A" }}>🔖</span> Save Project
+                <Bookmark size={16} color={isFavorite ? "#6C3EEB" : "#8A8A8A"} /> Save Project
               </div>
               <div onClick={handleShare} style={{ background: "#FDFDFD", border: "1px solid #F0F0F0", borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#1A1A1A", fontFamily: "'DM Sans', sans-serif" }}>
-                <span style={{ color: "#8A8A8A" }}>↗️</span> Share Project
+                <Share2 size={16} color="#8A8A8A" /> Share Project
               </div>
-              <div style={{ background: "#FDFDFD", border: "1px solid #F0F0F0", borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#1A1A1A", fontFamily: "'DM Sans', sans-serif" }}>
-                <span style={{ color: "#8A8A8A" }}>💬</span> Contact Client
+              <div onClick={() => navigate("/freelance-dashboard/messages", { state: { startChatWith: job.userId } })} style={{ background: "#FDFDFD", border: "1px solid #F0F0F0", borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#1A1A1A", fontFamily: "'DM Sans', sans-serif" }}>
+                <MessageSquare size={16} color="#8A8A8A" /> Contact Client
               </div>
             </div>
           </div>
@@ -766,21 +777,21 @@ export default function JobFullDetailJobScreen() {
           {/* AI Assistant Card */}
           <div style={{ background: "linear-gradient(135deg, #8352FF 0%, #6324FF 100%)", borderRadius: 16, padding: 24, color: "white", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", right: -20, top: -20, width: 100, height: 100, background: "rgba(255,255,255,0.1)", borderRadius: "50%" }}></div>
-            <div style={{ fontSize: 16, fontWeight: 700, display: "flex", alignItems: "center", gap: 8, marginBottom: 8, fontFamily: "'Sora', sans-serif" }}><span style={{ color: "#FFD700" }}>✨</span> AI Assistant</div>
+            <div style={{ fontSize: 16, fontWeight: 700, display: "flex", alignItems: "center", gap: 8, marginBottom: 8, fontFamily: "'Sora', sans-serif" }}><Sparkles size={18} color="#FFD700" /> AI Assistant</div>
             <div style={{ fontSize: 12, opacity: 0.9, marginBottom: 20, fontFamily: "'DM Sans', sans-serif" }}>Let Huzzler AI help you win this project</div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ background: "rgba(255,255,255,0.15)", padding: "12px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-                <span>📝</span> Write Proposal
+                <FileText size={14} /> Write Proposal
               </div>
               <div style={{ background: "rgba(255,255,255,0.15)", padding: "12px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-                <span>📁</span> Upload Portfolio
+                <Folder size={14} /> Upload Portfolio
               </div>
               <div style={{ background: "rgba(255,255,255,0.15)", padding: "12px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-                <span>💡</span> Proposal Tips
+                <Lightbulb size={14} /> Proposal Tips
               </div>
               <div style={{ background: "rgba(255,255,255,0.15)", padding: "12px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-                <span>🚀</span> Start Project
+                <Rocket size={14} /> Start Project
               </div>
             </div>
           </div>
@@ -808,21 +819,29 @@ function AboutClient({ clientId }) {
 
   if (!client) return null;
 
-  const name = `${client.first_name || ""} ${client.last_name || ""}`.trim() || "Client Name";
+  const fName = client.first_name || client.firstName || client.name || client.displayName || "";
+  const lName = client.last_name || client.lastName || "";
+  const fullName = fName ? `${fName} ${lName}`.trim() : "";
+  const compName = client.Company_name || client.companyName || "";
+  
+  const displayTitle = compName || fullName || "Client";
+  const initials = displayTitle.substring(0, 2).toUpperCase();
 
   return (
     <div style={{ background: "white", borderRadius: 16, border: "1px solid #EAEAEA", padding: 24 }}>
       <div style={{ fontSize: 11, color: "#A3A3A3", textTransform: "uppercase", fontWeight: 700, letterSpacing: 1, marginBottom: 16, fontFamily: "'DM Sans', sans-serif" }}>About the Client</div>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
         <div style={{ width: 40, height: 40, borderRadius: 12, background: "#6C3EEB", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, fontFamily: "'Sora', sans-serif" }}>
-          {name.substring(0, 2).toUpperCase()}
+          {initials}
         </div>
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#1A1A1A", fontFamily: "'Sora', sans-serif" }}>{client.companyName || name}</div>
+        <div style={{ fontSize: 16, fontWeight: 700, color: "#1A1A1A", fontFamily: "'Sora', sans-serif" }}>{displayTitle}</div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 20 }}>
         <div style={{ background: "#FDFDFD", border: "1px solid #F0F0F0", padding: 12, borderRadius: 8, textAlign: "center" }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#6C3EEB", marginBottom: 4, fontFamily: "'Sora', sans-serif" }}>{client.rating > 0 ? client.rating : "4.8"} <span style={{ fontSize: 10 }}>⭐</span></div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "#6C3EEB", marginBottom: 4, fontFamily: "'Sora', sans-serif" }}>
+            {client.rating > 0 ? client.rating : "4.8"} <Star size={12} color="#F59E0B" fill="#F59E0B" style={{ display: 'inline-block', verticalAlign: 'middle', marginTop: '-2px' }} />
+          </div>
           <div style={{ fontSize: 10, color: "#A3A3A3", fontFamily: "'DM Sans', sans-serif" }}>Client Rating</div>
         </div>
         <div style={{ background: "#FDFDFD", border: "1px solid #F0F0F0", padding: 12, borderRadius: 8, textAlign: "center" }}>
@@ -836,7 +855,7 @@ function AboutClient({ clientId }) {
       </div>
 
       <p style={{ fontSize: 12, color: "#8A8A8A", lineHeight: 1.5, margin: "0 0 24px 0", fontFamily: "'DM Sans', sans-serif" }}>
-        AI-powered digital product company building next-generation creator tools and SaaS platforms. We work with passionate freelancers globally.
+        {client.bio || client.description || "We are a forward-thinking company working with passionate freelancers globally to build amazing products."}
       </p>
 
       <div style={{ fontSize: 14, fontWeight: 700, color: "#1A1A1A", marginBottom: 16, fontFamily: "'Sora', sans-serif" }}>More Projects</div>

@@ -5,11 +5,118 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "../firbase/Firebase";
+import CreatableSelect from "react-select/creatable";
+
+const tagColors = [
+  { bg: "#EFF6FF", text: "#3B82F6" }, // Blue
+  { bg: "#ECFDF5", text: "#10B981" }, // Green
+  { bg: "#FEF2F2", text: "#EF4444" }, // Red
+  { bg: "#F5F3FF", text: "#8B5CF6" }, // Purple
+  { bg: "#FFF7ED", text: "#F97316" }, // Orange
+  { bg: "#F0FDF4", text: "#16A34A" }, // Emerald
+];
+
+const getColorForLabel = (label) => {
+  if (!label) return tagColors[0];
+  let hash = 0;
+  for (let i = 0; i < label.length; i++) {
+    hash = label.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % tagColors.length;
+  return tagColors[index];
+};
+
+const skillOptions = [
+  "UI Design", "UX Design", "Figma", "Website Development", "Mobile Apps (iOS & Android)",
+  "SEO", "Logo Design", "Graphic Design", "Writing & Translation", "Video Editing",
+  "Illustration", "Pattern Design", "Website Design", "App Design", "UX Research",
+  "Prototyping", "Wireframing", "Product Design", "Brand Style Guides", "Presentation Design",
+  "Social Media Design", "Web Programming", "E-Commerce Development", "Game Development",
+  "WordPress", "Shopify", "React Development", "Node.js", "Python Development",
+  "API Integration", "Data Analysis", "Digital Marketing", "Content Writing", "Copywriting",
+].map(e => ({ label: e, value: e }));
+
+const toolOptions = [
+  "Figma", "Adobe XD", "Sketch", "Webflow", "Framer", "InVision", "ProtoPie",
+  "Adobe Illustrator", "Adobe Photoshop", "Adobe InDesign", "Canva", "CorelDRAW",
+  "Notion", "Miro", "Balsamiq", "Axure RP", "Lucidchart",
+  "Blender", "ZBrush", "Unity", "Unreal Engine", "AutoCAD", "SketchUp",
+  "React", "Vue.js", "Angular", "Next.js", "TailwindCSS", "Bootstrap",
+  "Node.js", "Express", "Django", "Flask", "Spring Boot", "Laravel",
+  "MongoDB", "PostgreSQL", "MySQL", "Firebase", "AWS", "Google Cloud",
+  "Docker", "Kubernetes", "Git", "GitHub", "GitLab", "Jira", "Trello",
+  "VS Code", "WebStorm", "Android Studio", "Xcode",
+].map(e => ({ label: e, value: e }));
+
+const customSelectStyles = {
+  control: (provided) => ({
+    ...provided,
+    backgroundColor: "#F8F9FA",
+    borderRadius: "12px",
+    border: "none",
+    padding: "6px 12px",
+    boxShadow: "none",
+    minHeight: "50px",
+    "&:hover": {
+      border: "none",
+    },
+  }),
+  menu: (provided) => ({
+    ...provided,
+    borderRadius: "12px",
+    zIndex: 9999,
+  }),
+  menuPortal: base => ({ ...base, zIndex: 9999 }),
+  multiValue: (provided, state) => {
+    const colorInfo = getColorForLabel(state.data.label);
+    return {
+      ...provided,
+      backgroundColor: colorInfo.bg,
+      borderRadius: "8px",
+      padding: "2px",
+    };
+  },
+  multiValueLabel: (provided, state) => {
+    const colorInfo = getColorForLabel(state.data.label);
+    return {
+      ...provided,
+      color: colorInfo.text,
+      fontWeight: 600,
+    };
+  },
+  multiValueRemove: (provided, state) => {
+    const colorInfo = getColorForLabel(state.data.label);
+    return {
+      ...provided,
+      color: colorInfo.text,
+      ":hover": {
+        backgroundColor: colorInfo.text,
+        color: "#fff",
+      },
+    };
+  },
+  placeholder: (provided) => ({
+    ...provided,
+    color: "#6b7280",
+  }),
+};
 
 export default function AddService() {
   const navigate = useNavigate();
+
+  const isValidHttpsUrl = (string) => {
+    try {
+      const url = new URL(string);
+      return url.protocol === "https:";
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [selectedTools, setSelectedTools] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -21,14 +128,23 @@ export default function AddService() {
     requirements: "",
   });
 
-  const [previewFiles, setPreviewFiles] = useState([]);
+  const [sampleUrl, setSampleUrl] = useState("");
+  const [urlError, setUrlError] = useState("");
   const [error, setError] = useState("");
   
   // UI-only states to match Figma design
   const [serviceType, setServiceType] = useState("Work");
+  const [selectedPricingTier, setSelectedPricingTier] = useState("Standard");
   const [maxPrice, setMaxPrice] = useState("");
   const [deliverables, setDeliverables] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  
+  // FAQ state
+  const [faqs, setFaqs] = useState([]);
+  const [showFaqModal, setShowFaqModal] = useState(false);
+  const [showFaqSuccess, setShowFaqSuccess] = useState(false);
+  const [faqForm, setFaqForm] = useState({ question: "", answer: "" });
+  const [showFaqBanner, setShowFaqBanner] = useState(true);
 
   // 🧩 Handle text input
   const handleChange = (e) => {
@@ -36,58 +152,60 @@ export default function AddService() {
     setFormData({ ...formData, [name]: value });
   };
 
-  // 🧩 Handle file upload
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    const validFiles = [];
-    let errorMsg = "";
-
-    files.forEach((file) => {
-      if (file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024) {
-        validFiles.push(file);
-      } else if (file.type.startsWith("video/") && file.size <= 20 * 1024 * 1024) {
-        validFiles.push(file);
-      } else {
-        errorMsg = `❌ ${file.name} exceeds size limit (5MB for images / 20MB for videos).`;
-      }
-    });
-
-    if (errorMsg) {
-      setError(errorMsg);
-      setTimeout(() => setError(""), 4000);
-    } else {
-      setError("");
-    }
-
-    setPreviewFiles(validFiles);
-  };
-
   // 🧩 Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     const auth = getAuth();
-    const email = auth.currentUser?.email || localStorage.getItem("userEmail") || "freelancer@example.com";
+    const user = auth.currentUser;
+    
+    if (!user) {
+      alert("Please log in to save a service.");
+      return;
+    }
 
     const serviceData = {
-      ...formData,
-      userEmail: email,
-      skills: formData.skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      tools: formData.tools
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-      images: previewFiles.map((file) => URL.createObjectURL(file)), // temporary preview (later AWS S3)
-      createdAt: serverTimestamp()
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      budget_from: Number(formData.price),
+      budget_to: Number(maxPrice),
+      category: formData.category,
+      skills: selectedSkills.map((s) => s.value),
+      tools: selectedTools.map((t) => t.value),
+      sampleProjectUrl: sampleUrl,
+      clientRequirements: formData.requirements.trim(),
+      deliverables: deliverables.trim(),
+      faqs: faqs,
+      userId: user.uid,
+      userEmail: user.email || "freelancer@example.com",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     };
 
+    let collectionName = "services";
+
+    if (serviceType === "24 hours") {
+      serviceData.is24Hour = true;
+      serviceData.timeline = "24 Hours";
+      collectionName = "service_24h";
+    } else {
+      serviceData.deliveryDuration = formData.deliveryDays || null;
+    }
+
     try {
-      await addDoc(collection(db, "services"), serviceData);
+      // Save to main collection
+      const mainRef = doc(collection(db, collectionName));
+      await setDoc(mainRef, serviceData);
+      
+      // Save to user subcollection
+      const userRef = doc(
+        collection(db, "users", user.uid, collectionName),
+        mainRef.id
+      );
+      await setDoc(userRef, serviceData);
+
       setShowSuccessPopup(true);
       setTimeout(() => {
-        navigate("/myjobs");
+        navigate("/freelance-dashboard/myjobs");
       }, 2500);
     } catch (err) {
       console.error("Save service error:", err);
@@ -505,6 +623,260 @@ export default function AddService() {
         .ai-price-row.highlight .ai-price-name, .ai-price-row.highlight .ai-price-val {
           color: #6C4DFF;
         }
+
+        /* FAQ Modal & List Styles */
+        .faq-item-list {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-top: 20px;
+        }
+        .faq-banner {
+          background: #ECFDF5;
+          border: 1px solid #D1FAE5;
+          border-radius: 8px;
+          padding: 12px 16px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          color: #10B981;
+          font-size: 14px;
+          font-weight: 500;
+          margin-bottom: 20px;
+        }
+        .faq-banner-close {
+          cursor: pointer;
+          color: #10B981;
+          font-size: 18px;
+        }
+        .faq-item-card {
+          background: #FFFFFF;
+          border: 1px solid #E5E7EB;
+          border-radius: 12px;
+          padding: 16px 20px;
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .faq-item-number {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          background: #F4F0FF;
+          color: #6C4DFF;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: 700;
+          font-size: 14px;
+          flex-shrink: 0;
+        }
+        .faq-item-content {
+          flex: 1;
+        }
+        .faq-item-q {
+          font-weight: 700;
+          color: #1A1730;
+          font-size: 15px;
+          margin: 0 0 4px 0;
+        }
+        .faq-item-a {
+          color: #6B7280;
+          font-size: 14px;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .faq-item-actions {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          color: #9CA3AF;
+        }
+        .faq-item-actions svg {
+          cursor: pointer;
+        }
+        .faq-item-actions svg.delete {
+          color: #EF4444;
+        }
+        .faq-modal-overlay {
+          position: fixed;
+          top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.4);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 10000;
+        }
+        .faq-modal-box {
+          background: #fff;
+          border-radius: 16px;
+          width: 600px;
+          max-width: 90%;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+          overflow: hidden;
+        }
+        .faq-modal-header {
+          padding: 24px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+        }
+        .faq-modal-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: #1A1730;
+          margin: 0 0 8px 0;
+        }
+        .faq-modal-sub {
+          font-size: 14px;
+          color: #6B7280;
+          margin: 0;
+        }
+        .faq-modal-close {
+          cursor: pointer;
+          color: #9CA3AF;
+        }
+        .faq-modal-body {
+          padding: 0 24px 24px 24px;
+        }
+        .faq-modal-field {
+          margin-bottom: 20px;
+        }
+        .faq-modal-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: #1A1730;
+          margin-bottom: 8px;
+          display: flex;
+        }
+        .faq-modal-label span {
+          color: #EF4444;
+          margin-left: 4px;
+        }
+        .faq-modal-input-wrap {
+          position: relative;
+        }
+        .faq-modal-input {
+          width: 100%;
+          background: #FFFFFF;
+          border: 1px solid #E5E7EB;
+          border-radius: 8px;
+          padding: 14px;
+          font-size: 14px;
+          outline: none;
+          box-sizing: border-box;
+          font-family: inherit;
+        }
+        .faq-modal-textarea {
+          width: 100%;
+          background: #FFFFFF;
+          border: 1px solid #E5E7EB;
+          border-radius: 8px;
+          padding: 14px;
+          font-size: 14px;
+          outline: none;
+          min-height: 120px;
+          resize: vertical;
+          box-sizing: border-box;
+          font-family: inherit;
+        }
+        .faq-modal-input:focus, .faq-modal-textarea:focus {
+          border-color: #6C4DFF;
+        }
+        .faq-char-count {
+          position: absolute;
+          bottom: 12px;
+          right: 14px;
+          font-size: 12px;
+          color: #9CA3AF;
+        }
+        .faq-modal-footer {
+          padding: 24px;
+          border-top: 1px solid #F3F4F6;
+          display: flex;
+          justify-content: flex-end;
+          gap: 12px;
+        }
+        .faq-btn-cancel {
+          padding: 12px 24px;
+          border: 1px solid #E5E7EB;
+          background: #FFF;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 14px;
+          color: #4B5563;
+          cursor: pointer;
+        }
+        .faq-btn-add {
+          padding: 12px 24px;
+          border: none;
+          background: #4F46E5;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 14px;
+          color: #FFF;
+          cursor: pointer;
+        }
+        .faq-success-modal {
+          background: #fff;
+          border-radius: 16px;
+          width: 400px;
+          max-width: 90%;
+          padding: 32px 24px;
+          text-align: center;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .faq-success-icon {
+          width: 64px;
+          height: 64px;
+          background: #D1FAE5;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 0 auto 24px auto;
+        }
+        .faq-success-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: #1A1730;
+          margin: 0 0 8px 0;
+        }
+        .faq-success-sub {
+          font-size: 14px;
+          color: #6B7280;
+          margin: 0 0 32px 0;
+        }
+        .faq-success-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+        }
+        .faq-btn-done {
+          padding: 12px 32px;
+          border: none;
+          background: #4F46E5;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 14px;
+          color: #FFF;
+          cursor: pointer;
+          flex: 1;
+        }
+        .faq-btn-another {
+          padding: 12px 32px;
+          border: 1px solid #E5E7EB;
+          background: #FFF;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 14px;
+          color: #4B5563;
+          cursor: pointer;
+          flex: 1;
+        }
       `}</style>
 
       <div className="add-service-container">
@@ -615,45 +987,48 @@ export default function AddService() {
           <div className="form-card">
             <div>
               <label className="add-service-label">Skills <span className="add-service-label-sub">(Add at least 3)</span></label>
-              <input 
-                type="text" 
-                name="skills"
-                value={formData.skills}
-                onChange={handleChange}
-                className="add-service-input" 
-                placeholder="Add Skills..." 
+              <CreatableSelect
+                isMulti
+                value={selectedSkills}
+                onChange={setSelectedSkills}
+                options={skillOptions}
+                styles={customSelectStyles}
+                placeholder="Select or type a skill..."
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
               />
-              <div className="tag-row">
-                <div className="skill-tag tag-ui">UI Design <span>✕</span></div>
-                <div className="skill-tag tag-figma">Figma <span>✕</span></div>
-                <div className="skill-tag tag-proto">Prototyping <span>✕</span></div>
-              </div>
             </div>
             
             <div>
               <label className="add-service-label">Tools <span className="add-service-label-sub">(Add at least 3)</span></label>
-              <input 
-                type="text" 
-                name="tools"
-                value={formData.tools}
-                onChange={handleChange}
-                className="add-service-input" 
-                placeholder="Add Tools..." 
+              <CreatableSelect
+                isMulti
+                value={selectedTools}
+                onChange={setSelectedTools}
+                options={toolOptions}
+                styles={customSelectStyles}
+                placeholder="Select or type a tool..."
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
               />
             </div>
             
             <div>
-              {/* Preserved file logic entirely! Styled to match input box */}
               <label className="add-service-label">Sample Projects (URL)</label>
-              <div className="add-service-input" style={{ display: 'flex', alignItems: 'center' }}>
-                <input 
-                  type="file" 
-                  multiple 
-                  onChange={handleFileChange} 
-                  style={{ width: '100%', outline: 'none' }}
-                />
-              </div>
-              {error && <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>{error}</p>}
+              <input 
+                type="url" 
+                className="add-service-input"
+                placeholder="https://dribbble.com/your-project" 
+                value={sampleUrl}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSampleUrl(value);
+                  if (!value) setUrlError("");
+                  else if (!isValidHttpsUrl(value)) setUrlError("Please enter a valid HTTPS URL");
+                  else setUrlError("");
+                }}
+              />
+              {urlError && <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>{urlError}</p>}
             </div>
             
             <div>
@@ -683,12 +1058,55 @@ export default function AddService() {
           {/* FAQ */}
           <div className="form-card">
             <div className="faq-header" style={{ marginTop: 0 }}>
-              <h3 className="add-service-section-title" style={{ margin: 0 }}>FAQ</h3>
-              <button type="button" className="faq-add-btn">+ Add Question</button>
+              <div>
+                <h3 className="add-service-section-title" style={{ margin: 0 }}>FAQ</h3>
+                {faqs.length > 0 && <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#6B7280' }}>Manage common questions and answers for your clients.</p>}
+              </div>
+              <button type="button" className="faq-add-btn" onClick={() => setShowFaqModal(true)}>+ Add Question</button>
             </div>
-            <div className="faq-box" style={{ marginTop: 0 }}>
-              Add common questions clients ask about your service
-            </div>
+            
+            {faqs.length === 0 ? (
+              <div className="faq-box" style={{ marginTop: 0 }} onClick={() => setShowFaqModal(true)}>
+                Add common questions clients ask about your service
+              </div>
+            ) : (
+              <div className="faq-item-list">
+                {showFaqBanner && (
+                  <div className="faq-banner">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" fill="#10B981"/>
+                        <path d="M16 9L10 15L7 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      {faqs.length} question{faqs.length > 1 ? 's' : ''} added successfully.
+                    </div>
+                    <div className="faq-banner-close" onClick={() => setShowFaqBanner(false)}>×</div>
+                  </div>
+                )}
+                <div style={{ fontSize: '13px', color: '#6B7280', marginBottom: '8px' }}>Total Questions: <span style={{ color: '#4F46E5', fontWeight: 600 }}>{faqs.length}</span></div>
+                {faqs.map((faq, index) => (
+                  <div key={index} className="faq-item-card">
+                    <div className="faq-item-number">{index + 1}</div>
+                    <div className="faq-item-content">
+                      <p className="faq-item-q">{faq.question}</p>
+                      <p className="faq-item-a">{faq.answer}</p>
+                    </div>
+                    <div className="faq-item-actions">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      <svg className="delete" onClick={() => {
+                        const newFaqs = [...faqs];
+                        newFaqs.splice(index, 1);
+                        setFaqs(newFaqs);
+                      }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                  </div>
+                ))}
+                <div style={{ textAlign: 'center', fontSize: '13px', color: '#9CA3AF', marginTop: '12px' }}>
+                  Showing 1 to {faqs.length} of {faqs.length} questions
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ACTIONS */}
@@ -742,7 +1160,15 @@ export default function AddService() {
           <div className="ai-pricing-card">
             <h3 className="ai-pricing-title">AI Pricing Suggestions</h3>
             
-            <div className="ai-price-row">
+            <div 
+              className={`ai-price-row ${selectedPricingTier === "Starter" ? "highlight" : ""}`}
+              onClick={() => {
+                setSelectedPricingTier("Starter");
+                setFormData({...formData, price: "800"});
+                setMaxPrice("1200");
+              }}
+              style={{ cursor: 'pointer' }}
+            >
               <div>
                 <div className="ai-price-name">Starter</div>
                 <div className="ai-price-sub">Basic deliverables</div>
@@ -750,7 +1176,15 @@ export default function AddService() {
               <div className="ai-price-val">₹800–1,200</div>
             </div>
 
-            <div className="ai-price-row highlight">
+            <div 
+              className={`ai-price-row ${selectedPricingTier === "Standard" ? "highlight" : ""}`}
+              onClick={() => {
+                setSelectedPricingTier("Standard");
+                setFormData({...formData, price: "1500"});
+                setMaxPrice("2500");
+              }}
+              style={{ cursor: 'pointer' }}
+            >
               <div>
                 <div className="ai-price-name">Standard ✦ Popular</div>
                 <div className="ai-price-sub">Full scope delivery</div>
@@ -758,7 +1192,15 @@ export default function AddService() {
               <div className="ai-price-val">₹1,500–2,500</div>
             </div>
 
-            <div className="ai-price-row" style={{ borderBottom: 'none' }}>
+            <div 
+              className={`ai-price-row ${selectedPricingTier === "Premium" ? "highlight" : ""}`}
+              onClick={() => {
+                setSelectedPricingTier("Premium");
+                setFormData({...formData, price: "3000"});
+                setMaxPrice("5000");
+              }}
+              style={{ borderBottom: 'none', cursor: 'pointer' }}
+            >
               <div>
                 <div className="ai-price-name">Premium</div>
                 <div className="ai-price-sub">All-inclusive</div>
@@ -781,6 +1223,74 @@ export default function AddService() {
             </div>
             <h3 className="success-popup-title">Service Published!</h3>
             <p className="success-popup-text">Your service is now live on the client dashboard. Redirecting you to your services...</p>
+          </div>
+        </div>
+      )}
+
+      {/* FAQ Add Modal */}
+      {showFaqModal && (
+        <div className="faq-modal-overlay">
+          <div className="faq-modal-box">
+            <div className="faq-modal-header">
+              <div>
+                <h3 className="faq-modal-title">Add FAQ</h3>
+                <p className="faq-modal-sub">Add a common question and its answer to help your clients.</p>
+              </div>
+              <svg onClick={() => setShowFaqModal(false)} className="faq-modal-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </div>
+            <div className="faq-modal-body">
+              <div className="faq-modal-field">
+                <label className="faq-modal-label">Write a question <span>*</span></label>
+                <div className="faq-modal-input-wrap">
+                  <input type="text" className="faq-modal-input" placeholder="e.g. What services do you offer?" value={faqForm.question} onChange={(e) => setFaqForm({...faqForm, question: e.target.value.substring(0, 150)})} />
+                  <div className="faq-char-count">{faqForm.question.length}/150</div>
+                </div>
+              </div>
+              <div className="faq-modal-field" style={{ marginBottom: 0 }}>
+                <label className="faq-modal-label">Write your answer <span>*</span></label>
+                <div className="faq-modal-input-wrap">
+                  <textarea className="faq-modal-textarea" placeholder="e.g. We offer a range of services including..." value={faqForm.answer} onChange={(e) => setFaqForm({...faqForm, answer: e.target.value.substring(0, 1000)})}></textarea>
+                  <div className="faq-char-count" style={{ bottom: '16px' }}>{faqForm.answer.length}/1000</div>
+                </div>
+              </div>
+            </div>
+            <div className="faq-modal-footer">
+              <button className="faq-btn-cancel" onClick={() => setShowFaqModal(false)}>Cancel</button>
+              <button className="faq-btn-add" onClick={() => {
+                if(faqForm.question.trim() && faqForm.answer.trim()) {
+                  setFaqs([...faqs, { question: faqForm.question.trim(), answer: faqForm.answer.trim() }]);
+                  setFaqForm({ question: "", answer: "" });
+                  setShowFaqModal(false);
+                  setShowFaqSuccess(true);
+                  setShowFaqBanner(true);
+                } else {
+                  alert("Please enter both a question and an answer.");
+                }
+              }}>Add Question</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FAQ Success Modal */}
+      {showFaqSuccess && (
+        <div className="faq-modal-overlay">
+          <div className="faq-success-modal">
+            <div className="faq-success-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" fill="#10B981"/>
+                <path d="M16 9L10 15L7 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="faq-success-title">Question added!</h3>
+            <p className="faq-success-sub">Your FAQ has been added successfully.</p>
+            <div className="faq-success-actions">
+              <button className="faq-btn-another" onClick={() => {
+                setShowFaqSuccess(false);
+                setShowFaqModal(true);
+              }}>Add Another</button>
+              <button className="faq-btn-done" onClick={() => setShowFaqSuccess(false)}>Done</button>
+            </div>
           </div>
         </div>
       )}

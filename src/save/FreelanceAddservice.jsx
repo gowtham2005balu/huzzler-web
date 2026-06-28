@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firbase/Firebase"; // 👉 adjust path to your firebase file
 import backarrow from "../assets/backarrow.png";
+import CreatableSelect from "react-select/creatable";
 
 // --------------------------------------------------
 // INLINE CSS (same file)
@@ -402,6 +403,121 @@ if (
 // COMPONENT
 // --------------------------------------------------
 
+const SKILL_FAQ_SUGGESTIONS = {
+  "UI Design": [
+    { question: "What deliverables do I get with UI Design?", answer: "You will receive the Figma source file, along with exported PNG/SVG assets and an interactive prototype link." },
+    { question: "Do you design mobile apps, web interfaces, or both?", answer: "I can design for both iOS/Android mobile apps and responsive web interfaces." }
+  ],
+  "UX Design": [
+    { question: "What deliverables do I get with UX Design?", answer: "You will receive user persona reports, wireframes, user flow diagrams, and interactive prototypes built in Figma." },
+    { question: "Do you conduct user testing?", answer: "Yes, I perform usability testing and user research interviews to validate and refine the UX solutions." }
+  ],
+  "Figma": [
+    { question: "Do you use Figma components and auto-layout?", answer: "Yes, all my designs are built using responsive auto-layout, nested components, and a clean style guide/design system." }
+  ],
+  "Website Development": [
+    { question: "Will the website be responsive on mobile and tablet devices?", answer: "Yes, the website will be fully responsive and optimized for mobile, tablet, and desktop screens." },
+    { question: "Which technologies do you use for website development?", answer: "I typically build websites using React, HTML/CSS, and TailwindCSS for the frontend, combined with clean backend integrations." }
+  ],
+  "Mobile Apps (iOS & Android)": [
+    { question: "Do you develop native or cross-platform mobile apps?", answer: "I specialize in cross-platform mobile app development using React Native or Flutter, ensuring high performance on both iOS and Android." }
+  ],
+  "SEO": [
+    { question: "What is included in your SEO service?", answer: "My SEO service includes on-page optimization, meta tags, keyword research, site speed advice, and search console setup." }
+  ],
+  "Logo Design": [
+    { question: "What file formats will I receive for the logo?", answer: "You will receive high-resolution vector files (AI, EPS, PDF, SVG) along with transparent background formats (PNG)." }
+  ],
+  "Graphic Design": [
+    { question: "Do you provide source files for the graphic designs?", answer: "Yes, I always provide the original layered source files (PSD or AI) for your future editing needs." }
+  ],
+  "Writing & Translation": [
+    { question: "Do you proofread and translate manually?", answer: "Yes, all translation and writing is done manually to ensure correct context, tone, and cultural accuracy." }
+  ],
+  "Video Editing": [
+    { question: "What software do you use for video editing?", answer: "I edit videos professionally using Adobe Premiere Pro and DaVinci Resolve." }
+  ]
+};
+
+const GENERAL_FAQ_SUGGESTIONS = [
+  { question: "What is your standard turnaround time?", answer: "Turnaround time depends on the complexity of the project, but I usually deliver the initial draft within 3-5 business days." },
+  { question: "Do you offer revisions?", answer: "Yes, I offer up to 3 rounds of revisions to ensure you are completely satisfied with the final delivery." },
+  { question: "Can we sign an NDA?", answer: "Yes, I am happy to sign a Non-Disclosure Agreement (NDA) before starting work to protect your intellectual property." }
+];
+
+const generateFaqsFromSkills = (skillsArray) => {
+  const generated = [];
+  const addedQuestions = new Set();
+  
+  skillsArray.forEach(skill => {
+    const skillValue = typeof skill === 'object' ? skill.value : skill;
+    if (!skillValue) return;
+
+    const skillLower = skillValue.toLowerCase();
+    Object.keys(SKILL_FAQ_SUGGESTIONS).forEach(key => {
+      if (skillLower.includes(key.toLowerCase()) || key.toLowerCase().includes(skillLower)) {
+        SKILL_FAQ_SUGGESTIONS[key].forEach(faq => {
+          if (!addedQuestions.has(faq.question)) {
+            generated.push({ ...faq });
+            addedQuestions.add(faq.question);
+          }
+        });
+      }
+    });
+  });
+
+  if (generated.length === 0) {
+    GENERAL_FAQ_SUGGESTIONS.forEach(faq => {
+      generated.push({ ...faq });
+    });
+  }
+
+  return generated;
+};
+
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: "#F8F9FA",
+    borderRadius: "12px",
+    border: "none",
+    padding: "6px 12px",
+    boxShadow: "none",
+    minHeight: "65px",
+    "&:hover": {
+      border: "none",
+    },
+  }),
+  menu: (provided) => ({
+    ...provided,
+    borderRadius: "12px",
+    zIndex: 9999,
+  }),
+  menuPortal: base => ({ ...base, zIndex: 9999 }),
+  multiValue: (provided) => ({
+    ...provided,
+    backgroundColor: "#7c6c9c20",
+    borderRadius: "8px",
+  }),
+  multiValueLabel: (provided) => ({
+    ...provided,
+    color: "#000",
+    fontWeight: 500,
+  }),
+  multiValueRemove: (provided) => ({
+    ...provided,
+    color: "#2a292b",
+    ":hover": {
+      backgroundColor: "#2f2e2f",
+      color: "#fff",
+    },
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: "#6b7280",
+  }),
+};
+
 export default function AddServiceForm({ jobData = null, jobId = null }) {
   const navigate = useNavigate();
   const auth = getAuth();
@@ -417,11 +533,9 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
   const [urlError, setUrlError] = useState("");
 
   const [clientReq, setClientReq] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState("");
 
-  const [selectedSkill, setSelectedSkill] = useState("");
-  const [selectedTool, setSelectedTool] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [selectedTools, setSelectedTools] = useState([]);
 
@@ -429,10 +543,11 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  const [skillSearch, setSkillSearch] = useState("");
-  const [toolSearch, setToolSearch] = useState("");
-
-
+  const [faqs, setFaqs] = useState([]);
+  const [faqQuestion, setFaqQuestion] = useState("");
+  const [faqAnswer, setFaqAnswer] = useState("");
+  const [isAddingFaq, setIsAddingFaq] = useState(false);
+  const [editingFaqIndex, setEditingFaqIndex] = useState(-1);
 
   const deliveryOptions = [
     "1-7 days",
@@ -459,7 +574,7 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
     "Lifestyle",
     "Consulting",
     "Personal Growth & Hobbies",
-  ];
+  ].map(e => ({ label: e, value: e }));
 
 
   const skillOptions = [
@@ -686,7 +801,7 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
     "Career Mentoring",
     "Mindfulness & Meditation",
     "Confidence Coaching",
-  ];
+  ].map(e => ({ label: e, value: e }));
 
   const toolOptions = [
     // Design tools
@@ -939,10 +1054,7 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
     "Xero",
     "Tally",
     "Notion",
-  ];
-
-
-
+  ].map(e => ({ label: e, value: e }));
 
   useEffect(() => {
     if (jobData) {
@@ -956,57 +1068,21 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
       );
       setSampleUrl(jobData.sampleProjectUrl || "");
       setClientReq(jobData.clientRequirements || "");
-      setSelectedCategory(jobData.category || "");
+      setSelectedCategory(jobData.category ? { label: jobData.category, value: jobData.category } : null);
       setSelectedDuration(jobData.deliveryDuration || "");
-      setSelectedSkills(Array.isArray(jobData.skills) ? jobData.skills : []);
-      setSelectedTools(Array.isArray(jobData.tools) ? jobData.tools : []);
+      setSelectedSkills(Array.isArray(jobData.skills) ? jobData.skills.map(s => ({ label: s, value: s })) : []);
+      setSelectedTools(Array.isArray(jobData.tools) ? jobData.tools.map(t => ({ label: t, value: t })) : []);
+      setFaqs(Array.isArray(jobData.faqs) ? jobData.faqs : []);
       if (jobData.is24Hour) {
         setSelectedTab("24 Hours");
       }
     }
   }, [jobData]);
 
-  // -------------------- HELPERS -------------------- //
-
-  const addSkill = (skill) => {
-    if (!skill) return;
-    if (!selectedSkills.includes(skill)) {
-      setSelectedSkills((prev) => [...prev, skill]);
-    }
-    setSelectedSkill("");
-    setSkillSearch("");
-  };
-
-  const addTool = (tool) => {
-    if (!tool) return;
-    if (!selectedTools.includes(tool)) {
-      setSelectedTools((prev) => [...prev, tool]);
-    }
-    setSelectedTool("");
-    setToolSearch("");
-  };
-
-  const removeSkill = (skill) => {
-    setSelectedSkills((prev) => prev.filter((s) => s !== skill));
-  };
-
-  const removeTool = (tool) => {
-    setSelectedTools((prev) => prev.filter((t) => t !== tool));
-  };
-
-  const filteredSkills = skillOptions.filter((s) =>
-    s.toLowerCase().includes(skillSearch.toLowerCase())
-  );
-  const filteredTools = toolOptions.filter((t) =>
-    t.toLowerCase().includes(toolSearch.toLowerCase())
-  );
-
   // -------------------- VALIDATION + SAVE -------------------- //
-
   const handleSave = async () => {
     setErrorMsg("");
     setSuccessMsg("");
-
 
     if (!isValidHttpsUrl(sampleUrl)) {
       alert("invalid URLs are not allowed for sample projects link");
@@ -1068,13 +1144,14 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
         description: desc.trim(),
         budget_from: Number(budgetFrom.trim()),
         budget_to: Number(budgetTo.trim()),
-        category: selectedCategory || null,
-        skills: selectedSkills,
-        tools: selectedTools,
+        category: selectedCategory?.value || null,
+        skills: selectedSkills.map(s => s.value),
+        tools: selectedTools.map(t => t.value),
         sampleProjectUrl: sampleUrl.trim(),
         clientRequirements: clientReq.trim(),
         updatedAt: serverTimestamp(),
         userId: user.uid,
+        faqs: faqs,
       };
 
       let collectionName = "services";
@@ -1108,7 +1185,7 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
         setSuccessMsg("Service added successfully");
       }
 
-      setTimeout(() => navigate(-1), 800);
+      setTimeout(() => navigate("/freelance-dashboard/accountfreelancer"), 800);
     } catch (err) {
       console.error(err);
       setErrorMsg("Failed to save service: " + err.message);
@@ -1116,7 +1193,6 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
       setSaving(false);
     }
   };
-
 
   const isValidHttpsUrl = (url) => {
     try {
@@ -1128,13 +1204,12 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
   };
 
   // -------------------- RENDER -------------------- //
-
   return (
     <div className="add-service-wrapper">
       <div className="add-service-container">
         <div className="add-service-header">
           <h1 className="add-service-title">
-            <div 
+            <div
               onClick={() => navigate(-1)}
               style={{
                 width: 36,
@@ -1157,197 +1232,336 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
 
         <div className="add-service-layout">
           <div className="add-service-form">
-          
-          {(errorMsg || successMsg) && (
-            <div style={{ color: errorMsg ? 'red' : 'green', marginBottom: '10px' }}>
-              {errorMsg || successMsg}
-            </div>
-          )}
 
-          {/* SERVICE TYPE TOGGLE */}
-          <div className="add-service-toggle-bg">
-            <div 
-              className={`add-service-toggle-btn ${selectedTab === "Work" ? "active" : "inactive"}`}
-              onClick={() => setSelectedTab("Work")}
-            >Work</div>
-            <div 
-              className={`add-service-toggle-btn ${selectedTab === "24 Hours" ? "active" : "inactive"}`}
-              onClick={() => setSelectedTab("24 Hours")}
-            >24 hours</div>
-          </div>
-
-          {/* BASIC INFO */}
-          <div className="form-card">
-            <div>
-              <label className="add-service-label">Service Title</label>
-              <input 
-                type="text" 
-                className="add-service-input" 
-                placeholder="e.g. Logo Design That Pops and Defines Your Brand"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
-            
-            <div>
-              <label className="add-service-label">Description</label>
-              <textarea 
-                className="add-service-textarea" 
-                placeholder="Describe your service and showcase your uniqueness" 
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-              />
-            </div>
-            
-            <div className="add-service-grid-2">
-              <div>
-                <label className="add-service-label">Category</label>
-                <select 
-                  className="add-service-select"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  <option value="">Select Category</option>
-                  {expertiseOptions.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
+            {(errorMsg || successMsg) && (
+              <div style={{ color: errorMsg ? 'red' : 'green', marginBottom: '10px' }}>
+                {errorMsg || successMsg}
               </div>
-              <div>
-                <label className="add-service-label">Delivery Days</label>
-                <select 
-                  className="add-service-select"
-                  value={selectedDuration}
-                  onChange={(e) => setSelectedDuration(e.target.value)}
-                >
-                  <option value="">In days</option>
-                  {deliveryOptions.map((d) => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
+            )}
 
-          {/* PRICING */}
-          <div className="form-card">
-            <h3 className="add-service-section-title" style={{ margin: 0 }}>Pricing</h3>
-            <div className="add-service-grid-2">
+            {/* SERVICE TYPE TOGGLE */}
+            <div className="add-service-toggle-bg">
+              <div
+                className={`add-service-toggle-btn ${selectedTab === "Work" ? "active" : "inactive"}`}
+                onClick={() => setSelectedTab("Work")}
+              >Work</div>
+              <div
+                className={`add-service-toggle-btn ${selectedTab === "24 Hours" ? "active" : "inactive"}`}
+                onClick={() => navigate("/freelance-dashboard/add-service-form-24-hour")}
+              >24 hours</div>
+            </div>
+
+            {/* BASIC INFO */}
+            <div className="form-card">
               <div>
-                <label className="add-service-label">Minimum Price (₹)</label>
-                <input 
-                  type="number" 
-                  className="add-service-input" 
-                  placeholder="Min" 
-                  value={budgetFrom}
-                  onChange={(e) => setBudgetFrom(e.target.value)}
+                <label className="add-service-label">Service Title</label>
+                <input
+                  type="text"
+                  className="add-service-input"
+                  placeholder="e.g. Logo Design That Pops and Defines Your Brand"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                 />
               </div>
+
               <div>
-                <label className="add-service-label">Maximum Price (₹)</label>
-                <input 
-                  type="number" 
-                  className="add-service-input" 
-                  placeholder="Max" 
-                  value={budgetTo}
-                  onChange={(e) => setBudgetTo(e.target.value)}
+                <label className="add-service-label">Description</label>
+                <textarea
+                  className="add-service-textarea"
+                  placeholder="Describe your service and showcase your uniqueness"
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                />
+              </div>
+
+              <div className="add-service-grid-2">
+                <div>
+                  <label className="add-service-label">Category</label>
+                  <Select
+                    value={selectedCategory}
+                    onChange={setSelectedCategory}
+                    options={expertiseOptions}
+                    styles={customSelectStyles}
+                  />
+                </div>
+                <div>
+                  <label className="add-service-label">Delivery Days</label>
+                  <select
+                    className="add-service-select"
+                    value={selectedDuration}
+                    onChange={(e) => setSelectedDuration(e.target.value)}
+                  >
+                    <option value="">In days</option>
+                    {deliveryOptions.map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* PRICING */}
+            <div className="form-card">
+              <h3 className="add-service-section-title" style={{ margin: 0 }}>Pricing</h3>
+              <div className="add-service-grid-2">
+                <div>
+                  <label className="add-service-label">Minimum Price (₹)</label>
+                  <input
+                    type="number"
+                    className="add-service-input"
+                    placeholder="Min"
+                    value={budgetFrom}
+                    onChange={(e) => setBudgetFrom(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="add-service-label">Maximum Price (₹)</label>
+                  <input
+                    type="number"
+                    className="add-service-input"
+                    placeholder="Max"
+                    value={budgetTo}
+                    onChange={(e) => setBudgetTo(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* DETAILS */}
+            <div className="form-card">
+              <div>
+                <label className="add-service-label">Skills <span className="add-service-label-sub">(Add at least 3)</span></label>
+                <CreatableSelect
+                  isMulti
+                  value={selectedSkills}
+                  onChange={setSelectedSkills}
+                  options={skillOptions}
+                  styles={customSelectStyles}
+                  placeholder="Select or type a skill..."
+                  menuPortalTarget={document.body}
+                  menuPosition="fixed"
+                />
+              </div>
+
+              <div>
+                <label className="add-service-label">Tools <span className="add-service-label-sub">(Add at least 3)</span></label>
+                <CreatableSelect
+                  isMulti
+                  value={selectedTools}
+                  onChange={setSelectedTools}
+                  options={toolOptions}
+                  styles={customSelectStyles}
+                  placeholder="Select or type a tool..."
+                  menuPortalTarget={document.body}
+                  menuPosition="fixed"
+                />
+              </div>
+
+              <div>
+                <label className="add-service-label">Sample Projects (URL)</label>
+                <input
+                  type="url"
+                  className="add-service-input"
+                  placeholder="https://dribbble.com/your-project"
+                  value={sampleUrl}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSampleUrl(value);
+                    if (!value) setUrlError("");
+                    else if (!isValidHttpsUrl(value)) setUrlError("Please enter a valid HTTPS URL");
+                    else setUrlError("");
+                  }}
+                />
+                {urlError && <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>{urlError}</p>}
+              </div>
+
+              <div>
+                <label className="add-service-label">Deliverables</label>
+                <input
+                  type="text"
+                  className="add-service-input"
+                  placeholder="Add Deliverables"
+                />
+              </div>
+
+              <div>
+                <label className="add-service-label">Client Requirements <span className="add-service-label-sub">[Optional]</span></label>
+                <textarea
+                  className="add-service-textarea"
+                  placeholder="What do you need from your client to get started"
+                  style={{ minHeight: '100px' }}
+                  value={clientReq}
+                  onChange={(e) => setClientReq(e.target.value)}
                 />
               </div>
             </div>
-          </div>
 
-          {/* DETAILS */}
-          <div className="form-card">
-            <div>
-              <label className="add-service-label">Skills <span className="add-service-label-sub">(Add at least 3)</span></label>
-              <select
-                className="add-service-select"
-                value=""
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val) addSkill(val);
-                }}
-              >
-                <option value="">Add Skills...</option>
-                {skillOptions.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-              <ChipWrap items={selectedSkills} onRemove={removeSkill} />
-            </div>
-            
-            <div>
-              <label className="add-service-label">Tools <span className="add-service-label-sub">(Add at least 3)</span></label>
-              <select
-                className="add-service-select"
-                value=""
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val) addTool(val);
-                }}
-              >
-                <option value="">Add Tools...</option>
-                {toolOptions.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-              <ChipWrap items={selectedTools} onRemove={removeTool} />
-            </div>
-            
-            <div>
-              <label className="add-service-label">Sample Projects (URL)</label>
-              <input 
-                type="url" 
-                className="add-service-input" 
-                placeholder="https://dribbble.com/your-project" 
-                value={sampleUrl}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSampleUrl(value);
-                  if (!value) setUrlError("");
-                  else if (!isValidHttpsUrl(value)) setUrlError("Please enter a valid HTTPS URL");
-                  else setUrlError("");
-                }}
-              />
-              {urlError && <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>{urlError}</p>}
-            </div>
-            
-            <div>
-              <label className="add-service-label">Deliverables</label>
-              <input 
-                type="text" 
-                className="add-service-input" 
-                placeholder="Add Deliverables" 
-              />
-            </div>
-            
-            <div>
-              <label className="add-service-label">Client Requirements <span className="add-service-label-sub">[Optional]</span></label>
-              <textarea 
-                className="add-service-textarea" 
-                placeholder="What do you need from your client to get started" 
-                style={{ minHeight: '100px' }}
-                value={clientReq}
-                onChange={(e) => setClientReq(e.target.value)}
-              />
-            </div>
-          </div>
+            {/* FAQ */}
+            <div className="form-card">
+              <div className="faq-header" style={{ marginTop: 0, display: "flex", gap: "10px", alignItems: "center" }}>
+                <h3 className="add-service-section-title" style={{ margin: 0, marginRight: "auto" }}>FAQ</h3>
+                <button
+                  type="button"
+                  style={{
+                    background: "#F5F3FF",
+                    border: "1px solid #D8B4FE",
+                    borderRadius: "8px",
+                    padding: "8px 16px",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    color: "#6B21A8",
+                    cursor: "pointer"
+                  }}
+                  onClick={() => {
+                    const generated = generateFaqsFromSkills(selectedSkills);
+                    const currentQuestions = new Set(faqs.map(f => f.question));
+                    const newFaqs = [...faqs];
+                    generated.forEach(item => {
+                      if (!currentQuestions.has(item.question)) {
+                        newFaqs.push(item);
+                      }
+                    });
+                    setFaqs(newFaqs);
+                    alert(`Auto-generated ${newFaqs.length - faqs.length} FAQs based on selected skills!`);
+                  }}
+                >
+                  ✨ Auto-generate
+                </button>
+                <button
+                  type="button"
+                  className="faq-add-btn"
+                  onClick={() => {
+                    setIsAddingFaq(true);
+                    setEditingFaqIndex(-1);
+                    setFaqQuestion("");
+                    setFaqAnswer("");
+                  }}
+                >
+                  + Add Question
+                </button>
+              </div>
 
-          {/* FAQ */}
-          <div className="form-card">
-            <div className="faq-header" style={{ marginTop: 0 }}>
-              <h3 className="add-service-section-title" style={{ margin: 0 }}>FAQ</h3>
-              <button type="button" className="faq-add-btn">+ Add Question</button>
-            </div>
-            <div className="faq-box" style={{ marginTop: 0 }}>
-              Add common questions clients ask about your service
-            </div>
-          </div>
+              {faqs.length === 0 && !isAddingFaq && (
+                <div
+                  className="faq-box"
+                  style={{ marginTop: 8 }}
+                  onClick={() => {
+                    setIsAddingFaq(true);
+                    setEditingFaqIndex(-1);
+                    setFaqQuestion("");
+                    setFaqAnswer("");
+                  }}
+                >
+                  Add common questions clients ask about your service
+                </div>
+              )}
 
-          {/* ACTIONS */}
-          <button type="button" className="add-service-publish-btn" onClick={handleSave} disabled={saving}>
-            {saving ? "Saving..." : "✓ Publish Service"}
-          </button>
+              {isAddingFaq && (
+                <div style={{ background: "#F9FAFB", padding: "16px", borderRadius: "12px", border: "1px solid #E5E7EB", display: "flex", flexDirection: "column", gap: "12px", marginTop: "12px" }}>
+                  <div>
+                    <label className="add-service-label" style={{ marginBottom: "6px" }}>Question</label>
+                    <input
+                      type="text"
+                      className="add-service-input"
+                      style={{ height: "45px", background: "#FFFFFF", border: "1px solid #E5E7EB" }}
+                      placeholder="e.g. Can you deliver within 2 days?"
+                      value={faqQuestion}
+                      onChange={(e) => setFaqQuestion(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="add-service-label" style={{ marginBottom: "6px" }}>Answer</label>
+                    <textarea
+                      className="add-service-textarea"
+                      style={{ minHeight: "80px", background: "#FFFFFF", border: "1px solid #E5E7EB", padding: "12px" }}
+                      placeholder="e.g. Yes, but it will cost an extra express delivery fee."
+                      value={faqAnswer}
+                      onChange={(e) => setFaqAnswer(e.target.value)}
+                    />
+                  </div>
+                  <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                    <button
+                      type="button"
+                      className="faq-add-btn"
+                      style={{ background: "#F3F4F6", border: "none" }}
+                      onClick={() => {
+                        setIsAddingFaq(false);
+                        setEditingFaqIndex(-1);
+                        setFaqQuestion("");
+                        setFaqAnswer("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="faq-add-btn"
+                      style={{ background: "#6C4DFF", color: "#FFFFFF", border: "none" }}
+                      onClick={() => {
+                        if (!faqQuestion.trim() || !faqAnswer.trim()) {
+                          alert("Please enter both question and answer");
+                          return;
+                        }
+                        if (editingFaqIndex !== -1) {
+                          const updated = [...faqs];
+                          updated[editingFaqIndex] = { question: faqQuestion.trim(), answer: faqAnswer.trim() };
+                          setFaqs(updated);
+                        } else {
+                          setFaqs([...faqs, { question: faqQuestion.trim(), answer: faqAnswer.trim() }]);
+                        }
+                        setIsAddingFaq(false);
+                        setEditingFaqIndex(-1);
+                        setFaqQuestion("");
+                        setFaqAnswer("");
+                      }}
+                    >
+                      {editingFaqIndex !== -1 ? "Save" : "Add"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {faqs.length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+                  {faqs.map((faq, index) => (
+                    <div key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", background: "#F9FAFB", padding: "12px 16px", borderRadius: "10px", border: "1px solid #E5E7EB" }}>
+                      <div style={{ flex: 1, paddingRight: "16px" }}>
+                        <div style={{ fontWeight: 600, fontSize: "14px", color: "#1A1730" }}>Q: {faq.question}</div>
+                        <div style={{ fontSize: "13px", color: "#4B5563", marginTop: "4px" }}>A: {faq.answer}</div>
+                      </div>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <button
+                          type="button"
+                          style={{ background: "transparent", border: "none", color: "#6C4DFF", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}
+                          onClick={() => {
+                            setEditingFaqIndex(index);
+                            setIsAddingFaq(true);
+                            setFaqQuestion(faq.question);
+                            setFaqAnswer(faq.answer);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          style={{ background: "transparent", border: "none", color: "#EF4444", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}
+                          onClick={() => {
+                            setFaqs(faqs.filter((_, idx) => idx !== index));
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ACTIONS */}
+            <button type="button" className="add-service-publish-btn" onClick={handleSave} disabled={saving}>
+              {saving ? "Saving..." : "✓ Publish Service"}
+            </button>
 
           </div>
 
@@ -1355,37 +1569,37 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
           <div className="ai-sidebar">
             <div className="ai-card">
               <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '120px', height: '120px', background: '#E0D4FF', borderRadius: '50%', filter: 'blur(40px)', opacity: 0.6, zIndex: 0 }}></div>
-              
+
               <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: '15.2px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <h3 className="ai-card-title">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#6C4DFF"/>
+                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#6C4DFF" />
                     </svg>
                     AI Assistant
                   </h3>
                   <div className="ai-card-status" style={{ paddingLeft: '28px' }}>Online & ready</div>
                 </div>
-                
+
                 <div className="ai-tags" style={{ marginTop: '16px', marginBottom: '16px' }}>
                   <span className="ai-tag ai-tag-blue">⚡ Auto-fill fields</span>
                   <span className="ai-tag ai-tag-green">$ Smart pricing</span>
                   <span className="ai-tag ai-tag-red">✍ Write description</span>
                 </div>
-                
+
                 <p className="ai-desc" style={{ marginBottom: '20px' }}>
                   Hi! Tell me what <strong>service you want to offer</strong> and I'll generate a compelling title, description, skills, and suggest the perfect pricing — in seconds.
                 </p>
-                
+
                 <input type="text" className="ai-input" placeholder="e.g. UI/UX Design for mobile apps" style={{ marginBottom: '16px' }} />
-                
+
                 <button className="ai-btn">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FFFFFF"/>
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FFFFFF" />
                   </svg>
                   Generate Service Details
                 </button>
-                
+
                 <p style={{ fontSize: '10px', color: '#9CA3AF', textAlign: 'center', marginTop: '12px', marginBottom: '0' }}>
                   AI may suggest edits — always review before publishing
                 </p>
@@ -1394,7 +1608,7 @@ export default function AddServiceForm({ jobData = null, jobId = null }) {
 
             <div className="ai-pricing-card">
               <h3 className="ai-pricing-title">AI Pricing Suggestions</h3>
-              
+
               <div className="ai-price-row">
                 <div>
                   <div className="ai-price-name">Starter</div>

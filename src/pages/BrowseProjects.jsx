@@ -19,7 +19,7 @@ import { categoriesData } from "../data/categoriesData";
 
 const timeAgo = (date) => {
   if (!date) return "";
-  const diff = Date.now() - date.getTime();
+  const diff = Math.abs(Date.now() - date.getTime());
   const mins = Math.floor(diff / 60000);
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);

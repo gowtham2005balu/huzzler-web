@@ -6,9 +6,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <title>Huzzler</title> 
+<style>
+  /* Hide Google Translate UI elements completely */
+  html {
+    margin-top: 0px !important;
+    padding-top: 0px !important;
+  }
+  body {
+    top: 0px !important;
+    position: static !important;
+  }
+  iframe.goog-te-banner-frame,
+  .goog-te-banner-frame,
+  .skiptranslate > iframe.goog-te-banner-frame {
+    display: none !important;
+  }
+  #google_translate_element {
+    display: none !important;
+  }
+  .goog-tooltip {
+    display: none !important;
+  }
+  .goog-tooltip:hover {
+    display: none !important;
+  }
+  .goog-text-highlight {
+    background-color: transparent !important;
+    border: none !important; 
+    box-shadow: none !important;
+  }
+  /* Additional hide for new google translate classes */
+  .VIpgJd-ZVi9od-ORHb-OEVmcd,
+  .VIpgJd-ZVi9od-aZ2wEe-wOHMyf {
+    display: none !important;
+  }
+</style>
 </head>
 
 <body>
+  <div id="google_translate_element"></div>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false}, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
   <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>

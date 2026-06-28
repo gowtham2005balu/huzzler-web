@@ -1,6 +1,3 @@
-//FreelanceAddservice24hour.jsx
-
-
 
 
 import React, { useEffect, useState } from "react";
@@ -15,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firbase/Firebase"; // 👉 adjust path to your firebase file
 import backarrow from "../assets/backarrow.png";
+import CreatableSelect from "react-select/creatable";
 
 // --------------------------------------------------
 // INLINE CSS (same file)
@@ -27,363 +25,375 @@ if (
   style.id = "add-service-style";
   style.innerHTML = `
   :root {
-    --as-yellow-bg: #fffccf;
-    --as-yellow-border: #fff7b9;
-    --as-purple: #7C3CFF;
-    --as-purple-hover: #7C3CFF;
-    --as-gray-text: #6b7280;
+    --as-page-bg: #FAFAFA;
   }
-
+  
   body {
-    font-family: 'Rubik', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-  }
-
-  .add-service-page {
-    min-height: 100vh;
-    background: var(--as-page-bg);
-    padding: 20px 16px;
-    display: flex;
-    justify-content: center;
+    font-family: 'DM Sans', sans-serif !important;
   }
 
   .add-service-wrapper {
-    width: 100%;
-    max-width: 1000px;
+    padding: 40px;
+    background: #FAFAFA;
+    min-height: 100vh;
+  }
+  .add-service-container {
+    max-width: 1464px;
     margin: 0 auto;
-  }
-
-  .as-header {
-    display: flex;
-    align-items: center;
-    gap: 1px;
-    margin-bottom: 16px;
-  }
-
-  .as-back-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 500px;
-    border: none;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.15s ease;
-  }
-
-  .as-back-btn:hover {
-    background: #f3f4f6;
-  }
-
-  .as-title {
-    font-size: 22px;
-    font-weight: 600;
-    color: #111827;
-  }
-
-  .as-subtitle {
-    font-size: 12px;
-    color: var(--as-gray-text);
-    margin-top: 2px;
-  }
-
-  /* Tabs pill */
-  .as-tab-bar {
     width: 100%;
-    background: #ffffff;
-    border-radius: 999px;
-    padding: 10px 12px;
-    display: flex;
-    gap: 8px;
-    margin-bottom: 18px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.10);
   }
-
-  .as-tab-btn {
-    width: 165.7937px;      /* 🔥 Figma width */
-    height: 29px;           /* 🔥 Figma height */
-    border-radius: 14px;    /* 🔥 Figma radius */
-    border: 0.8px solid #e5e7eb;
-    padding: 10px 24px;     /* 🔥 Figma padding */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;               /* 🔥 Figma gap */
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--as-gray-text);
-    background: transparent;
-    cursor: pointer;
-    transition:
-      background 0.15s ease,
-      color 0.15s ease,
-      box-shadow 0.15s ease,
-      border-color 0.15s ease;
-  }
-
-  .as-tab-btn--active {
-    background: #FDFD96;
-    color: #010308ff;
-    border-color: #f4e98a;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-  }
-
-  /* Main card */
-  .as-card {
-    background: #ffffff;
-    border-radius: 32px;
-    padding: 34px 44px 46px;
-    box-shadow: 0 14px 40px rgba(0,0,0,0.12);
-  }
-
-  .as-message {
-    margin-bottom: 16px;
-    font-size: 13px;
-    border-radius: 10px;
-    padding: 8px 12px;
-  }
-  .as-message-error {
-    background: #fef2f2;
-    color: #b91c1c;
-  }
-  .as-message-success {
-    background: #ecfdf3;
-    color: #166534;
-  }
-
-  .as-section-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #111827;
-    margin-bottom: 4px;
-  }
-
-  .as-required {
-    color: #ef4444;
-    margin-left: 2px;
-  }
-
-  .as-yellow-box {
-  background: #FFFECC !important;   /* exact pale yellow from screenshot */
-  border: 1px solid #E8E4C6 !important;  /* thin soft border */
-  border-radius: 12px !important;   /* smoother curve */
-  padding: 14px 16px !important;    /* perfect inner spacing */
-  box-shadow: none !important;      /* screenshot = NO shadow */
-  display: flex;
-  align-items: flex-start;          /* text starts at top-left */
-}
-
-
-  .as-input,
-  .as-textarea,
-  .as-select {
-    width: 100%;
-    font-size: 14px;
-    color: #6B6767;
-    border: none;
-    outline: none;
-    background: transparent;
-  }
-
-  .as-textarea {
-    resize: none;
-    line-height: 1.5;
-  }
-
-  .as-select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-  }
-
-  .as-inline-row {
+  .form-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
+    gap: 20px;
+  }
+  .add-service-header {
+    margin-bottom: 32px;
+  }
+  .add-service-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1A1730;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
     gap: 12px;
   }
-
-  @media (min-width: 640px) {
-    .as-inline-row {
-      flex-direction: row;
-      align-items: center;
+  .add-service-subtitle {
+    font-size: 14px;
+    color: #9B97B8;
+    margin: 0;
+  }
+  .add-service-layout {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .add-service-form {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 300px;
+    max-width: 962px;
+  }
+  @media (max-width: 1100px) {
+    .add-service-form {
+      min-width: 100%;
     }
   }
-
-  .as-inline-row > .as-flex-1 {
+  
+  /* Toggle Switch */
+  .add-service-toggle-bg {
+    background: #F4F4F5;
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+  }
+  .add-service-toggle-btn {
     flex: 1;
-  }
-
-  .as-to-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: #111827;
+    padding: 12px;
     text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
   }
-
-  .as-helper-text {
-    font-size: 11px;
-    color: #6b7280;
-    margin-top: 3px;
-    text-align: right;
+  .add-service-toggle-btn.active {
+    background: #FFFFFF;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+    color: #6C4DFF;
   }
-
-  /* Skills & Tools chips */
+  .add-service-toggle-btn.inactive {
+    color: #9CA3AF;
+    font-weight: 500;
+  }
+  
+  /* Form Inputs */
+  .add-service-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A1730;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .add-service-label-sub {
+    color: #9CA3AF;
+    font-weight: 400;
+  }
+  .add-service-input, .add-service-select {
+    width: 100%;
+    background: #F8F9FA;
+    border: none;
+    border-radius: 12px;
+    height: 65px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #1A1730;
+    outline: none;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .add-service-input::placeholder, .add-service-textarea::placeholder, .add-service-select:invalid {
+    color: #9CA3AF;
+  }
+  .add-service-input:focus, .add-service-textarea:focus, .add-service-select:focus {
+    background: #FFFFFF;
+    box-shadow: 0 0 0 2px #E0D4FF;
+  }
+  .add-service-textarea {
+    width: 100%;
+    background: #F8F9FA;
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #1A1730;
+    outline: none;
+    min-height: 140px;
+    resize: vertical;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .add-service-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .add-service-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1A1730;
+    margin: 16px 0 8px 0;
+  }
+  
+  /* Tags */
   .as-chip-wrap {
     display: flex;
+    gap: 10px;
+    margin-top: 10px;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 4px;
   }
-
   .as-chip {
-    display: inline-flex;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
     align-items: center;
     gap: 6px;
-    border-radius: 999px;
-    border: 1px solid #d1d5db;
-    background: #ffffff;
-    padding: 4px 10px;
-    font-size: 11px;
-    color: #111827;
+    background: #EEF2FF;
+    color: #6366F1;
   }
-
   .as-chip-remove {
     border: none;
     background: transparent;
     cursor: pointer;
-    font-size: 12px;
-    color: #6b7280;
+    font-size: 10px;
+    color: #6366F1;
   }
-
-  .as-chip-remove:hover {
-    color: #111827;
-  }
-
-  /* Skills/tools select row */
-  .as-skill-row {
+  
+  /* FAQ Section */
+  .faq-box {
+    background: #F8F9FA;
+    border-radius: 12px;
+    padding: 20px;
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  @media (min-width: 640px) {
-    .as-skill-row {
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-
-  .as-skill-row .as-search-input {
-    flex: 1;
-  }
-
-  .as-skill-row .as-dropdown {
-    width: 100%;
-    max-width: 260px;
-    background: rgba(255,255,255,0.9);
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    padding: 6px 8px;
-    font-size: 12px;
-    outline: none;
-  }
-
-.as-buttons {
-  margin-top: 26px;
-  display: flex;
-  flex-direction: row;
-  gap: 14px;
-  width: 100%;
-}
-
-  @media (min-width: 640px) {
-    .as-buttons {
-      flex-direction: row;
-    }
-  }
-
-  .as-btn {
-    flex: 1;
-    border-radius: 999px;
-    padding: 10px 0;
-    border: none;
+    justify-content: center;
+    align-items: center;
+    color: #9CA3AF;
     font-size: 14px;
     font-weight: 500;
+    border: 1px dashed #E5E7EB;
     cursor: pointer;
-    transition:
-      background 0.15s ease,
-      color 0.15s ease,
-      opacity 0.15s ease,
-      transform 0.07s ease;
+    margin-top: 8px;
   }
-
-  .as-btn-cancel {
-    background: #ffffff;
-    border: 1px solid #d1d5db;
-    color: #374151;
+  .faq-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
   }
-  .as-btn-cancel:hover {
-    background: #f9fafb;
+  .faq-add-btn {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4B5563;
+    cursor: pointer;
   }
-
-  .as-btn-save {
-    background: var(--as-purple);
-    color: #ffffff;
-    box-shadow: 0 7px 16px rgba(155, 106, 255, 0.7);
+  
+  /* Publish Button */
+  .add-service-publish-btn {
+    width: 100%;
+    background: linear-gradient(100.36deg, #6C4DFF 0%, #8B6DFF 100%);
+    border-radius: 12px;
+    padding: 16px;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
   }
-  .as-btn-save:hover {
-    background: var(--as-purple-hover);
-  }
-  .as-btn-save:active {
-    transform: translateY(1px);
-    box-shadow: 0 4px 10px rgba(155, 106, 255, 0.6);
-  }
-  .as-btn-save[disabled] {
+  .add-service-publish-btn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
   }
-
-  .as-spinner {
-    width: 16px;
-    height: 16px;
-    border-radius: 999px;
-    border: 2px solid #ffffff;
-    border-top-color: transparent;
-    animation: as-spin 0.7s linear infinite;
-  }
-
-  @keyframes as-spin {
-    to { transform: rotate(360deg); }
-  }
-
-  .backbtn{
-    width:30px;
-    height:30px; 
-    border-radius:14px;
-    border:0.8px solid #ccc;
+  
+  /* Sidebar styling */
+  .ai-sidebar {
+    flex: 1;
+    max-width: 456px;
+    min-width: 300px;
     display: flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer; 
-    font-size:20px;
-    opacity: 1; 
-    flex-shrink: 0;
-    margin-bottom:12px;
+    flex-direction: column;
+    gap: 32px;
+    padding-top: 76px;
+    position: sticky;
+    top: 40px;
+    height: max-content;
   }
-    /* Common dropdown arrow for .as-select and .as-dropdown */
-.as-select,
-.as-dropdown {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236B7280' stroke-width='2'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 12px 7px;
-  padding-right: 30px; /* add space for the arrow */
-  cursor: pointer;
-}
+  @media (max-width: 1100px) {
+    .ai-sidebar {
+      max-width: 100%;
+      padding-top: 0;
+    }
+  }
+  .ai-card {
+    background: #FFFFFF;
+    box-shadow: 0px 8px 40px rgba(108, 77, 255, 0.16);
+    border-radius: 22px;
+    padding: 30.4px;
+    display: flex;
+    flex-direction: column;
+    gap: 15.2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #6C4DFF;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+  .ai-card-status {
+    font-size: 12px;
+    color: #10B981;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ai-card-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: #10B981;
+    border-radius: 50%;
+  }
+  .ai-tags {
+    display: flex;
+    gap: 8px;
+  }
+  .ai-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 20px;
+  }
+  .ai-tag-blue { background: #EFF6FF; color: #3B82F6; }
+  .ai-tag-green { background: #ECFDF5; color: #10B981; }
+  .ai-tag-red { background: #FEF2F2; color: #EF4444; }
+  .ai-desc {
+    font-size: 14px;
+    color: #4B5563;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .ai-input {
+    width: 100%;
+    background: #F8F9FA;
+    border: 1px solid #F3F4F6;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    outline: none;
+  }
+  .ai-btn {
+    width: 100%;
+    background: linear-gradient(100.36deg, #6C4DFF 0%, #8B6DFF 100%);
+    border-radius: 12px;
+    padding: 14px;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .ai-pricing-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .ai-pricing-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1A1730;
+    margin: 0;
+  }
+  .ai-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #F3F4F6;
+  }
+  .ai-price-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1730;
+  }
+  .ai-price-sub {
+    font-size: 12px;
+    color: #9CA3AF;
+    margin-top: 4px;
+  }
+  .ai-price-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1A1730;
+  }
+  .ai-price-row.highlight {
+    background: #F4F0FF;
+    border-radius: 12px;
+    border-bottom: none;
+  }
+  .ai-price-row.highlight .ai-price-name, .ai-price-row.highlight .ai-price-val {
+    color: #6C4DFF;
+  }
 
   `;
   document.head.appendChild(style);
@@ -393,25 +403,138 @@ if (
 // COMPONENT
 // --------------------------------------------------
 
+const SKILL_FAQ_SUGGESTIONS = {
+  "UI Design": [
+    { question: "What deliverables do I get with UI Design?", answer: "You will receive the Figma source file, along with exported PNG/SVG assets and an interactive prototype link." },
+    { question: "Do you design mobile apps, web interfaces, or both?", answer: "I can design for both iOS/Android mobile apps and responsive web interfaces." }
+  ],
+  "UX Design": [
+    { question: "What deliverables do I get with UX Design?", answer: "You will receive user persona reports, wireframes, user flow diagrams, and interactive prototypes built in Figma." },
+    { question: "Do you conduct user testing?", answer: "Yes, I perform usability testing and user research interviews to validate and refine the UX solutions." }
+  ],
+  "Figma": [
+    { question: "Do you use Figma components and auto-layout?", answer: "Yes, all my designs are built using responsive auto-layout, nested components, and a clean style guide/design system." }
+  ],
+  "Website Development": [
+    { question: "Will the website be responsive on mobile and tablet devices?", answer: "Yes, the website will be fully responsive and optimized for mobile, tablet, and desktop screens." },
+    { question: "Which technologies do you use for website development?", answer: "I typically build websites using React, HTML/CSS, and TailwindCSS for the frontend, combined with clean backend integrations." }
+  ],
+  "Mobile Apps (iOS & Android)": [
+    { question: "Do you develop native or cross-platform mobile apps?", answer: "I specialize in cross-platform mobile app development using React Native or Flutter, ensuring high performance on both iOS and Android." }
+  ],
+  "SEO": [
+    { question: "What is included in your SEO service?", answer: "My SEO service includes on-page optimization, meta tags, keyword research, site speed advice, and search console setup." }
+  ],
+  "Logo Design": [
+    { question: "What file formats will I receive for the logo?", answer: "You will receive high-resolution vector files (AI, EPS, PDF, SVG) along with transparent background formats (PNG)." }
+  ],
+  "Graphic Design": [
+    { question: "Do you provide source files for the graphic designs?", answer: "Yes, I always provide the original layered source files (PSD or AI) for your future editing needs." }
+  ],
+  "Writing & Translation": [
+    { question: "Do you proofread and translate manually?", answer: "Yes, all translation and writing is done manually to ensure correct context, tone, and cultural accuracy." }
+  ],
+  "Video Editing": [
+    { question: "What software do you use for video editing?", answer: "I edit videos professionally using Adobe Premiere Pro and DaVinci Resolve." }
+  ]
+};
+
+const GENERAL_FAQ_SUGGESTIONS = [
+  { question: "What is your standard turnaround time?", answer: "Turnaround time depends on the complexity of the project, but I usually deliver the initial draft within 3-5 business days." },
+  { question: "Do you offer revisions?", answer: "Yes, I offer up to 3 rounds of revisions to ensure you are completely satisfied with the final delivery." },
+  { question: "Can we sign an NDA?", answer: "Yes, I am happy to sign a Non-Disclosure Agreement (NDA) before starting work to protect your intellectual property." }
+];
+
+const generateFaqsFromSkills = (skillsArray) => {
+  const generated = [];
+  const addedQuestions = new Set();
+
+  skillsArray.forEach(skill => {
+    const skillValue = typeof skill === 'object' ? skill.value : skill;
+    if (!skillValue) return;
+
+    const skillLower = skillValue.toLowerCase();
+    Object.keys(SKILL_FAQ_SUGGESTIONS).forEach(key => {
+      if (skillLower.includes(key.toLowerCase()) || key.toLowerCase().includes(skillLower)) {
+        SKILL_FAQ_SUGGESTIONS[key].forEach(faq => {
+          if (!addedQuestions.has(faq.question)) {
+            generated.push({ ...faq });
+            addedQuestions.add(faq.question);
+          }
+        });
+      }
+    });
+  });
+
+  if (generated.length === 0) {
+    GENERAL_FAQ_SUGGESTIONS.forEach(faq => {
+      generated.push({ ...faq });
+    });
+  }
+
+  return generated;
+};
+
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: "#F8F9FA",
+    borderRadius: "12px",
+    border: "none",
+    padding: "6px 12px",
+    boxShadow: "none",
+    minHeight: "65px",
+    "&:hover": {
+      border: "none",
+    },
+  }),
+  menu: (provided) => ({
+    ...provided,
+    borderRadius: "12px",
+    zIndex: 9999,
+  }),
+  menuPortal: base => ({ ...base, zIndex: 9999 }),
+  multiValue: (provided) => ({
+    ...provided,
+    backgroundColor: "#7c6c9c20",
+    borderRadius: "8px",
+  }),
+  multiValueLabel: (provided) => ({
+    ...provided,
+    color: "#000",
+    fontWeight: 500,
+  }),
+  multiValueRemove: (provided) => ({
+    ...provided,
+    color: "#2a292b",
+    ":hover": {
+      backgroundColor: "#2f2e2f",
+      color: "#fff",
+    },
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: "#6b7280",
+  }),
+};
+
 export default function AddServiceForm({ jobData = null, jobId = null }) {
   const navigate = useNavigate();
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
   // -------------------- BASIC STATE -------------------- //
-const [selectedTab, setSelectedTab] = useState("24 Hours");  const [title, setTitle] = useState("");
+  const [selectedTab, setSelectedTab] = useState("24 Hours");
+  const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [budgetFrom, setBudgetFrom] = useState("");
   const [budgetTo, setBudgetTo] = useState("");
   const [sampleUrl, setSampleUrl] = useState("");
-  const [urlError, setUrlError] = useState("");
 
   const [clientReq, setClientReq] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState("");
 
-  const [selectedSkill, setSelectedSkill] = useState("");
-  const [selectedTool, setSelectedTool] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [selectedTools, setSelectedTools] = useState([]);
 
@@ -419,10 +542,11 @@ const [selectedTab, setSelectedTab] = useState("24 Hours");  const [title, setTi
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  const [skillSearch, setSkillSearch] = useState("");
-  const [toolSearch, setToolSearch] = useState("");
-
-
+  const [faqs, setFaqs] = useState([]);
+  const [faqQuestion, setFaqQuestion] = useState("");
+  const [faqAnswer, setFaqAnswer] = useState("");
+  const [isAddingFaq, setIsAddingFaq] = useState(false);
+  const [editingFaqIndex, setEditingFaqIndex] = useState(-1);
 
   const deliveryOptions = [
     "1-7 days",
@@ -449,8 +573,7 @@ const [selectedTab, setSelectedTab] = useState("24 Hours");  const [title, setTi
     "Lifestyle",
     "Consulting",
     "Personal Growth & Hobbies",
-  ];
-
+  ].map(e => ({ label: e, value: e }));
 
   const skillOptions = [
     // Graphics & Design
@@ -676,7 +799,7 @@ const [selectedTab, setSelectedTab] = useState("24 Hours");  const [title, setTi
     "Career Mentoring",
     "Mindfulness & Meditation",
     "Confidence Coaching",
-  ];
+  ].map(e => ({ label: e, value: e }));
 
   const toolOptions = [
     // Design tools
@@ -929,10 +1052,7 @@ const [selectedTab, setSelectedTab] = useState("24 Hours");  const [title, setTi
     "Xero",
     "Tally",
     "Notion",
-  ];
-
-
-
+  ].map(e => ({ label: e, value: e }));
 
   useEffect(() => {
     if (jobData) {
@@ -946,57 +1066,22 @@ const [selectedTab, setSelectedTab] = useState("24 Hours");  const [title, setTi
       );
       setSampleUrl(jobData.sampleProjectUrl || "");
       setClientReq(jobData.clientRequirements || "");
-      setSelectedCategory(jobData.category || "");
+      setSelectedCategory(jobData.category ? { label: jobData.category, value: jobData.category } : null);
       setSelectedDuration(jobData.deliveryDuration || "");
-      setSelectedSkills(Array.isArray(jobData.skills) ? jobData.skills : []);
-      setSelectedTools(Array.isArray(jobData.tools) ? jobData.tools : []);
+      setSelectedSkills(Array.isArray(jobData.skills) ? jobData.skills.map(s => ({ label: s, value: s })) : []);
+      setSelectedTools(Array.isArray(jobData.tools) ? jobData.tools.map(t => ({ label: t, value: t })) : []);
+      setFaqs(Array.isArray(jobData.faqs) ? jobData.faqs : []);
       if (jobData.is24Hour) {
         setSelectedTab("24 Hours");
       }
     }
   }, [jobData]);
 
-  // -------------------- HELPERS -------------------- //
-
-  const addSkill = (skill) => {
-    if (!skill) return;
-    if (!selectedSkills.includes(skill)) {
-      setSelectedSkills((prev) => [...prev, skill]);
-    }
-    setSelectedSkill("");
-    setSkillSearch("");
-  };
-
-  const addTool = (tool) => {
-    if (!tool) return;
-    if (!selectedTools.includes(tool)) {
-      setSelectedTools((prev) => [...prev, tool]);
-    }
-    setSelectedTool("");
-    setToolSearch("");
-  };
-
-  const removeSkill = (skill) => {
-    setSelectedSkills((prev) => prev.filter((s) => s !== skill));
-  };
-
-  const removeTool = (tool) => {
-    setSelectedTools((prev) => prev.filter((t) => t !== tool));
-  };
-
-  const filteredSkills = skillOptions.filter((s) =>
-    s.toLowerCase().includes(skillSearch.toLowerCase())
-  );
-  const filteredTools = toolOptions.filter((t) =>
-    t.toLowerCase().includes(toolSearch.toLowerCase())
-  );
-
   // -------------------- VALIDATION + SAVE -------------------- //
 
   const handleSave = async () => {
     setErrorMsg("");
     setSuccessMsg("");
-
 
     if (!isValidHttpsUrl(sampleUrl)) {
       alert("invalid URLs are not allowed for sample projects link");
@@ -1058,13 +1143,14 @@ const [selectedTab, setSelectedTab] = useState("24 Hours");  const [title, setTi
         description: desc.trim(),
         budget_from: Number(budgetFrom.trim()),
         budget_to: Number(budgetTo.trim()),
-        category: selectedCategory || null,
-        skills: selectedSkills,
-        tools: selectedTools,
+        category: selectedCategory?.value || null,
+        skills: selectedSkills.map(s => s.value),
+        tools: selectedTools.map(t => t.value),
         sampleProjectUrl: sampleUrl.trim(),
         clientRequirements: clientReq.trim(),
         updatedAt: serverTimestamp(),
         userId: user.uid,
+        faqs: faqs,
       };
 
       let collectionName = "services";
@@ -1098,7 +1184,7 @@ const [selectedTab, setSelectedTab] = useState("24 Hours");  const [title, setTi
         setSuccessMsg("Service added successfully");
       }
 
-      setTimeout(() => navigate(-1), 800);
+      setTimeout(() => navigate("/freelance-dashboard/accountfreelancer"), 800);
     } catch (err) {
       console.error(err);
       setErrorMsg("Failed to save service: " + err.message);
@@ -1120,300 +1206,436 @@ const [selectedTab, setSelectedTab] = useState("24 Hours");  const [title, setTi
   // -------------------- RENDER -------------------- //
 
   return (
-    <div className="add-service-page" style={{ marginTop: "40px" }}>
-      <div className="add-service-wrapper">
-        {/* Header */}
-        <div className="as-header">
-          <button onClick={() => navigate(-1)} className="as-back-btn">
-            <span className="material-icons" style={{ fontSize: 20 }}>
-              {/* back icon optional */}
-            </span>
-          </button>
-
-          <div>
-            {/* Left side header row */}
+    <div className="add-service-wrapper">
+      <div className="add-service-container">
+        <div className="add-service-header">
+          <h1 className="add-service-title">
             <div
+              onClick={() => navigate(-1)}
               style={{
+                width: 36,
+                height: 36,
+                borderRadius: 14,
+                border: "0.8px solid #E0E0E0",
+                backgroundColor: "#FFFFFF",
                 display: "flex",
                 alignItems: "center",
-                gap: 12,
-                padding: "16px 0px",
+                justifyContent: "center",
+                cursor: "pointer",
               }}
             >
+              <img src={backarrow} alt="Back" style={{ width: 16, height: 18, objectFit: "contain" }} />
+            </div>
+            Create New Service
+          </h1>
+          <p className="add-service-subtitle">Launch your service and let clients find you.</p>
+        </div>
+
+        <div className="add-service-layout">
+          <div className="add-service-form">
+
+            {(errorMsg || successMsg) && (
+              <div style={{ color: errorMsg ? 'red' : 'green', marginBottom: '10px' }}>
+                {errorMsg || successMsg}
+              </div>
+            )}
+
+            {/* SERVICE TYPE TOGGLE */}
+            <div className="add-service-toggle-bg">
               <div
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 12,
-                  background: "#ffffff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 4px 14px rgba(0,0,0,0.18)",
-                  cursor: "pointer",
-                }}
-                onClick={() => navigate(-1)}
-              >
-                <img src={backarrow} style={{ width: "20px" }} alt="back" />
+                className={`add-service-toggle-btn ${selectedTab === "Work" ? "active" : "inactive"}`}
+                onClick={() => navigate("/freelance-dashboard/add-service-form")}
+              >Work</div>
+              <div
+                className={`add-service-toggle-btn ${selectedTab === "24 Hours" ? "active" : "inactive"}`}
+                onClick={() => setSelectedTab("24 Hours")}
+              >24 hours</div>
+            </div>
+
+            {/* BASIC INFO */}
+            <div className="form-card">
+              <div>
+                <label className="add-service-label">Service Title</label>
+                <input
+                  type="text"
+                  className="add-service-input"
+                  placeholder="e.g. Logo Design That Pops and Defines Your Brand"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
               </div>
 
-              <span
-                style={{
-                  fontSize: 24,
-                  fontWeight: 700,
-                  fontFamily:
-                    "'Rubik', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  color: "#000",
-                }}
-              >
-                Create Service ...
-              </span>
+              <div>
+                <label className="add-service-label">Description</label>
+                <textarea
+                  className="add-service-textarea"
+                  placeholder="Describe your service and showcase your uniqueness"
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                />
+              </div>
+
+              <div className="add-service-grid-2">
+                <div>
+                  <label className="add-service-label">Category</label>
+                  <Select
+                    value={selectedCategory}
+                    onChange={setSelectedCategory}
+                    options={expertiseOptions}
+                    styles={customSelectStyles}
+                  />
+                </div>
+                <div>
+                  <label className="add-service-label">Delivery Days</label>
+                  <select
+                    className="add-service-select"
+                    value={selectedDuration}
+                    onChange={(e) => setSelectedDuration(e.target.value)}
+                  >
+                    <option value="">In days</option>
+                    {deliveryOptions.map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
-            <div className="as-subtitle">
-              Show what you do — create your service here....
+
+            {/* PRICING */}
+            <div className="form-card">
+              <h3 className="add-service-section-title" style={{ margin: 0 }}>Pricing</h3>
+              <div className="add-service-grid-2">
+                <div>
+                  <label className="add-service-label">Minimum Price (₹)</label>
+                  <input
+                    type="number"
+                    className="add-service-input"
+                    placeholder="Min"
+                    value={budgetFrom}
+                    onChange={(e) => setBudgetFrom(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="add-service-label">Maximum Price (₹)</label>
+                  <input
+                    type="number"
+                    className="add-service-input"
+                    placeholder="Max"
+                    value={budgetTo}
+                    onChange={(e) => setBudgetTo(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Tabs */}
-        <div className="as-tab-bar">
-          <button
-            className={
-              "as-tab-btn " +
-              (selectedTab === "Work" ? "as-tab-btn--active" : "")
-            }
-            onClick={() => setSelectedTab("Work")}
-          >
-            Work
-          </button>
-          <button
-            className={
-              "as-tab-btn " +
-              (selectedTab === "24 Hours" ? "as-tab-btn--active" : "")
-            }
-            onClick={() => setSelectedTab("24 Hours")}
-          >
-            24 Hours
-          </button>
-        </div>
+            {/* DETAILS */}
+            <div className="form-card">
+              <div>
+                <label className="add-service-label">Skills <span className="add-service-label-sub">(Add at least 3)</span></label>
+                <CreatableSelect
+                  isMulti
+                  value={selectedSkills}
+                  onChange={setSelectedSkills}
+                  options={skillOptions}
+                  styles={customSelectStyles}
+                  placeholder="Select or type a skill..."
+                  menuPortalTarget={document.body}
+                  menuPosition="fixed"
+                />
+              </div>
 
-        {/* Main card */}
-        <div className="as-card">
-          {(errorMsg || successMsg) && (
-            <div
-              className={
-                "as-message " +
-                (errorMsg ? "as-message-error" : "as-message-success")
-              }
-            >
-              {errorMsg || successMsg}
-            </div>
-          )}
+              <div>
+                <label className="add-service-label">Tools <span className="add-service-label-sub">(Add at least 3)</span></label>
+                <CreatableSelect
+                  isMulti
+                  value={selectedTools}
+                  onChange={setSelectedTools}
+                  options={toolOptions}
+                  styles={customSelectStyles}
+                  placeholder="Select or type a tool..."
+                  menuPortalTarget={document.body}
+                  menuPosition="fixed"
+                />
+              </div>
 
-          {/* Service Title */}
-          <SectionLabel label="Service Title" required />
-          <div className="as-yellow-box">
-            <input
-              type="text"
-              className="as-input"
-              placeholder="e.g. Logo Design That Pops and Defines Your Brand"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-
-          {/* Description */}
-          <SectionLabel label="Description" required className="mt-5" />
-          <div className="as-yellow-box" style={{ alignItems: "flex-start" }}>
-            <textarea
-              className="as-textarea"
-              rows={4}
-              placeholder="Describe your service and showcase your uniqueness"
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-            />
-          </div>
-
-          {/* Category */}
-          <SectionLabel label="Category" required className="mt-5" />
-          <div className="as-yellow-box">
-            <select
-              className="as-select"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">Select Category</option>
-              {expertiseOptions.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Price Range */}
-          <SectionLabel label="Price Range" required className="mt-5" />
-          <div className="as-inline-row">
-            <div className="as-flex-1">
-              <div className="as-yellow-box">
+              <div>
+                <label className="add-service-label">Sample Projects (URL)</label>
                 <input
-                  type="number"
-                  className="as-input"
-                  value={budgetFrom}
-                  onChange={(e) => setBudgetFrom(e.target.value)}
+                  type="url"
+                  className="add-service-input"
+                  placeholder="https://dribbble.com/your-project"
+                  value={sampleUrl}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSampleUrl(value);
+                    if (!value) setUrlError("");
+                    else if (!isValidHttpsUrl(value)) setUrlError("Please enter a valid HTTPS URL");
+                    else setUrlError("");
+                  }}
+                />
+                {urlError && <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>{urlError}</p>}
+              </div>
+
+              <div>
+                <label className="add-service-label">Deliverables</label>
+                <input
+                  type="text"
+                  className="add-service-input"
+                  placeholder="Add Deliverables"
+                />
+              </div>
+
+              <div>
+                <label className="add-service-label">Client Requirements <span className="add-service-label-sub">[Optional]</span></label>
+                <textarea
+                  className="add-service-textarea"
+                  placeholder="What do you need from your client to get started"
+                  style={{ minHeight: '100px' }}
+                  value={clientReq}
+                  onChange={(e) => setClientReq(e.target.value)}
                 />
               </div>
             </div>
-            <div className="as-to-text">To</div>
-            <div className="as-flex-1">
-              <div className="as-yellow-box">
-                <input
-                  type="number"
-                  className="as-input"
-                  value={budgetTo}
-                  onChange={(e) => setBudgetTo(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
 
-          {/* Delivery Days - only Work */}
-          {selectedTab === "Work" && (
-            <>
-              <SectionLabel label="Delivery days" required className="mt-5" />
-              <div className="as-yellow-box">
-                <select
-                  className="as-select"
-                  value={selectedDuration}
-                  onChange={(e) => setSelectedDuration(e.target.value)}
+            {/* FAQ */}
+            <div className="form-card">
+              <div className="faq-header" style={{ marginTop: 0, display: "flex", gap: "10px", alignItems: "center" }}>
+                <h3 className="add-service-section-title" style={{ margin: 0, marginRight: "auto" }}>FAQ</h3>
+                <button
+                  type="button"
+                  style={{
+                    background: "#F5F3FF",
+                    border: "1px solid #D8B4FE",
+                    borderRadius: "8px",
+                    padding: "8px 16px",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    color: "#6B21A8",
+                    cursor: "pointer"
+                  }}
+                  onClick={() => {
+                    const generated = generateFaqsFromSkills(selectedSkills);
+                    const currentQuestions = new Set(faqs.map(f => f.question));
+                    const newFaqs = [...faqs];
+                    generated.forEach(item => {
+                      if (!currentQuestions.has(item.question)) {
+                        newFaqs.push(item);
+                      }
+                    });
+                    setFaqs(newFaqs);
+                    alert(`Auto-generated ${newFaqs.length - faqs.length} FAQs based on selected skills!`);
+                  }}
                 >
-                  <option value="">In days</option>
-                  {deliveryOptions.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
+                  ✨ Auto-generate
+                </button>
+                <button
+                  type="button"
+                  className="faq-add-btn"
+                  onClick={() => {
+                    setIsAddingFaq(true);
+                    setEditingFaqIndex(-1);
+                    setFaqQuestion("");
+                    setFaqAnswer("");
+                  }}
+                >
+                  + Add Question
+                </button>
               </div>
-            </>
-          )}
 
-          {/* Skills */}
-          <SectionLabel label="Skills" required className="mt-5" />
-          <div>
-            <div className="as-yellow-box">
-              <select
-                className="as-select"
-                value=""
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val) addSkill(val);
-                }}
-              >
-                <option value="">Select a skill</option>
-                {skillOptions.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+              {faqs.length === 0 && !isAddingFaq && (
+                <div
+                  className="faq-box"
+                  style={{ marginTop: 8 }}
+                  onClick={() => {
+                    setIsAddingFaq(true);
+                    setEditingFaqIndex(-1);
+                    setFaqQuestion("");
+                    setFaqAnswer("");
+                  }}
+                >
+                  Add common questions clients ask about your service
+                </div>
+              )}
+
+              {isAddingFaq && (
+                <div style={{ background: "#F9FAFB", padding: "16px", borderRadius: "12px", border: "1px solid #E5E7EB", display: "flex", flexDirection: "column", gap: "12px", marginTop: "12px" }}>
+                  <div>
+                    <label className="add-service-label" style={{ marginBottom: "6px" }}>Question</label>
+                    <input
+                      type="text"
+                      className="add-service-input"
+                      style={{ height: "45px", background: "#FFFFFF", border: "1px solid #E5E7EB" }}
+                      placeholder="e.g. Can you deliver within 2 days?"
+                      value={faqQuestion}
+                      onChange={(e) => setFaqQuestion(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="add-service-label" style={{ marginBottom: "6px" }}>Answer</label>
+                    <textarea
+                      className="add-service-textarea"
+                      style={{ minHeight: "80px", background: "#FFFFFF", border: "1px solid #E5E7EB", padding: "12px" }}
+                      placeholder="e.g. Yes, but it will cost an extra express delivery fee."
+                      value={faqAnswer}
+                      onChange={(e) => setFaqAnswer(e.target.value)}
+                    />
+                  </div>
+                  <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                    <button
+                      type="button"
+                      className="faq-add-btn"
+                      style={{ background: "#F3F4F6", border: "none" }}
+                      onClick={() => {
+                        setIsAddingFaq(false);
+                        setEditingFaqIndex(-1);
+                        setFaqQuestion("");
+                        setFaqAnswer("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="faq-add-btn"
+                      style={{ background: "#6C4DFF", color: "#FFFFFF", border: "none" }}
+                      onClick={() => {
+                        if (!faqQuestion.trim() || !faqAnswer.trim()) {
+                          alert("Please enter both question and answer");
+                          return;
+                        }
+                        if (editingFaqIndex !== -1) {
+                          const updated = [...faqs];
+                          updated[editingFaqIndex] = { question: faqQuestion.trim(), answer: faqAnswer.trim() };
+                          setFaqs(updated);
+                        } else {
+                          setFaqs([...faqs, { question: faqQuestion.trim(), answer: faqAnswer.trim() }]);
+                        }
+                        setIsAddingFaq(false);
+                        setEditingFaqIndex(-1);
+                        setFaqQuestion("");
+                        setFaqAnswer("");
+                      }}
+                    >
+                      {editingFaqIndex !== -1 ? "Save" : "Add"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {faqs.length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+                  {faqs.map((faq, index) => (
+                    <div key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", background: "#F9FAFB", padding: "12px 16px", borderRadius: "10px", border: "1px solid #E5E7EB" }}>
+                      <div style={{ flex: 1, paddingRight: "16px" }}>
+                        <div style={{ fontWeight: 600, fontSize: "14px", color: "#1A1730" }}>Q: {faq.question}</div>
+                        <div style={{ fontSize: "13px", color: "#4B5563", marginTop: "4px" }}>A: {faq.answer}</div>
+                      </div>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <button
+                          type="button"
+                          style={{ background: "transparent", border: "none", color: "#6C4DFF", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}
+                          onClick={() => {
+                            setEditingFaqIndex(index);
+                            setIsAddingFaq(true);
+                            setFaqQuestion(faq.question);
+                            setFaqAnswer(faq.answer);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          style={{ background: "transparent", border: "none", color: "#EF4444", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}
+                          onClick={() => {
+                            setFaqs(faqs.filter((_, idx) => idx !== index));
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div className="as-helper-text">Add at least 3 skills</div>
-            <ChipWrap items={selectedSkills} onRemove={removeSkill} />
+            {/* ACTIONS */}
+            <button type="button" className="add-service-publish-btn" onClick={handleSave} disabled={saving}>
+              {saving ? "Saving..." : "✓ Publish Service"}
+            </button>
+
           </div>
 
-          {/* Tools */}
-          <SectionLabel label="Tools" required className="mt-5" />
-          <div>
-            <div className="as-yellow-box">
-              <select
-                className="as-select"
-                value=""
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val) addTool(val);
-                }}
-              >
-                <option value="">Select a tool</option>
-                {toolOptions.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
+          {/* RIGHT SIDEBAR - AI ASSISTANT */}
+          <div className="ai-sidebar">
+            <div className="ai-card">
+              <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '120px', height: '120px', background: '#E0D4FF', borderRadius: '50%', filter: 'blur(40px)', opacity: 0.6, zIndex: 0 }}></div>
+
+              <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: '15.2px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <h3 className="ai-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#6C4DFF" />
+                    </svg>
+                    AI Assistant
+                  </h3>
+                  <div className="ai-card-status" style={{ paddingLeft: '28px' }}>Online & ready</div>
+                </div>
+
+                <div className="ai-tags" style={{ marginTop: '16px', marginBottom: '16px' }}>
+                  <span className="ai-tag ai-tag-blue">⚡ Auto-fill fields</span>
+                  <span className="ai-tag ai-tag-green">$ Smart pricing</span>
+                  <span className="ai-tag ai-tag-red">✍ Write description</span>
+                </div>
+
+                <p className="ai-desc" style={{ marginBottom: '20px' }}>
+                  Hi! Tell me what <strong>service you want to offer</strong> and I'll generate a compelling title, description, skills, and suggest the perfect pricing — in seconds.
+                </p>
+
+                <input type="text" className="ai-input" placeholder="e.g. UI/UX Design for mobile apps" style={{ marginBottom: '16px' }} />
+
+                <button className="ai-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FFFFFF" />
+                  </svg>
+                  Generate Service Details
+                </button>
+
+                <p style={{ fontSize: '10px', color: '#9CA3AF', textAlign: 'center', marginTop: '12px', marginBottom: '0' }}>
+                  AI may suggest edits — always review before publishing
+                </p>
+              </div>
             </div>
 
-            <div className="as-helper-text">Add at least 3 tools</div>
-            <ChipWrap items={selectedTools} onRemove={removeTool} />
+            <div className="ai-pricing-card">
+              <h3 className="ai-pricing-title">AI Pricing Suggestions</h3>
+
+              <div className="ai-price-row">
+                <div>
+                  <div className="ai-price-name">Starter</div>
+                  <div className="ai-price-sub">Basic deliverables</div>
+                </div>
+                <div className="ai-price-val">₹800–1,200</div>
+              </div>
+
+              <div className="ai-price-row highlight">
+                <div>
+                  <div className="ai-price-name">Standard ✦ Popular</div>
+                  <div className="ai-price-sub">Full scope delivery</div>
+                </div>
+                <div className="ai-price-val">₹1,500–2,500</div>
+              </div>
+
+              <div className="ai-price-row" style={{ borderBottom: 'none' }}>
+                <div>
+                  <div className="ai-price-name">Premium</div>
+                  <div className="ai-price-sub">All-inclusive</div>
+                </div>
+                <div className="ai-price-val">₹3,000–5,000</div>
+              </div>
+            </div>
           </div>
 
-          {/* Sample Projects */}
-          <SectionLabel label="Sample Projects" required className="mt-5" />
-          <div className="as-yellow-box">
-            <input
-              type="url"
-              className="as-input"
-              placeholder="e.g. Logo Design That Pops and Defines Your Brand"
-              value={sampleUrl}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSampleUrl(value);
-
-                if (!value) {
-                  setUrlError("");
-                } else if (!isValidHttpsUrl(value)) {
-                  setUrlError("Please enter a valid HTTPS URL (https://)");
-                } else {
-                  setUrlError("");
-                }
-              }}
-            />
-          </div>
-
-          {/* Client Requirements */}
-          <SectionLabel label="Client Requirements" className="mt-5" />
-          <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 3 }}>
-            (Optional)
-          </div>
-          <div
-            className="as-yellow-box"
-            style={{
-              alignItems: "flex-start",
-              border: "2px solid #FEFED7",
-            }}
-          >
-            <textarea
-              rows={4}
-              className="as-textarea"
-              placeholder="Describe what you need and specific details"
-              value={clientReq}
-              onChange={(e) => setClientReq(e.target.value)}
-            />
-          </div>
-
-          {/* Buttons */}
-          <div className="as-buttons">
-            <button
-              type="button"
-              className="as-btn as-btn-cancel"
-              onClick={() => navigate(-1)}
-            >
-              Cancel
-            </button>
-
-            <button
-              type="button"
-              className="as-btn as-btn-save"
-              disabled={saving}
-              onClick={handleSave}
-            >
-              {saving && <span className="as-spinner" />}
-              <span style={{ marginLeft: saving ? 6 : 0 }}>
-                {saving ? "Saving..." : "Save"}
-              </span>
-            </button>
-          </div>
         </div>
       </div>
     </div>

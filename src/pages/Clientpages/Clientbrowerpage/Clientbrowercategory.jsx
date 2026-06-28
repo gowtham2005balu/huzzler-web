@@ -1477,7 +1477,8 @@ const jobCategories1 = {
    HELPERS
 ====================================================== */
 const timeAgo = (date) => {
-  const diff = Date.now() - date.getTime();
+  if (!date) return "";
+  const diff = Math.abs(Date.now() - date.getTime());
   const sec = Math.floor(diff / 1000);
   if (sec < 60) return `${sec}s ago`;
   const min = Math.floor(sec / 60);

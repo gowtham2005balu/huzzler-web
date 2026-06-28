@@ -1237,6 +1237,13 @@ export default function CategoryPage({ initialTab = "Work" }) {
         return cat.includes(target) || skills.some(s => s.includes(target));
       });
     }
+    
+    // ❌ FILTER OUT JOBS WITH NO NAME
+    filtered = filtered.filter(j => {
+      const nameStr = j.company || j.companyName || j.company_name || j.clientName || "";
+      return nameStr && nameStr.trim() !== "";
+    });
+
     return filtered;
   }, [jobs, activeCategory]);
 
@@ -1349,7 +1356,7 @@ export default function CategoryPage({ initialTab = "Work" }) {
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {jobsToRender.map((job) => {
             const isSaved = savedIds.includes(job.id);
-            const companyName = job.company || job.companyName || "NovaSpark";
+            const companyName = job.company || job.companyName || job.company_name || job.clientName || "";
             const jobType = job.jobType || "Full-time";
             const locationType = job.locationType || job.location || "Remote";
             const roleName = job.title || "Senior UI/UX Designer";

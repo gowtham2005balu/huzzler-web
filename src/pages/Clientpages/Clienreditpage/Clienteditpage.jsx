@@ -973,7 +973,7 @@ import {
   collection,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../../../firbase/Firebase";
+import { db, auth } from "../../../firbase/Firebase";
 import backarrow from "../../../assets/backarrow.png"
 import Select from "react-select";
 
@@ -1569,6 +1569,8 @@ export default function ClientEditJob() {
       skills: skills.map(s => s.value),
       tools: tools.map(t => t.value),
 
+      userId: auth?.currentUser?.uid || null,
+      company_name: auth?.currentUser?.displayName || "Unknown",
       updated_at: serverTimestamp(),
     };
 

@@ -83,6 +83,7 @@ export default function MyWorksScreen() {
   const [activeTab, setActiveTab] = useState(0);
   const [search, setSearch] = useState("");
   const [jobs, setJobs] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [handledNotifs, setHandledNotifs] = useState({});
@@ -324,9 +325,16 @@ export default function MyWorksScreen() {
     return () => unsubNotif();
   }, [selectedTab, activeTab, user, db]);
 
-  const filteredJobs = jobs.filter((j) =>
-    (j.title || "").toLowerCase().includes(search)
-  );
+  const filteredJobs = jobs.filter((j) => {
+    const searchLower = search.toLowerCase();
+    const title = (j.title || "").toLowerCase();
+    const catStr = (j.Category || j.category || "").toLowerCase();
+    
+    const matchesSearch = title.includes(searchLower) || catStr.includes(searchLower);
+    const matchesCategory = selectedCategory === "All" || catStr.includes(selectedCategory.toLowerCase()) || title.includes(selectedCategory.toLowerCase());
+    
+    return matchesSearch && matchesCategory;
+  });
 
   if (!user) return <div style={{ padding: 20 }}>Please log in</div>;
 
@@ -464,22 +472,25 @@ export default function MyWorksScreen() {
             {/* Category Pills */}
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 32 }}>
               {[
-                { label: "All", active: true },
-                { label: "UI Design", active: false },
-                { label: "Branding", active: false },
-                { label: "Mobile Apps", active: false },
-                { label: "SaaS", active: false },
-                { label: "Web Design", active: false }
-              ].map((cat) => (
+                { label: "All" },
+                { label: "UI Design" },
+                { label: "Branding" },
+                { label: "Mobile Apps" },
+                { label: "SaaS" },
+                { label: "Web Design" }
+              ].map((cat) => {
+                const isActive = selectedCategory === cat.label;
+                return (
                 <div
                   key={cat.label}
+                  onClick={() => setSelectedCategory(cat.label)}
                   style={{
                     padding: "8px 24px",
                     borderRadius: 999,
                     cursor: "pointer",
-                    background: cat.active ? "#8B5CF6" : "transparent",
-                    border: cat.active ? "1px solid #8B5CF6" : "1px solid #E5E7EB",
-                    color: cat.active ? "#fff" : "#4B5563",
+                    background: isActive ? "#8B5CF6" : "transparent",
+                    border: isActive ? "1px solid #8B5CF6" : "1px solid #E5E7EB",
+                    color: isActive ? "#fff" : "#4B5563",
                     fontWeight: 600,
                     fontSize: 14,
                     transition: "all 0.2s"
@@ -487,7 +498,7 @@ export default function MyWorksScreen() {
                 >
                   {cat.label}
                 </div>
-              ))}
+              )})}
             </div>
 
             {/* Portfolio Grid */}
@@ -578,7 +589,7 @@ export default function MyWorksScreen() {
                 transition: "all 0.2s",
                 height: 308
               }}
-                onClick={() => navigate("/freelance-dashboard/add-service-form")}
+                onClick={() => navigate("/freelance-dashboard/createservice")}
                 onMouseEnter={(e) => { e.currentTarget.style.background = "#F3F4F6"; e.currentTarget.style.borderColor = "#D1D5DB"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = "#FAFAFA"; e.currentTarget.style.borderColor = "#E5E7EB"; }}
               >

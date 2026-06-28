@@ -12,9 +12,9 @@ import { Bookmark, Calendar, Clock, MapPin, Share2 } from "lucide-react";
 import { FiEye } from "react-icons/fi";
 
 const getInitials = (title) => {
-  if (!title) return "";
-  const w = title.split(" ");
-  return (w[0][0] + (w[1]?.[0] || "")).toUpperCase();
+  if (!title || typeof title !== "string") return "";
+  const w = title.trim().split(" ");
+  return ((w[0]?.[0] || "") + (w[1]?.[0] || "")).toUpperCase();
 };
 
 export default function ServiceFullDetailScreen() {
@@ -44,7 +44,7 @@ export default function ServiceFullDetailScreen() {
         description: data.description || "",
         budgetFrom: data.budget_from ?? 0,
         budgetTo: data.budget_to ?? 0,
-        skills: data.skills || [],
+        skills: Array.isArray(data.skills) ? data.skills : (typeof data.skills === "string" ? data.skills.split(",").map(s => s.trim()) : []),
         createdAt: data.createdAt?.toDate?.() || new Date(),
         userId: data.userId,
       });

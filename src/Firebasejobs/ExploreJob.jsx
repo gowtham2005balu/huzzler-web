@@ -26,7 +26,7 @@ const formatAmount = (amount) => {
 const timeAgo = (date) => {
   if (!date) return "";
 
-  const diff = (new Date() - date) / 1000; // seconds
+  const diff = Math.abs(new Date() - date) / 1000; // seconds
   if (diff < 60) return "just now";
   if (diff < 3600) return Math.floor(diff / 60) + " min ago";
   if (diff < 86400) return Math.floor(diff / 3600) + " hr ago";
