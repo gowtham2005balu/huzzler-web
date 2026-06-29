@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Huzzler SEO Meta Tags Reference</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.wrap { padding: 1.5rem 0; }
+.page-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+.tab { padding: 6px 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 13px; cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); transition: all 0.15s; }
+.tab.active { background: #6B5CE7; color: #fff; border-color: #6B5CE7; }
+.section { margin-bottom: 1.5rem; }
+.section-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.code-block { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; font-size: 12px; font-family: var(--font-mono); line-height: 1.8; overflow-x: auto; white-space: pre; color: var(--color-text-primary); position: relative; }
+.copy-btn { position: absolute; top: 8px; right: 8px; padding: 4px 10px; font-size: 11px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-secondary); cursor: pointer; }
+.copy-btn:hover { background: var(--color-background-secondary); }
+.badge { display: inline-block; padding: 2px 8px; border-radius: var(--border-radius-md); font-size: 11px; font-weight: 500; margin-left: 6px; }
+.badge-green { background: #EAF3DE; color: #3B6D11; }
+.badge-purple { background: #EEEDFE; color: #3C3489; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+.tag-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.tag-row:last-child { border-bottom: none; }
+.tag-name { font-size: 12px; font-family: var(--font-mono); color: #6B5CE7; min-width: 140px; flex-shrink: 0; margin-top: 2px; }
+.tag-val { font-size: 13px; color: var(--color-text-primary); line-height: 1.5; }
+.tag-note { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+.page-content { display: none; }
+.page-content.active { display: block; }
+.slug-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 14px; font-family: var(--font-mono); font-size: 13px; color: #6B5CE7; margin-bottom: 1rem; }
+.test-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); align-items: flex-start; }
+.test-item:last-child { border-bottom: none; }
+.test-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+.test-pass { background: #EAF3DE; color: #3B6D11; }
+.test-warn { background: #FAEEDA; color: #854F0B; }
+.test-label { font-size: 13px; color: var(--color-text-primary); }
+.test-detail { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.meta-highlight { color: #E24B4A; }
+.meta-attr { color: #3B6D11; }
+.meta-val { color: #185FA5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2 style="sr-only">Huzzler SEO Meta Tags Reference</h2>
+  
+  <div style="margin-bottom: 1.5rem;">
+    <h3>Huzzler — SEO Meta Tags, Slugs & Alt Text Tests</h3>
+    <p style="font-size: 13px; color: var(--color-text-secondary); margin-top: 4px;">Select a page to view its complete SEO configuration</p>
+  </div>
+
+  <div class="page-tabs">
+    <button class="tab active" onclick="showPage('home')">Home</button>
+    <button class="tab" onclick="showPage('graphics')">Graphics & Design</button>
+    <button class="tab" onclick="showPage('writing')">Writing & Translation</button>
+    <button class="tab" onclick="showPage('music')">Music & Audio</button>
+    <button class="tab" onclick="showPage('ai')">AI Services</button>
+    <button class="tab" onclick="showPage('data')">Data</button>
+    <button class="tab" onclick="showPage('growth')">Personal Growth</button>
+    <button class="tab" onclick="showPage('finance')">Finance</button>
+    <button class="tab" onclick="showPage('digital')">Digital Marketing</button>
+    <button class="tab" onclick="showPage('video')">Video & Animation</button>
+    <button class="tab" onclick="showPage('programming')">Programming & Tech</button>
+    <button class="tab" onclick="showPage('consulting')">Consulting</button>
+    <button class="tab" onclick="showPage('business')">Business</button>
+    <button class="tab" onclick="showPage('photography')">Photography</button>
+    <button class="tab" onclick="showPage('about')">About</button>
+    <button class="tab" onclick="showPage('careers')">Careers</button>
+    <button class="tab" onclick="showPage('casestudies')">Case Studies</button>
+    <button class="tab" onclick="showPage('tos')">Terms of Service</button>
+    <button class="tab" onclick="showPage('privacy')">Privacy Policy</button>
+    <button class="tab" onclick="showPage('help')">Help Center</button>
+  </div>
+
+  <div id="home" class="page-content active">
+    <div class="section">
+      <div class="section-title">Slug</div>
+      <div class="slug-box">https://huzzler.com/</div>
+    </div>
+    <div class="section">
+      <div class="section-title">Meta tags — paste inside &lt;head&gt;</div>
+      <div class="code-block" id="code-home"><button class="copy-btn" onclick="copyCode('code-home')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Huzzler — Hire Freelancers &amp; Find Work, Powered by AI<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span>
+      <span class="meta-attr">content</span>=<span class="meta-val">"Huzzler connects clients with top freelancers across design, tech, marketing &amp; more. Post a project or build your profile — with AI-powered matching to help you move faster."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"keywords"</span>
+      <span class="meta-attr">content</span>=<span class="meta-val">"freelance marketplace, hire freelancers, AI freelance platform, find freelance work, freelancer profiles"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Huzzler — Hire Freelancers &amp; Find Work, Powered by AI"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"AI-powered freelance marketplace. Connect with clients and freelancers across every skill category."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:type"</span> <span class="meta-attr">content</span>=<span class="meta-val">"website"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"twitter:card"</span> <span class="meta-attr">content</span>=<span class="meta-val">"summary_large_image"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"twitter:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Huzzler — Hire Freelancers &amp; Find Work, Powered by AI"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"twitter:description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"AI-powered freelance marketplace. Connect with clients and freelancers across every skill category."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/"</span><span class="meta-highlight">&gt;</span></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Logo</div><div><div class="tag-val">alt="Huzzler logo — AI freelance marketplace"</div><div class="tag-note">Describes brand + context, not just "logo"</div></div></div>
+      <div class="tag-row"><div class="tag-name">Hero image</div><div><div class="tag-val">alt="Freelancer working on a laptop, connected to clients on Huzzler"</div><div class="tag-note">Describe the scene; avoid generic "hero image"</div></div></div>
+      <div class="tag-row"><div class="tag-name">AI feature icon</div><div><div class="tag-val">alt="AI-powered matching icon for Huzzler freelance search"</div><div class="tag-note">Decorative icons can use alt="" if labelled elsewhere</div></div></div>
+      <div class="tag-row"><div class="tag-name">Category thumbnails</div><div><div class="tag-val">alt="Graphics &amp; Design category on Huzzler"</div><div class="tag-note">Each thumbnail should name its specific category</div></div></div>
+    </div>
+  </div>
+
+  <div id="graphics" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/graphics-design</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-graphics"><button class="copy-btn" onclick="copyCode('code-graphics')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Graphics &amp; Design Freelancers | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire expert graphic designers on Huzzler. Browse logo design, brand identity, illustration &amp; UI/UX freelancers — matched smarter with AI."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Graphics &amp; Design Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/graphics-design"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/graphics-design"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Graphics and design freelancers category banner on Huzzler"</div></div></div>
+      <div class="tag-row"><div class="tag-name">Freelancer card photo</div><div><div class="tag-val">alt="Profile photo of [Name], graphic designer on Huzzler"</div><div class="tag-note">Populate dynamically with freelancer name</div></div></div>
+      <div class="tag-row"><div class="tag-name">Portfolio preview</div><div><div class="tag-val">alt="Logo design portfolio sample by [Freelancer Name]"</div></div></div>
+    </div>
+  </div>
+
+  <div id="writing" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/writing-translation</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-writing"><button class="copy-btn" onclick="copyCode('code-writing')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Writing &amp; Translation Freelancers | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Find skilled writers, editors &amp; translators on Huzzler. From blog posts to multilingual content — hire the right freelancer with AI-powered matching."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Writing &amp; Translation Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/writing-translation"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/writing-translation"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Writing and translation freelancers category on Huzzler"</div></div></div>
+      <div class="tag-row"><div class="tag-name">Language icons</div><div><div class="tag-val">alt="[Language name] translation services on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="music" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/music-audio</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-music"><button class="copy-btn" onclick="copyCode('code-music')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Music &amp; Audio Freelancers | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire music producers, voice-over artists &amp; audio engineers on Huzzler. AI-matched audio freelancers for podcasts, ads, games &amp; more."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Music &amp; Audio Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/music-audio"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/music-audio"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Music and audio freelancers category on Huzzler"</div></div></div>
+      <div class="tag-row"><div class="tag-name">Waveform graphic</div><div><div class="tag-val">alt="Audio waveform representing music production services on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="ai" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/ai-services</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-ai"><button class="copy-btn" onclick="copyCode('code-ai')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>AI Services Freelancers | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire AI freelancers on Huzzler — prompt engineers, AI trainers, chatbot builders &amp; automation experts. Find AI talent faster with our built-in AI matching."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"AI Services Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/ai-services"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/ai-services"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="AI services freelancers category on Huzzler"</div></div></div>
+      <div class="tag-row"><div class="tag-name">AI illustration</div><div><div class="tag-val">alt="Illustration of AI-powered freelance matching on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="data" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/data</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-data"><button class="copy-btn" onclick="copyCode('code-data')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Data Freelancers — Analytics &amp; Data Science | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire data analysts, scientists &amp; engineers on Huzzler. Get insights from your data faster with AI-matched freelancers skilled in SQL, Python, dashboards &amp; more."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Data Freelancers — Analytics &amp; Data Science | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/data"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/data"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Data and analytics freelancers category on Huzzler"</div></div></div>
+      <div class="tag-row"><div class="tag-name">Chart/graph graphic</div><div><div class="tag-val">alt="Bar chart representing data analysis services available on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="growth" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/personal-growth-hobbies</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-growth"><button class="copy-btn" onclick="copyCode('code-growth')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Personal Growth &amp; Hobbies Freelancers | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Find life coaches, fitness trainers, tutors &amp; hobby instructors on Huzzler. Hire freelancers to help you grow personally, professionally &amp; creatively."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Personal Growth &amp; Hobbies Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/personal-growth-hobbies"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/personal-growth-hobbies"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Personal growth and hobbies freelancers on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="finance" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/finance</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-finance"><button class="copy-btn" onclick="copyCode('code-finance')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Finance Freelancers — Accounting, CFO &amp; More | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire finance freelancers on Huzzler — accountants, bookkeepers, fractional CFOs &amp; financial analysts. AI-matched talent for your business finance needs."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Finance Freelancers — Accounting, CFO &amp; More | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/finance"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/finance"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Finance freelancers — accounting and CFO services on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="digital" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/digital-marketing</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-digital"><button class="copy-btn" onclick="copyCode('code-digital')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Digital Marketing Freelancers — SEO, Ads &amp; Social | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire digital marketing freelancers on Huzzler. SEO experts, PPC specialists, social media managers &amp; content strategists — AI-matched to your campaign goals."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Digital Marketing Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/digital-marketing"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/digital-marketing"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Digital marketing freelancers — SEO and ads specialists on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="video" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/video-animation</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-video"><button class="copy-btn" onclick="copyCode('code-video')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Video &amp; Animation Freelancers | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire video editors, motion designers &amp; animators on Huzzler. From explainer videos to brand reels — find the right creative talent with AI-powered matching."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Video &amp; Animation Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/video-animation"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/video-animation"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Video and animation freelancers category on Huzzler"</div></div></div>
+      <div class="tag-row"><div class="tag-name">Portfolio thumbnail</div><div><div class="tag-val">alt="Animation reel thumbnail by [Freelancer Name] on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="programming" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/programming-tech</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-programming"><button class="copy-btn" onclick="copyCode('code-programming')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Programming &amp; Tech Freelancers | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Find developers, engineers &amp; tech freelancers on Huzzler. Web dev, mobile apps, APIs, DevOps &amp; more — AI-matched to your stack and timeline."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Programming &amp; Tech Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/programming-tech"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/programming-tech"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Programming and tech freelancers category on Huzzler"</div></div></div>
+      <div class="tag-row"><div class="tag-name">Code screenshot</div><div><div class="tag-val">alt="Code editor screenshot showing a developer's work sample on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="consulting" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/consulting</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-consulting"><button class="copy-btn" onclick="copyCode('code-consulting')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Consulting Freelancers — Strategy &amp; Advisory | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire business consultants &amp; strategy advisors on Huzzler. Fractional executives, startup advisors, operations experts — AI-matched for your growth stage."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Consulting Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/consulting"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/consulting"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Business consulting and strategy freelancers on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="business" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/business</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-business"><button class="copy-btn" onclick="copyCode('code-business')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Business Freelancers — Admin, Ops &amp; More | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire business freelancers on Huzzler — virtual assistants, project managers, HR specialists &amp; operations support. Find the right help, matched by AI."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Business Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/business"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/business"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Business freelancers — admin, ops and support on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="photography" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/category/photography</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-photography"><button class="copy-btn" onclick="copyCode('code-photography')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Photography Freelancers — Portrait, Product &amp; Event | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Hire professional photographers on Huzzler. Portrait, product, event, real estate &amp; commercial photography — AI-matched to your shoot requirements."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Photography Freelancers | Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/category/photography"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/category/photography"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Banner</div><div><div class="tag-val">alt="Photography freelancers — portrait, product and event photographers on Huzzler"</div></div></div>
+      <div class="tag-row"><div class="tag-name">Portfolio photo</div><div><div class="tag-val">alt="Product photography sample by [Freelancer Name] on Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="about" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/about</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-about"><button class="copy-btn" onclick="copyCode('code-about')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>About Huzzler — Our Mission &amp; Story<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Huzzler is on a mission to make freelancing better — for everyone. Learn how we're using AI to connect clients with the right freelancers, faster and more fairly."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"About Huzzler — Our Mission &amp; Story"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/about"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/about"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Team photo</div><div><div class="tag-val">alt="Huzzler team members collaborating in the office"</div></div></div>
+      <div class="tag-row"><div class="tag-name">Founder headshot</div><div><div class="tag-val">alt="[Founder Name], Co-founder of Huzzler"</div></div></div>
+    </div>
+  </div>
+
+  <div id="careers" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/careers</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-careers"><button class="copy-btn" onclick="copyCode('code-careers')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Careers at Huzzler — Join Our Team<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Join the Huzzler team and help shape the future of freelancing. Explore open roles in engineering, design, product &amp; more at our AI-powered marketplace."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Careers at Huzzler — Join Our Team"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/careers"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/careers"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Office / culture photo</div><div><div class="tag-val">alt="Huzzler team culture — people collaborating at work"</div></div></div>
+    </div>
+  </div>
+
+  <div id="casestudies" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/case-studies</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-casestudies"><button class="copy-btn" onclick="copyCode('code-casestudies')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Case Studies — Real Results with Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"See how clients and freelancers achieve real results on Huzzler. Read success stories across design, tech, marketing &amp; more — powered by AI matching."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Case Studies — Real Results with Huzzler"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://huzzler.com/case-studies"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/case-studies"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">Case study thumbnail</div><div><div class="tag-val">alt="Case study: [Client Name] achieved [result] using Huzzler"</div><div class="tag-note">Be specific — use the actual client and result</div></div></div>
+      <div class="tag-row"><div class="tag-name">Client logo</div><div><div class="tag-val">alt="[Company Name] logo — Huzzler client"</div></div></div>
+    </div>
+  </div>
+
+  <div id="tos" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/terms-of-service</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-tos"><button class="copy-btn" onclick="copyCode('code-tos')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Terms of Service | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Read Huzzler's Terms of Service. Understand the rules, rights &amp; responsibilities for freelancers and clients using our AI-powered freelance marketplace."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"robots"</span> <span class="meta-attr">content</span>=<span class="meta-val">"noindex, follow"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/terms-of-service"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div style="background: #FAEEDA; border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 12px; color: #854F0B; margin-bottom: 1rem;">
+      <strong>Note:</strong> Legal pages (ToS, Privacy) typically use <code>noindex</code> so they don't compete with your core pages in search results. Remove if you prefer them indexed.
+    </div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">No images expected</div><div><div class="tag-val">If any icons are used, alt="" is fine (decorative)</div></div></div>
+    </div>
+  </div>
+
+  <div id="privacy" class="page-content">
+    <div class="section"><div class="section-title">Slug</div><div class="slug-box">https://huzzler.com/privacy-policy</div></div>
+    <div class="section"><div class="section-title">Meta tags</div><div class="code-block" id="code-privacy"><button class="copy-btn" onclick="copyCode('code-privacy')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Privacy Policy | Huzzler<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Huzzler's Privacy Policy explains how we collect, use &amp; protect your data on our AI-powered freelance marketplace. Your privacy matters to us."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"robots"</span> <span class="meta-attr">content</span>=<span class="meta-val">"noindex, follow"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/privacy-policy"</span><span class="meta-highlight">&gt;</span></div></div>
+    <div class="section"><div class="section-title">Alt text tests</div>
+      <div class="tag-row"><div class="tag-name">No images expected</div><div><div class="tag-val">If any icons are used, alt="" is fine (decorative)</div></div></div>
+    </div>
+  </div>
+
+  <div id="help" class="page-content">
+    <div class="section">
+      <div class="section-title">Slug</div>
+      <div class="slug-box">https://help.huzzler.com/</div>
+    </div>
+    <div class="section">
+      <div class="section-title">Meta tags</div>
+      <div class="code-block" id="code-help"><button class="copy-btn" onclick="copyCode('code-help')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>Huzzler Help Center — Guides, FAQs &amp; Support<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Browse Huzzler's help guides for freelancers and clients. Get answers fast."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:url"</span> <span class="meta-attr">content</span>=<span class="meta-val">"https://help.huzzler.com/"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">property</span>=<span class="meta-val">"og:type"</span> <span class="meta-attr">content</span>=<span class="meta-val">"website"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"twitter:card"</span> <span class="meta-attr">content</span>=<span class="meta-val">"summary"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"twitter:title"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Huzzler Help Center — Guides, FAQs &amp; Support"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"twitter:description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Browse Huzzler's help guides for freelancers and clients. Get answers fast."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"robots"</span> <span class="meta-attr">content</span>=<span class="meta-val">"index, follow"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://help.huzzler.com/"</span><span class="meta-highlight">&gt;</span></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Meta tags — individual help article (template)</div>
+      <div class="code-block" id="code-helparticle"><button class="copy-btn" onclick="copyCode('code-helparticle')">Copy</button><span class="meta-highlight">&lt;title&gt;</span>How to [Do X] on Huzzler | Help Center<span class="meta-highlight">&lt;/title&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span>
+      <span class="meta-attr">content</span>=<span class="meta-val">"Step-by-step guide to [doing X] on Huzzler. Learn how to [brief outcome] in just a few minutes."</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"robots"</span> <span class="meta-attr">content</span>=<span class="meta-val">"index, follow"</span><span class="meta-highlight">&gt;</span>
+<span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://help.huzzler.com/articles/[article-slug]"</span><span class="meta-highlight">&gt;</span></div>
+      <div class="tag-note" style="margin-top: 8px;">Example slug: <code>help.huzzler.com/articles/how-to-set-up-your-freelancer-profile</code></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Alt text tests</div>
+      <div class="tag-row">
+        <div class="tag-name">Category icons</div>
+        <div><div class="tag-val">alt="" (decorative — category name is the visible label below)</div></div>
+      </div>
+      <div class="tag-row">
+        <div class="tag-name">Article screenshot</div>
+        <div><div class="tag-val">alt="Screenshot showing the [feature name] settings screen on Huzzler"</div><div class="tag-note">Be specific about what part of the UI is shown</div></div>
+      </div>
+      <div class="tag-row">
+        <div class="tag-name">Step-by-step images</div>
+        <div><div class="tag-val">alt="Step [N]: [What is happening in this step] on Huzzler"</div><div class="tag-note">Numbered steps in alt text help screen reader users follow along</div></div>
+      </div>
+      <div class="tag-row">
+        <div class="tag-name">Search bar illustration</div>
+        <div><div class="tag-val">alt="Search the Huzzler Help Center for answers"</div></div>
+      </div>
+    </div>
+    <div class="notice notice-blue" style="background: #EAF3DE; border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 12px; color: #3B6D11; margin-bottom: 1rem;">
+      <strong>Help articles are high-value SEO pages.</strong> Each article should target a specific question (e.g. "how to withdraw earnings on Huzzler"). Use <code>FAQPage</code> JSON-LD schema on FAQ-style articles to get Google rich results (accordion snippets in search).
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+function copyCode(id) {
+  const el = document.getElementById(id);
+  const text = el.innerText.replace('Copy', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = el.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+</script>
+</body>
+</html>
