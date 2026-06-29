@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firbase/Firebase"; // 👉 adjust path to your firebase file
 import backarrow from "../assets/backarrow.png";
+import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
 // --------------------------------------------------

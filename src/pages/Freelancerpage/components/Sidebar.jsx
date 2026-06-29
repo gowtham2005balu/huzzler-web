@@ -343,7 +343,7 @@ export default function FreelanceSideBar() {
           {!collapsed && (
             <div className="hz-user-info">
               <p className="hz-user-name">
-                {userInfo.company_name || `${userInfo.first_name || "Freelancer"} ${userInfo.last_name || ""}`.trim()}
+                {`${userInfo.first_name || "Freelancer"} ${userInfo.last_name || ""}`.trim()}
               </p>
               <p className="hz-user-role">{userInfo.role || "UI/UX Designer"}</p>
             </div>

@@ -145,7 +145,7 @@ export default function FreelanceHome() {
       }
 
       let jobsFormatted = computed.count >= 1000 ? (computed.count / 1000).toFixed(1) + "K" : computed.count + (def.isTop ? "" : " projects");
-      
+
       const maxCount = sortedSkills[0]?.count || 1;
       const percentage = Math.round((computed.count / maxCount) * 100);
       const demand = `+${percentage}%`;
@@ -340,7 +340,7 @@ export default function FreelanceHome() {
         unsubSnapshot = onSnapshot(userRef, (snap) => {
           let data = {};
           if (snap.exists()) data = snap.data();
-          
+
           const hasValidData = data.firstName || data.first_name || data.firstname || data.role || data.professional_title;
 
           if (snap.exists() && hasValidData) {
@@ -348,7 +348,7 @@ export default function FreelanceHome() {
             try {
               const stored = localStorage.getItem("freelancerOtpUser") || localStorage.getItem("clientOtpUser");
               if (stored) localData = JSON.parse(stored);
-            } catch (e) {}
+            } catch (e) { }
 
             const authDisplayName = currentUser.displayName || "";
             const authFirst = authDisplayName.split(" ")[0] || "";
@@ -366,12 +366,12 @@ export default function FreelanceHome() {
             unsubSnapshot2 = onSnapshot(freelancerRef, (fSnap) => {
               if (fSnap.exists()) {
                 const fData = fSnap.data();
-                
+
                 let localData = {};
                 try {
                   const stored = localStorage.getItem("freelancerOtpUser") || localStorage.getItem("clientOtpUser");
                   if (stored) localData = JSON.parse(stored);
-                } catch (e) {}
+                } catch (e) { }
 
                 const authDisplayName = currentUser.displayName || "";
                 const authFirst = authDisplayName.split(" ")[0] || "";
@@ -525,7 +525,7 @@ export default function FreelanceHome() {
     const lName = client?.last_name || client?.lastName || "";
     const fullName = fName ? `${fName} ${lName}`.trim() : "";
     const nameStr = client?.Company_name || client?.companyName || job.company_name || job.company || job.companyName || job.clientName || fullName;
-    
+
     if (!nameStr || nameStr.trim() === "") return false;
 
     const txt = searchText.toLowerCase();
@@ -545,15 +545,15 @@ export default function FreelanceHome() {
 
   const filteredTopRecJobs = topRecJobs.filter((job) => {
     if (blockedUserIds.includes(job.userId)) return false;
-    
+
     const client = userMap?.[job.userId];
     const fName = client?.first_name || client?.firstName || client?.name || client?.displayName || "";
     const lName = client?.last_name || client?.lastName || "";
     const fullName = fName ? `${fName} ${lName}`.trim() : "";
     const nameStr = client?.Company_name || client?.companyName || job.company_name || job.company || job.companyName || job.clientName || fullName;
-    
+
     if (!nameStr || nameStr.trim() === "") return false;
-    
+
     return true;
   });
   const displayTopRecJob = filteredTopRecJobs.length > 0 ? filteredTopRecJobs[0] : null;
@@ -653,9 +653,9 @@ export default function FreelanceHome() {
 
               <div style={{ flex: 1, display: "flex", justifyContent: "flex-start", padding: "0 24px" }}>
                 <div style={{ position: "relative", width: "100%", maxWidth: "500px", height: "38px" }}>
-                  <FiSearch 
-                    style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#757575", strokeWidth: "2", cursor: "pointer", zIndex: 10 }} 
-                    size={16} 
+                  <FiSearch
+                    style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#757575", strokeWidth: "2", cursor: "pointer", zIndex: 10 }}
+                    size={16}
                     onClick={() => {
                       if (searchText.trim()) {
                         navigate("/freelance-dashboard/browse-projects", { state: { searchQuery: searchText.trim() } });
@@ -719,7 +719,7 @@ export default function FreelanceHome() {
               >
                 <FiChevronLeft size={16} color="#6C3EEB" />
               </button>
-              
+
               <button
                 onClick={() => {
                   if (categoryScrollRef.current) {
@@ -747,88 +747,88 @@ export default function FreelanceHome() {
                         setShowMegaMenu(true);
                       }
                     }}
+                    style={{
+                      color: activeMegaCategoryIndex === idx && showMegaMenu ? "#6C3EEB" : "#8C84A8",
+                      borderBottom: activeMegaCategoryIndex === idx && showMegaMenu ? "2px solid #6C3EEB" : "2px solid transparent",
+                      paddingBottom: "12px",
+                      marginBottom: "-1px",
+                      whiteSpace: "nowrap",
+                      cursor: "pointer",
+                      transition: "all 0.2s"
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      {getCategoryIcon(cat.title)} {cat.title}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* MEGAMENU DROPDOWN */}
+              {showMegaMenu && categoriesData[activeMegaCategoryIndex] && (
+                <div
                   style={{
-                    color: activeMegaCategoryIndex === idx && showMegaMenu ? "#6C3EEB" : "#8C84A8",
-                    borderBottom: activeMegaCategoryIndex === idx && showMegaMenu ? "2px solid #6C3EEB" : "2px solid transparent",
-                    paddingBottom: "12px",
-                    marginBottom: "-1px",
-                    whiteSpace: "nowrap",
-                    cursor: "pointer",
-                    transition: "all 0.2s"
+                    position: "absolute",
+                    top: "calc(100% - 24px)",
+                    left: 0,
+                    width: "100%",
+                    background: "white",
+                    border: "1px solid #E8E6F0",
+                    borderTop: "none",
+                    boxShadow: "0px 12px 32px rgba(108, 62, 235, 0.08)",
+                    borderRadius: "0 0 16px 16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden",
+                    zIndex: 100
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                    {getCategoryIcon(cat.title)} {cat.title}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* MEGAMENU DROPDOWN */}
-            {showMegaMenu && categoriesData[activeMegaCategoryIndex] && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "calc(100% - 24px)",
-                  left: 0,
-                  width: "100%",
-                  background: "white",
-                  border: "1px solid #E8E6F0",
-                  borderTop: "none",
-                  boxShadow: "0px 12px 32px rgba(108, 62, 235, 0.08)",
-                  borderRadius: "0 0 16px 16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  overflow: "hidden",
-                  zIndex: 100
-                }}
-              >
-                {/* Top Pill Tags */}
-                <div style={{ padding: "16px 32px", background: "#FDFCFE", borderBottom: "1px solid #E8E6F0", display: "flex", gap: "12px", alignItems: "center" }}>
-                  <div style={{ padding: "8px 16px", borderRadius: "50px", border: "1px solid #EBE5F2", background: "white", fontSize: "12px", color: "#8C84A8", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={(e) => e.target.style.borderColor = "#6C3EEB"} onMouseLeave={(e) => e.target.style.borderColor = "#EBE5F2"}>
-                    Trending: {categoriesData[activeMegaCategoryIndex]?.sections[0]?.items[0] || "Services"}
-                  </div>
-                  <div style={{ padding: "8px 16px", borderRadius: "50px", border: "1px solid #EBE5F2", background: "white", fontSize: "12px", color: "#8C84A8", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={(e) => e.target.style.borderColor = "#6C3EEB"} onMouseLeave={(e) => e.target.style.borderColor = "#EBE5F2"}>
-                    Most Hired: {categoriesData[activeMegaCategoryIndex]?.title} Experts
-                  </div>
-                  <div style={{ padding: "8px 16px", borderRadius: "50px", border: "1px solid #EBE5F2", background: "white", fontSize: "12px", color: "#8C84A8", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={(e) => e.target.style.borderColor = "#6C3EEB"} onMouseLeave={(e) => e.target.style.borderColor = "#EBE5F2"}>
-                    New: Top Rated
-                  </div>
-
-                  <div style={{ flex: 1 }} />
-                  <button onClick={() => setShowMegaMenu(false)} style={{ background: "transparent", border: "none", color: "#A39DBA", cursor: "pointer", fontSize: "13px", fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>Close Menu ✕</button>
-                </div>
-
-                {/* Columns */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "32px", padding: "24px 32px", maxHeight: "60vh", overflowY: "auto" }}>
-                  {categoriesData[activeMegaCategoryIndex]?.sections.map((section, sidx) => (
-                    <div key={sidx} style={{ minWidth: 0 }}>
-                      <h4 style={{ fontSize: "11px", fontWeight: 700, color: "#A39DBA", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "16px", fontFamily: "'Sora', sans-serif" }}>
-                        {section.title}
-                      </h4>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                        {section.items.map((item, iidx) => (
-                          <div 
-                            key={iidx} 
-                            onClick={() => {
-                              navigate("/freelance-dashboard/browse-projects", {
-                                state: {
-                                  category: categoriesData[activeMegaCategoryIndex].title,
-                                  skill: item
-                                }
-                              });
-                            }}
-                            style={{ display: "flex", alignItems: "center", gap: "8px", color: "#4A4A68", fontWeight: 500, fontSize: "14px", fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}
-                          >
-                            {item}
-                          </div>
-                        ))}
-                      </div>
+                  {/* Top Pill Tags */}
+                  <div style={{ padding: "16px 32px", background: "#FDFCFE", borderBottom: "1px solid #E8E6F0", display: "flex", gap: "12px", alignItems: "center" }}>
+                    <div style={{ padding: "8px 16px", borderRadius: "50px", border: "1px solid #EBE5F2", background: "white", fontSize: "12px", color: "#8C84A8", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={(e) => e.target.style.borderColor = "#6C3EEB"} onMouseLeave={(e) => e.target.style.borderColor = "#EBE5F2"}>
+                      Trending: {categoriesData[activeMegaCategoryIndex]?.sections[0]?.items[0] || "Services"}
                     </div>
-                  ))}
+                    <div style={{ padding: "8px 16px", borderRadius: "50px", border: "1px solid #EBE5F2", background: "white", fontSize: "12px", color: "#8C84A8", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={(e) => e.target.style.borderColor = "#6C3EEB"} onMouseLeave={(e) => e.target.style.borderColor = "#EBE5F2"}>
+                      Most Hired: {categoriesData[activeMegaCategoryIndex]?.title} Experts
+                    </div>
+                    <div style={{ padding: "8px 16px", borderRadius: "50px", border: "1px solid #EBE5F2", background: "white", fontSize: "12px", color: "#8C84A8", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={(e) => e.target.style.borderColor = "#6C3EEB"} onMouseLeave={(e) => e.target.style.borderColor = "#EBE5F2"}>
+                      New: Top Rated
+                    </div>
+
+                    <div style={{ flex: 1 }} />
+                    <button onClick={() => setShowMegaMenu(false)} style={{ background: "transparent", border: "none", color: "#A39DBA", cursor: "pointer", fontSize: "13px", fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>Close Menu ✕</button>
+                  </div>
+
+                  {/* Columns */}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "32px", padding: "24px 32px", maxHeight: "60vh", overflowY: "auto" }}>
+                    {categoriesData[activeMegaCategoryIndex]?.sections.map((section, sidx) => (
+                      <div key={sidx} style={{ minWidth: 0 }}>
+                        <h4 style={{ fontSize: "11px", fontWeight: 700, color: "#A39DBA", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "16px", fontFamily: "'Sora', sans-serif" }}>
+                          {section.title}
+                        </h4>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                          {section.items.map((item, iidx) => (
+                            <div
+                              key={iidx}
+                              onClick={() => {
+                                navigate("/freelance-dashboard/browse-projects", {
+                                  state: {
+                                    category: categoriesData[activeMegaCategoryIndex].title,
+                                    skill: item
+                                  }
+                                });
+                              }}
+                              style={{ display: "flex", alignItems: "center", gap: "8px", color: "#4A4A68", fontWeight: 500, fontSize: "14px", fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}
+                            >
+                              {item}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             </div>
           </div>
 
@@ -1257,7 +1257,7 @@ export default function FreelanceHome() {
                 if (!companyName || companyName.trim().toLowerCase() === "unknown") {
                   companyName = fullName;
                 }
-                
+
                 // Use project title for initials
                 const initials = job.title ? job.title.substring(0, 1).toUpperCase() : "P";
 
