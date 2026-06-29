@@ -111,7 +111,13 @@ export default function TopNavbar({
         </div>
 
         <div
-          onClick={() => navigate("/freelance-dashboard/accountfreelancer")}
+          onClick={() => {
+            if (window.location.pathname === "/freelance-dashboard/accountfreelancer") {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              navigate("/freelance-dashboard/accountfreelancer");
+            }
+          }}
           style={{
             width: "40px",
             height: "40px",

@@ -638,7 +638,7 @@
 //       </aside>
 
 //       {/* 🔥 SAME CSS AS FREELANCER */}
-     
+
 //       {/* CSS */}
 //       <style>{`
 //      .hz-sidebar {
@@ -821,9 +821,9 @@
 // .hz-user-role {
 //   font-size: 12px;
 //   color: #666;
- 
+
 //   margin-top:-4px;
- 
+
 // }
 
 // /* MOBILE TOPBAR */
@@ -866,7 +866,7 @@
 
 //   .mobile-logo {
 //     width: 45px;
-  
+
 //   }
 
 //   .mobile-menu-btn {
@@ -887,7 +887,7 @@
 //   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 //   margin-top: 30px;
 //   margin-bottom: 40px;
- 
+
 // }
 
 // }
@@ -929,7 +929,9 @@ import {
   Menu,
   X,
   LogOut,
-  MoreVertical
+  MoreVertical,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 
 import { useNavigate, useLocation } from "react-router-dom";
@@ -954,10 +956,10 @@ export default function ClientSidebar() {
   });
 
   // Real-time tab counters
-  const [unreadMessages, setUnreadMessages]           = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const [listingsCount, setListingsCount]             = useState(0);
-  const [applicantsCount, setApplicantsCount]         = useState(0);
+  const [listingsCount, setListingsCount] = useState(0);
+  const [applicantsCount, setApplicantsCount] = useState(0);
 
   useEffect(() => {
     let unsubSnapshot;
@@ -969,7 +971,7 @@ export default function ClientSidebar() {
       unsubSnapshot = onSnapshot(userRef, (snap) => {
         let data = {};
         if (snap.exists()) data = snap.data();
-        
+
         const hasValidData = data.Company_name || data.companyName || data.first_name || data.name || data.firstName;
 
         if (snap.exists() && hasValidData) {
@@ -977,7 +979,7 @@ export default function ClientSidebar() {
           try {
             const stored = localStorage.getItem("clientOtpUser") || localStorage.getItem("freelancerOtpUser");
             if (stored) localData = JSON.parse(stored);
-          } catch (e) {}
+          } catch (e) { }
 
           const authDisplayName = currentUser.displayName || "";
           const authFirst = authDisplayName.split(" ")[0] || "";
@@ -998,7 +1000,7 @@ export default function ClientSidebar() {
               try {
                 const stored = localStorage.getItem("clientOtpUser") || localStorage.getItem("freelancerOtpUser");
                 if (stored) localData = JSON.parse(stored);
-              } catch (e) {}
+              } catch (e) { }
 
               const authDisplayName = currentUser.displayName || "";
               const authFirst = authDisplayName.split(" ")[0] || "";
@@ -1167,10 +1169,14 @@ export default function ClientSidebar() {
 
       {/* SIDEBAR */}
       <aside
-        className={`hz-sidebar ${collapsed ? "collapsed" : ""} ${
-          mobileOpen ? "mobile-show" : ""
-        }`}
+        className={`hz-sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-show" : ""
+          }`}
       >
+        {/* Toggle Button */}
+        <button className="hz-collapse-btn" onClick={toggleSidebar}>
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
+
         {/* LOGO */}
         <div className="hz-client-sidebar-header">
           <div className="hz-client-sidebar-logo" style={{ cursor: "pointer" }} onClick={toggleSidebar}>
@@ -1185,7 +1191,7 @@ export default function ClientSidebar() {
 
         {/* SCROLLABLE MENU */}
         <div className="sidebar-scrollable">
-          
+
           {/* MAIN */}
           <div className="sidebar-group">
             {!collapsed && <div className="sidebar-title">MAIN</div>}
@@ -1258,7 +1264,7 @@ export default function ClientSidebar() {
               <User size={18} className="icon" />
               {!collapsed && <span className="btn-text">Talent Profile</span>}
             </button>
-            <button className={`hz-menu-btn`} onClick={() => {}}>
+            <button className={`hz-menu-btn`} onClick={() => { }}>
               <Star size={18} className="icon" />
               {!collapsed && <span className="btn-text">AI Assistant</span>}
             </button>
@@ -1273,7 +1279,7 @@ export default function ClientSidebar() {
           </div>
 
 
-          
+
 
 
         </div>
@@ -1294,7 +1300,7 @@ export default function ClientSidebar() {
           {!collapsed && (
             <div className="hz-user-more" onClick={() => setShowUserMenu(!showUserMenu)}>
               <MoreVertical size={16} />
-              
+
               {showUserMenu && (
                 <div className="hz-user-popup-menu">
                   <button className="hz-popup-btn" onClick={() => handleNav("/client-dashbroad2/settings")}>
@@ -1332,6 +1338,28 @@ export default function ClientSidebar() {
 
         .hz-sidebar.collapsed {
           width: 80px;
+        }
+
+        .hz-collapse-btn {
+          position: absolute;
+          right: -16px;
+          top: 32px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: #ffffff;
+          border: 1px solid #E5E7EB;
+          color: #6B7280;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: 0.2s ease;
+          z-index: 10;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .hz-collapse-btn:hover {
+          background: #F9FAFB;
         }
 
         /* HEADER & LOGO */

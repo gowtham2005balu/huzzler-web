@@ -12,12 +12,12 @@ export default function FloatingAssistantButton() {
         <>
           <button 
             onClick={() => navigate("/freelance-dashboard/aigenerator")}
-            style={{ width: 119, height: 36, background: "#FFFFFF", border: "1px solid #A987FF", boxShadow: "0px 4px 16px rgba(108, 62, 235, 0.15)", borderRadius: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 18px", gap: 6, cursor: "pointer", fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11, color: "#6C3EEB" }}>
+            style={{ width: "max-content", height: 36, background: "#FFFFFF", border: "1px solid #A987FF", boxShadow: "0px 4px 16px rgba(108, 62, 235, 0.15)", borderRadius: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 18px", gap: 6, cursor: "pointer", fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11, color: "#6C3EEB", whiteSpace: "nowrap" }}>
             ✨ AI Assistant
           </button>
           <button 
             onClick={() => navigate("/freelance-dashboard/add-service-form")}
-            style={{ width: 121, height: 34, background: "linear-gradient(106.09deg, #6C3EEB 0%, #7C4EF5 100%)", boxShadow: "0px 4px 20px rgba(108, 62, 235, 0.35)", borderRadius: 50, border: "none", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 18px", gap: 6, cursor: "pointer", fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11, color: "#FFFFFF" }}>
+            style={{ width: "max-content", height: 34, background: "linear-gradient(106.09deg, #6C3EEB 0%, #7C4EF5 100%)", boxShadow: "0px 4px 20px rgba(108, 62, 235, 0.35)", borderRadius: 50, border: "none", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 18px", gap: 6, cursor: "pointer", fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11, color: "#FFFFFF", whiteSpace: "nowrap" }}>
             🚀 Start Project
           </button>
         </>

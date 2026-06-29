@@ -443,11 +443,7 @@ export default function MessagesUI() {
             {requestCount > 0 && <div className="msg-bell-dot">{requestCount}</div>}
           </button>
 
-          <button className="msg-new-service-btn">
-            + New Service
-          </button>
-
-          <div className="msg-avatar-top">
+          <div className="msg-avatar-top" style={{ cursor: "pointer" }} onClick={() => navigate(currentUserRole === 'client' ? '/client-dashbroad2/ClientProfile' : '/freelance-dashboard/accountfreelancer')}>
             {userInfo.profileImage ? (
               <img src={userInfo.profileImage} style={{width:'100%', height:'100%', borderRadius:'50%', objectFit:'cover'}} alt="" />
             ) : (

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Huzzler SEO Meta Tags Reference</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,15 +39,22 @@ h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin
 .meta-highlight { color: #E24B4A; }
 .meta-attr { color: #3B6D11; }
 .meta-val { color: #185FA5; }
+.sr-only { display: none; }
+.intro-section { margin-bottom: 1.5rem; }
+.intro-text { font-size: 13px; color: var(--color-text-secondary); margin-top: 4px; }
+.notice { border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 12px; margin-bottom: 1rem; }
+.notice-amber { background: #FAEEDA; color: #854F0B; }
+.notice-green { background: #EAF3DE; color: #3B6D11; }
+.extra-margin { margin-top: 8px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h2 style="sr-only">Huzzler SEO Meta Tags Reference</h2>
+  <h2 class="sr-only">Huzzler SEO Meta Tags Reference</h2>
   
-  <div style="margin-bottom: 1.5rem;">
+  <div class="intro-section">
     <h3>Huzzler — SEO Meta Tags, Slugs & Alt Text Tests</h3>
-    <p style="font-size: 13px; color: var(--color-text-secondary); margin-top: 4px;">Select a page to view its complete SEO configuration</p>
+    <p class="intro-text">Select a page to view its complete SEO configuration</p>
   </div>
 
   <div class="page-tabs">
@@ -311,7 +319,7 @@ h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin
 <span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"description"</span> <span class="meta-attr">content</span>=<span class="meta-val">"Read Huzzler's Terms of Service. Understand the rules, rights &amp; responsibilities for freelancers and clients using our AI-powered freelance marketplace."</span><span class="meta-highlight">&gt;</span>
 <span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"robots"</span> <span class="meta-attr">content</span>=<span class="meta-val">"noindex, follow"</span><span class="meta-highlight">&gt;</span>
 <span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://huzzler.com/terms-of-service"</span><span class="meta-highlight">&gt;</span></div></div>
-    <div style="background: #FAEEDA; border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 12px; color: #854F0B; margin-bottom: 1rem;">
+    <div class="notice notice-amber">
       <strong>Note:</strong> Legal pages (ToS, Privacy) typically use <code>noindex</code> so they don't compete with your core pages in search results. Remove if you prefer them indexed.
     </div>
     <div class="section"><div class="section-title">Alt text tests</div>
@@ -354,7 +362,7 @@ h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin
       <span class="meta-attr">content</span>=<span class="meta-val">"Step-by-step guide to [doing X] on Huzzler. Learn how to [brief outcome] in just a few minutes."</span><span class="meta-highlight">&gt;</span>
 <span class="meta-highlight">&lt;meta</span> <span class="meta-attr">name</span>=<span class="meta-val">"robots"</span> <span class="meta-attr">content</span>=<span class="meta-val">"index, follow"</span><span class="meta-highlight">&gt;</span>
 <span class="meta-highlight">&lt;link</span> <span class="meta-attr">rel</span>=<span class="meta-val">"canonical"</span> <span class="meta-attr">href</span>=<span class="meta-val">"https://help.huzzler.com/articles/[article-slug]"</span><span class="meta-highlight">&gt;</span></div>
-      <div class="tag-note" style="margin-top: 8px;">Example slug: <code>help.huzzler.com/articles/how-to-set-up-your-freelancer-profile</code></div>
+      <div class="tag-note extra-margin">Example slug: <code>help.huzzler.com/articles/how-to-set-up-your-freelancer-profile</code></div>
     </div>
     <div class="section">
       <div class="section-title">Alt text tests</div>
@@ -375,7 +383,7 @@ h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin
         <div><div class="tag-val">alt="Search the Huzzler Help Center for answers"</div></div>
       </div>
     </div>
-    <div class="notice notice-blue" style="background: #EAF3DE; border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 12px; color: #3B6D11; margin-bottom: 1rem;">
+    <div class="notice notice-green">
       <strong>Help articles are high-value SEO pages.</strong> Each article should target a specific question (e.g. "how to withdraw earnings on Huzzler"). Use <code>FAQPage</code> JSON-LD schema on FAQ-style articles to get Google rich results (accordion snippets in search).
     </div>
   </div>
