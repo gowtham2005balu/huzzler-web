@@ -1,22 +1,24 @@
 import React, { useState } from "react";
 import { FiX } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function FloatingAssistantButton() {
   const [isFabOpen, setIsFabOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isClient = location.pathname.includes("client-dashbroad");
 
   return (
     <div className="floating-btn" style={{ position: "fixed", right: 40, bottom: 40, zIndex: 1000, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
       {isFabOpen && (
         <>
           <button 
-            onClick={() => navigate("/freelance-dashboard/aigenerator")}
+            onClick={() => navigate(isClient ? "/client-dashbroad2/aigenerator" : "/freelance-dashboard/aigenerator")}
             style={{ width: "max-content", height: 36, background: "#FFFFFF", border: "1px solid #A987FF", boxShadow: "0px 4px 16px rgba(108, 62, 235, 0.15)", borderRadius: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 18px", gap: 6, cursor: "pointer", fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11, color: "#6C3EEB", whiteSpace: "nowrap" }}>
             ✨ AI Assistant
           </button>
           <button 
-            onClick={() => navigate("/freelance-dashboard/add-service-form")}
+            onClick={() => navigate(isClient ? "/client-dashbroad2/PostJob" : "/freelance-dashboard/add-service-form")}
             style={{ width: "max-content", height: 34, background: "linear-gradient(106.09deg, #6C3EEB 0%, #7C4EF5 100%)", boxShadow: "0px 4px 20px rgba(108, 62, 235, 0.35)", borderRadius: 50, border: "none", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 18px", gap: 6, cursor: "pointer", fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11, color: "#FFFFFF", whiteSpace: "nowrap" }}>
             🚀 Start Project
           </button>

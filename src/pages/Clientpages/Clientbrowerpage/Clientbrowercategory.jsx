@@ -1691,64 +1691,105 @@ const [notifications, setNotifications] = useState([]);
       >
 
         <div style={styles.page}>
-          {/* HEADER */}
-          {/* HEADER */}
-          <div style={styles.appBarr}>
-
-            <div style={{ marginLeft: isMobile ? "-10px" : "-5px", }}>
-              <h3 style={styles.title1}>
-                {screen === "CATEGORIES" ? "Welcome," : category}
-                <div style={{ fontSize: 20 }}>{userInfo.first_name || "Huzzlers"}</div>
-              </h3>
-
-            </div>
-
-
-            {/* TOP RIGHT ICONS */}
+          {/* BROWSE PROJECT OR SUBCATEGORY HEADER */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              marginBottom: "20px",
+              marginTop: "10px",
+            }}
+          >
+            {/* BACK ARROW */}
             <div
+              onClick={() => {
+                if (screen === "CATEGORIES") {
+                  navigate(-1);
+                } else {
+                  setScreen("CATEGORIES");
+                  setCategory("");
+                  setSubSearch("");
+                }
+              }}
               style={{
-                ...styles.headerIcons,
-                position: isMobile ? "absolute" : "static",
-                top: isMobile ? "-5px" : "auto",
-                right: isMobile ? "-44px" : "auto",
+                width: 36,
+                height: 36,
+                borderRadius: 14,
+                border: "0.8px solid #E0E0E0",
+                backgroundColor: "#FFFFFF",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.06)",
+                flexShrink: 0,
               }}
             >
-
-
-              <img src={message} onClick={() => navigate("/client-dashbroad2/messages")} alt="message" style={{ width: "23px", cursor: "pointer" }} />
-              <div
-                      className="ibtan"
-                      onClick={() => setNotifOpen(true)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <img width={25}src={notification} alt="notification" />
-                      {pending > 0 && (
-                        <span
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            background: "red",
-                            position: "absolute",
-                            top: 10,
-                            right: 12,
-                          }}
-                        />
-                      )}
-                    </div>
-
+              <img src={backarrow} alt="back" style={{ width: 16, height: 16 }} />
             </div>
+
+            {/* TITLE */}
+            <h1 style={{ margin: 0, fontSize: "24px", fontWeight: 600 }}>
+              {screen === "CATEGORIES" ? "Browse Project" : category}
+            </h1>
           </div>
 
-          <div style={{ marginTop: "1px" }}>
+          {screen === "CATEGORIES" && (
+            <>
+              <div style={styles.appBarr}>
+                <div style={{ marginLeft: isMobile ? "-10px" : "-5px", }}>
+                  <h3 style={styles.title1}>
+                    Welcome,
+                    <div style={{ fontSize: 20 }}>{userInfo.first_name || "Huzzlers"}</div>
+                  </h3>
+                </div>
 
-            <div style={{ fontSize: "16px", fontWeight: "400", color: "#0A0A0A", marginTop: "22px", padding: "0 10px" }}>Discover projects that match your skills</div>
-          </div>
+                {/* TOP RIGHT ICONS */}
+                <div
+                  style={{
+                    ...styles.headerIcons,
+                    position: isMobile ? "absolute" : "static",
+                    top: isMobile ? "-5px" : "auto",
+                    right: isMobile ? "-44px" : "auto",
+                  }}
+                >
+                  <img src={message} onClick={() => navigate("/client-dashbroad2/messages")} alt="message" style={{ width: "23px", cursor: "pointer" }} />
+                  <div
+                    className="ibtan"
+                    onClick={() => setNotifOpen(true)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <img width={25} src={notification} alt="notification" />
+                    {pending > 0 && (
+                      <span
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          background: "red",
+                          position: "absolute",
+                          top: 10,
+                          right: 12,
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: "1px" }}>
+                <div style={{ fontSize: "16px", fontWeight: "400", color: "#0A0A0A", marginTop: "22px", padding: "0 10px" }}>
+                  Discover projects that match your skills
+                </div>
+              </div>
+            </>
+          )}
+
           {/* SEARCH */}
           <div style={styles.searchWrap}>
             <div style={styles.searchBar}>
               <Search size={16} style={styles.searchIcon} />
-
               <input
                 placeholder="Search"
                 value={screen === "CATEGORIES" ? catSearch : subSearch}
@@ -1761,52 +1802,21 @@ const [notifications, setNotifications] = useState([]);
               />
             </div>
           </div>
+
           {screen === "CATEGORIES" && (
-            <div style={{ marginTop: "10px" }}>
-              {/* TOP ROW : Arrow + Title */}
+            <div style={{ marginTop: "25px" }}>
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                }}
-              >
-                {/* BACK ARROW */}
-                <div
-                  onClick={() => navigate(-1)}
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 14,
-                    border: "0.8px solid #E0E0E0",
-                    backgroundColor: "#FFFFFF",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    boxShadow: "0 4px 10px rgba(0,0,0,0.06)",
-                    flexShrink: 0,
-                  }}
-                >
-                  <img src={backarrow} alt="back" style={{ width: 16, height: 16 }} />
-                </div>
-
-                {/* TITLE */}
-                <h1 style={styles.title}>Browse Project</h1>
-              </div>
-
-              {/* TEXT BELOW ARROW */}
-              <div
-                style={{
-                  marginLeft: isMobile ? "0px" : "48px",
+                  marginLeft: isMobile ? "0px" : "12px",
                   marginTop: "12px",
                 }}
               >
                 <p
                   style={{
-                    fontWeight: "400",
-                    marginBottom: "8px",
-                    marginLeft: isMobile ? "0px" : "-38px",
+                    fontWeight: 600,
+                    fontSize: "18px",
+                    marginBottom: "4px",
+                    marginLeft: isMobile ? "0px" : "-2px",
                   }}
                 >
                   What Are You Looking For?
@@ -1814,17 +1824,16 @@ const [notifications, setNotifications] = useState([]);
 
                 <p
                   style={{
-                    color: "#0A0A0A",
-                    fontSize: "16px",
+                    color: "#666",
+                    fontSize: "14px",
                     fontWeight: "400",
-                    marginLeft: isMobile ? "0px" : "-38px",
+                    marginLeft: isMobile ? "0px" : "-2px",
                   }}
                 >
-                  Choose your a category
+                  Choose a category
                 </p>
               </div>
             </div>
-
           )}
 
 

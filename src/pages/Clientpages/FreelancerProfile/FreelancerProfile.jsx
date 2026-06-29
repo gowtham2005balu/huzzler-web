@@ -146,14 +146,20 @@ export default function FreelancerProfile() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFreelancer(docSnap.data());
+          // Merge embedded array data with subcollection data
+          const fData = docSnap.data();
+          const embeddedPort = Array.isArray(fData.portfolio) ? fData.portfolio : (Array.isArray(fData.Portfolio) ? fData.Portfolio : []);
+          const embeddedRev = Array.isArray(fData.reviews) ? fData.reviews : (Array.isArray(fData.Reviews) ? fData.Reviews : []);
 
           // Fetch portfolio subcollection
           const portSnap = await getDocs(collection(db, "users", id, "portfolio"));
-          setPortfolio(portSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+          const fetchedPortfolio = portSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          setPortfolio([...embeddedPort, ...fetchedPortfolio]);
 
           // Fetch reviews subcollection
           const revSnap = await getDocs(collection(db, "users", id, "reviews"));
-          setReviews(revSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+          const fetchedReviews = revSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          setReviews([...embeddedRev, ...fetchedReviews]);
         } else {
           showToast("Freelancer profile not found", "red");
         }
@@ -404,7 +410,7 @@ export default function FreelancerProfile() {
       </div>
 
       {/* ── BODY GRID ─────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1060, margin: "0 auto", padding: "32px 20px", display: "grid", gridTemplateColumns: "1fr 300px", gap: 24, alignItems: "start" }}>
+      <div style={{ maxWidth: 1552, margin: "0 auto", padding: "32px 20px", display: "grid", gridTemplateColumns: "1fr 300px", gap: 24, alignItems: "start" }}>
 
         {/* ═══════════════ LEFT COLUMN ═══════════════ */}
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -480,15 +486,21 @@ export default function FreelancerProfile() {
               <div style={{ fontSize: 11, fontWeight: 700, color: "#8A8599", letterSpacing: 1, textTransform: "uppercase", marginBottom: 14 }}>Portfolio</div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
                 {portfolio.map((item, i) => {
+                  const PORTFOLIO_COLORS = [
+                    { bg: "#EDE9FF", text: "#6C3EEB", icon: "🛒" },
+                    { bg: "#E3EEFF", text: "#2D6EF6", icon: "📊" },
+                    { bg: "#E6F9F0", text: "#0F8A50", icon: "✈️" },
+                    { bg: "#FFFADF", text: "#9A7A00", icon: "💰" },
+                  ];
                   const p = typeof item === "string"
-                    ? { title: item, bg: "#EDE9FF", text: "#6C3EEB", icon: "🛒" }
-                    : { bg: "#E3EEFF", text: "#2D6EF6", icon: "📊", ...item };
+                    ? { title: item, ...PORTFOLIO_COLORS[i % PORTFOLIO_COLORS.length] }
+                    : { ...PORTFOLIO_COLORS[i % PORTFOLIO_COLORS.length], ...item };
                   return (
-                    <div key={i} style={{ background: p.bg || "#F0F0FF", borderRadius: 12, padding: "28px 20px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, color: p.text || "#444", fontWeight: 600, fontSize: 14, cursor: "pointer", transition: "transform 0.15s" }}
+                    <div key={i} style={{ background: p.bg || p.color || "#F0F0FF", borderRadius: 12, padding: "28px 20px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, color: p.text || p.textColor || "#444", fontWeight: 600, fontSize: 14, cursor: "pointer", transition: "transform 0.15s" }}
                       onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
                       onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
                     >
-                      {p.icon && <span>{p.icon}</span>} {p.title}
+                      {p.icon && <span>{p.icon}</span>} {p.title || p.projectName || p.name || p.project_title || p.portfolio_ProjectTitle || "Portfolio Item"}
                     </div>
                   );
                 })}

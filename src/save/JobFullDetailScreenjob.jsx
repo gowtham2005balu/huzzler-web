@@ -2004,14 +2004,13 @@ const styles = {
     },
     modal: {
         maxWidth: 720,
-        font: "",
         width: "100%",
-        borderRadius: 20,
+        borderRadius: 24,
         boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
         padding: "32px 28px",
         position: "relative",
-        fontFamily: "'Rubik', sans-serif",
-
+        background: "#FFFFFF",
+        fontFamily: "'DM Sans', sans-serif",
     },
 
     loadingContainer: {
@@ -2032,8 +2031,9 @@ const styles = {
     headerTitle: {
         margin: 0,
         fontSize: 28,
-        fontWeight: 400,
-        color: "#1a1a1a",
+        fontWeight: 700,
+        color: "#1A1433",
+        fontFamily: "'Sora', sans-serif",
     },
     headerIcons: {
         display: "flex",
@@ -2159,16 +2159,16 @@ const styles = {
     },
     viewProfileBtn: {
         marginLeft: "auto",
-        background: "linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)",
+        background: "#6C3EEB",
         color: "#fff",
         border: "none",
         padding: "10px 20px",
-        borderRadius: 10,
-        fontSize: 15,
-        fontWeight: 600,
+        borderRadius: 12,
+        fontSize: 14,
+        fontWeight: 700,
         cursor: "pointer",
+        fontFamily: "'DM Sans', sans-serif",
         transition: "transform 0.2s, box-shadow 0.2s",
-        boxShadow: "0 4px 12px rgba(139, 92, 246, 0.3)",
     },
     divider: {
         height: 1,
@@ -2180,9 +2180,10 @@ const styles = {
     },
     sectionTitle: {
         fontSize: 20,
-        fontWeight: 400,
-        color: "#1a1a1a",
+        fontWeight: 700,
+        color: "#1A1433",
         margin: "0 0 14px 0",
+        fontFamily: "'Sora', sans-serif",
     },
     skillsContainer: {
         display: "flex",
@@ -2190,13 +2191,14 @@ const styles = {
         gap: 10,
     },
     skillTag: {
-        background: "#FEF9C3",
-        color: "#713F12",
+        background: "#F5F3F7",
+        color: "#6C3EEB",
         padding: "8px 16px",
         borderRadius: 20,
         fontSize: 13,
-        fontWeight: 500,
-        border: "1px solid #FDE047",
+        fontWeight: 700,
+        border: "none",
+        fontFamily: "'DM Sans', sans-serif",
     },
     descriptionSection: {
 
@@ -2209,11 +2211,12 @@ const styles = {
     },
 
     descriptionText: {
-        color: "#444",
+        color: "#6B6B8A",
         lineHeight: 1.7,
-        fontSize: 18,
+        fontSize: 15,
         whiteSpace: "pre-line",
         margin: 0,
+        fontFamily: "'DM Sans', sans-serif",
     },
     footer: {
         display: "flex",
@@ -2223,12 +2226,13 @@ const styles = {
         flex: 1,
         padding: "14px 24px",
         borderRadius: 12,
-        border: "2px solid #9810FAE5",
+        border: "1px solid #EBE5F2",
         background: "#fff",
-        color: "#9810FAE5",
+        color: "#6C3EEB",
         fontSize: 15,
-        fontWeight: 600,
+        fontWeight: 700,
         cursor: "pointer",
+        fontFamily: "'DM Sans', sans-serif",
         transition: "all 0.2s",
     },
     hireBtn: {
@@ -2236,14 +2240,13 @@ const styles = {
         padding: "14px 24px",
         borderRadius: 12,
         border: "none",
-        background: "#9810FAE5",
-
+        background: "#6C3EEB",
         color: "white",
         fontSize: 15,
         fontWeight: 700,
         cursor: "pointer",
+        fontFamily: "'DM Sans', sans-serif",
         transition: "transform 0.2s, box-shadow 0.2s",
-
     },
 };
 

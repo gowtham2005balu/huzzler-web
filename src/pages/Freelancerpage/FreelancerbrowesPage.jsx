@@ -1248,22 +1248,43 @@ export default function Categories() {
           <div
             style={{
               marginTop: isMobile ? "20px" : "40px",
-              textAlign: "center",
+              textAlign: "left",
             }}
           >
+            {/* PAGE HEADER: Back Arrow + Title */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "20px" }}>
+              <div
+                onClick={() => navigate(-1)}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 14,
+                  border: "0.8px solid #E0E0E0",
+                  backgroundColor: "#FFFFFF",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.06)",
+                  flexShrink: 0,
+                }}
+              >
+                <img src={backarrow} alt="back" style={{ width: 16, height: 16 }} />
+              </div>
+              <h1 style={{ margin: 0, fontSize: "24px", fontWeight: 600 }}>Browse Project</h1>
+            </div>
+
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                padding: "16px 12px",
+                padding: "0px 12px",
                 width: "100%",
                 flexWrap: "nowrap",
+                marginBottom: "20px",
               }}
             >
-
-
-
               {/* LEFT TEXT */}
               <div style={{ marginLeft: isMobile ? "-10px" : "0px", }}>
                 <h1
@@ -1271,7 +1292,7 @@ export default function Categories() {
                     margin: 0,
                     fontSize: isMobile ? "22px" : "26px",
                     fontWeight: 400,
-                    maxWidth: isMobile ? "70%" : "100%", // 🔥 key fix
+                    maxWidth: isMobile ? "70%" : "100%", 
                     ...responsiveText,
                   }}
                 >
@@ -1283,7 +1304,7 @@ export default function Categories() {
                     margin: "2px 0",
                     fontSize: "32px",
                     fontWeight: 600,
-                    maxWidth: isMobile ? "100%" : "100%", // 🔥 key fix
+                    maxWidth: isMobile ? "100%" : "100%", 
                   }}
                 >
                   {userInfo.first_name || "Huzzlers"}
@@ -1306,7 +1327,6 @@ export default function Categories() {
                   display: "flex",
                   gap: 12,
                   alignItems: "center",
-                  marginTop: isMobile ? "-100px" : "-60px",
                   flexShrink: 0,
                 }}
               >
@@ -1336,6 +1356,7 @@ export default function Categories() {
             </div>
 
           </div>
+
           {/* SEARCH BAR */}
           <div style={styles.searchBar}>
             <IconSearch />
@@ -1352,43 +1373,14 @@ export default function Categories() {
             )}
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: "20px" }}>
-            <div
-              onClick={() => navigate(-1)}
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 14,
-                border: "0.8px solid #E0E0E0",
-                backgroundColor: "#FFFFFF",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.06)",
-                flexShrink: 0,
-                marginTop: isMobile ? "-80px" : "-75px",
-
-              }}
-            >
-              <img
-                src={backarrow}
-                alt="back"
-                style={{ width: 16, height: 16 }}
-              />
-            </div>
-            <div style={{ paddingLeft: isMobile ? 0 : 6 }}>
-              <h1 style={{ marginTop: "12px" }}>Browse Project</h1>
-
-              <p style={{ marginTop: "20px", fontWeight: 400 }}>
-                What Are You Looking For?
-              </p>
-
-              <p style={{ color: "#0A0A0A", fontSize: "16px", fontWeight: 400 }}>
-                Choose your a category
-              </p>
-            </div>
-
+          {/* CHOOSE A CATEGORY TEXT */}
+          <div style={{ marginTop: "25px", paddingLeft: isMobile ? 4 : 12 }}>
+            <p style={{ fontWeight: 600, fontSize: "18px", marginBottom: "4px" }}>
+              What Are You Looking For?
+            </p>
+            <p style={{ color: "#666", fontSize: "14px", fontWeight: 400 }}>
+              Choose a category
+            </p>
           </div>
 
           {/* 🔥 CATEGORY CARDS GRID */}
@@ -1462,51 +1454,31 @@ export default function Categories() {
 
         <div style={styles.container}>
           {/* HEADER */}
-          <div style={styles.appBar}>
-            <button style={styles.backBtn} onClick={pop}>
-              <IconBack />
-            </button>
-
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: isMobile ? "20px" : "40px", marginBottom: "20px" }}>
+            {/* BACK ARROW CIRCLE */}
             <div
+              onClick={pop}
               style={{
+                width: 36,
+                height: 36,
+                borderRadius: "14px",
+                backgroundColor: "#fff",
                 display: "flex",
                 alignItems: "center",
-                fontSize: 36,
-                fontWeight: 400,
-                marginTop: 0,
-
-                gap: 16,
+                justifyContent: "center",
+                border: "0.8px solid #E0E0E0",
+                cursor: "pointer",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.06)",
+                flexShrink: 0,
               }}
             >
-              {/* BACK ARROW CIRCLE */}
-              <div
-                onClick={() => navigate(-1)}
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: "14px",
-                  backgroundColor: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "1px solid #0e02020e",
-                  cursor: "pointer",
-                  marginLeft: isMobile ? "-1px" : "-70px",
-                }}
-              >
-
-                <img
-                  src={backarrow}
-                  alt="backarrow"
-                  style={{ width: 20, height: 20, }}
-                />
-              </div>
-
-              <h1 style={{ marginLeft: "0px", marginTop: "12px" }}>Browse Project</h1>
+              <img
+                src={backarrow}
+                alt="backarrow"
+                style={{ width: 16, height: 16, }}
+              />
             </div>
-
-
-            <div style={{ width: 36 }} />
+            <h1 style={{ margin: 0, fontSize: "24px", fontWeight: 600 }}>{category}</h1>
           </div>
           {/* SEARCH */}
           <div style={styles.searchBar}>

@@ -112,6 +112,8 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
   const [hireState, setHireState] = useState(null); // null | "sent" | "accepted"
   const [hireModalOpen, setHireModalOpen] = useState(false);
   const [hireLoading, setHireLoading] = useState(false);
+  const [portfolioItems, setPortfolioItems] = useState([]);
+  const [reviewItems, setReviewItems] = useState([]);
   const [toast, setToast] = useState({ msg: "", color: "#333" });
   const showToast = (msg, color = "#222") => setToast({ msg, color });
 
@@ -153,7 +155,7 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
   useEffect(() => {
     (async () => {
       let uid = serviceData?.userId || serviceData?.uid || serviceData?.freelancerId;
-      
+
       // If no UID is present but userEmail is, try to find the user by email
       if (!uid && serviceData?.userEmail) {
         const usersRef = collection(db, "users");
@@ -168,11 +170,39 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
 
       const snap = await getDoc(doc(db, "users", uid));
       if (snap.exists()) setUserData({ id: snap.id, ...snap.data() });
-      const [s1, s2] = await Promise.all([
+      const [s1, s2, portSnap, revSnap] = await Promise.all([
         getDocs(query(collection(db, "services"), where("userId", "==", uid))),
         getDocs(query(collection(db, "service_24h"), where("userId", "==", uid))),
+        getDocs(collection(db, "users", uid, "portfolio")),
+        getDocs(collection(db, "users", uid, "reviews")),
       ]);
       setServiceCount(s1.size + s2.size);
+
+      const pItems = portSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const rItems = revSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Merge with any embedded array data
+      const embeddedPort = Array.isArray(snap.data()?.portfolio) ? snap.data().portfolio : (Array.isArray(snap.data()?.Portfolio) ? snap.data().Portfolio : []);
+      const embeddedRev = Array.isArray(snap.data()?.reviews) ? snap.data().reviews : (Array.isArray(snap.data()?.Reviews) ? snap.data().Reviews : []);
+
+      // Also try fetching from the MongoDB API in case the data lives there
+      let apiPort = [];
+      let apiRev = [];
+      try {
+        const res = await fetch(`http://localhost:5000/api/freelanceprofile/user/${uid}`);
+        if (res.ok) {
+          const apiData = await res.json();
+          if (apiData?.data) {
+            if (Array.isArray(apiData.data.Portfolio)) apiPort = apiData.data.Portfolio;
+            if (Array.isArray(apiData.data.Reviews)) apiRev = apiData.data.Reviews;
+          }
+        }
+      } catch (e) {
+        // silently fail if API is offline
+      }
+
+      setPortfolioItems([...embeddedPort, ...pItems, ...apiPort]);
+      setReviewItems([...embeddedRev, ...rItems, ...apiRev]);
     })();
   }, [serviceData?.userId, serviceData?.uid, serviceData?.freelancerId, serviceData?.userEmail]);
 
@@ -447,15 +477,12 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
   const isTopRated = userData?.isTopRated || userData?.top_rated || false;
   const posterInitials = posterName.split(" ").map(w => w[0]).filter(Boolean).join("").toUpperCase().slice(0, 2) || "FL";
 
-  // Portfolio & reviews from user data
-  const portfolioItems = Array.isArray(userData?.portfolio) ? userData.portfolio : [];
   const PORTFOLIO_COLORS = [
     { bg: "#EDE9FF", text: "#6C3EEB", icon: "🛒" },
     { bg: "#E3EEFF", text: "#2D6EF6", icon: "📊" },
     { bg: "#E6F9F0", text: "#0F8A50", icon: "✈️" },
     { bg: "#FFFADF", text: "#9A7A00", icon: "💰" },
   ];
-  const reviewItems = Array.isArray(userData?.reviews) ? userData.reviews : [];
 
   const AVATAR_COLORS = ["#7C3AED", "#2563EB", "#DB2777", "#EA580C", "#059669"];
   const avatarColor = AVATAR_COLORS[posterName.length % AVATAR_COLORS.length];
@@ -489,7 +516,7 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
       </div>
 
       {/* ── BODY GRID ─────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1060, margin: "0 auto", padding: "32px 20px", display: "grid", gridTemplateColumns: "1fr 300px", gap: 24, alignItems: "start" }}>
+      <div style={{ maxWidth: 1552, margin: "0 auto", padding: "32px 20px", display: "grid", gridTemplateColumns: "1fr 300px", gap: 24, alignItems: "start" }}>
 
         {/* ═══════════════ LEFT COLUMN ═══════════════ */}
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -601,7 +628,7 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
                       onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
                       onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
                     >
-                      {p.icon && <span>{p.icon}</span>} {p.title}
+                      {p.icon && <span>{p.icon}</span>} {p.title || p.projectName || p.name || p.project_title || p.portfolio_ProjectTitle || "Portfolio Item"}
                     </div>
                   );
                 })}

@@ -98,6 +98,13 @@ function formatCurrency(amount) {
   return `₹${amount}`;
 }
 
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good Morning";
+  if (hour < 18) return "Good Afternoon";
+  return "Good Evening";
+};
+
 // ======================================================
 // MAIN
 // ======================================================
@@ -227,6 +234,10 @@ export default function ClientHomeUI() {
 
   const topMatch = useMemo(() => {
     return freelancers.length > 0 ? freelancers[0] : null;
+  }, [freelancers]);
+
+  const secondMatch = useMemo(() => {
+    return freelancers.length > 1 ? freelancers[1] : null;
   }, [freelancers]);
 
   const clientJobs = useMemo(() => {
@@ -595,7 +606,7 @@ export default function ClientHomeUI() {
                   </div>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    <button onClick={() => setNotifOpen(!notifOpen)} style={{ background: "#FDFCFE", border: "1px solid #EBE5F2", borderRadius: "50%", width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
+                    <button onClick={() => navigate('/client-dashbroad2/clientNotification')} style={{ background: "#FDFCFE", border: "1px solid #EBE5F2", borderRadius: "50%", width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
                       <FiBell color="#D9A000" size={18} />
                       {pending > 0 && <span style={{ position: "absolute", top: "10px", right: "10px", width: "6px", height: "6px", background: "#FF4B4B", borderRadius: "50%" }}></span>}
                     </button>
@@ -616,7 +627,7 @@ export default function ClientHomeUI() {
                 <div style={{ position: "absolute", width: "400px", height: "400px", right: "-100px", top: "-100px", background: "rgba(240, 232, 168, 0.4)", borderRadius: "200px", zIndex: 0 }}></div>
 
                 <div style={{ zIndex: 1 }}>
-                  <h2 style={{ fontSize: "28px", fontWeight: 700, margin: 0, color: "#1A1433", fontFamily: "'Sora', sans-serif", letterSpacing: "-0.5px", lineHeight: "1.2" }}>Good morning, {userInfo.companyName || userInfo.first_name || "Client"}! 👋</h2>
+                  <h2 style={{ fontSize: "28px", fontWeight: 700, margin: 0, color: "#1A1433", fontFamily: "'Sora', sans-serif", letterSpacing: "-0.5px", lineHeight: "1.2" }}>{getGreeting()}, {userInfo.companyName || userInfo.first_name || "Client"}! 👋</h2>
                   <p style={{ margin: "4px 0 0 0", color: "#6B6B8A", fontSize: "14px", fontFamily: "'DM Sans', sans-serif" }}>You have <strong style={{ color: "#1A1433" }}>{newApplicantsTodayCount} new applicant{newApplicantsTodayCount === 1 ? "" : "s"}</strong> today</p>
                 </div>
 
@@ -705,7 +716,7 @@ export default function ClientHomeUI() {
                 <div style={{ flex: "1", display: "flex", flexDirection: "column", gap: "12px" }}>
                   <div style={{ fontSize: "16px", fontWeight: 700, fontFamily: "'Sora', sans-serif", color: "#1A1433", marginBottom: "4px" }}>Quick Actions</div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", height: "100%" }}>
-                    <div onClick={() => navigate("/client-dashbroad2/AddJobScreen")} style={{ background: "linear-gradient(106.39deg, #7C4EF5 0%, #6C3EEB 100%)", borderRadius: "16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "white", cursor: "pointer", padding: "20px", boxShadow: "0px 4px 16px rgba(108, 62, 235, 0.15)" }}>
+                    <div onClick={() => navigate("/client-dashbroad2/PostJob")} style={{ background: "linear-gradient(106.39deg, #7C4EF5 0%, #6C3EEB 100%)", borderRadius: "16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "white", cursor: "pointer", padding: "20px", boxShadow: "0px 4px 16px rgba(108, 62, 235, 0.15)" }}>
                       <FiPlus size={24} />
                       <span style={{ fontWeight: 600, fontSize: "14px", fontFamily: "'DM Sans', sans-serif" }}>Post a Job</span>
                     </div>
@@ -819,7 +830,7 @@ export default function ClientHomeUI() {
                 <div style={{ flex: "1", display: "flex", flexDirection: "column", gap: "16px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h3 style={{ fontSize: "18px", fontWeight: 700, margin: 0, fontFamily: "'Sora', sans-serif", color: "#1A1433" }}>📌 Shortlisted Talent</h3>
-                    <span style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>Manage →</span>
+                    <span onClick={() => navigate('/client-dashbroad2/ClientSideCategoryPage')} style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>Manage →</span>
                   </div>
                   <div style={{ display: "flex", gap: "16px", height: "100%", width: "100%" }}>
                     {shortlistedTalent.length > 0 ? (
@@ -828,7 +839,13 @@ export default function ClientHomeUI() {
                         const initials = getInitials(name);
                         const role = freelancer.role || freelancer.title || "Professional";
                         return (
-                          <div key={freelancer.id} style={{ flex: 1, background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", padding: "24px 16px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "8px" }}>
+                          <div 
+                            key={freelancer.id} 
+                            onClick={() => navigate(`/client-dashbroad2/freelancer/${freelancer.id}`)}
+                            style={{ flex: 1, background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", padding: "24px 16px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "8px", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s" }}
+                            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 24px rgba(0,0,0,0.08)"; }}
+                            onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+                          >
                             <div style={{ width: "48px", height: "48px", borderRadius: "24px", background: idx === 0 ? "#6C3EEB" : "#FF6B35", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", fontWeight: 700, fontFamily: "'Sora', sans-serif" }}>
                               {initials}
                             </div>
@@ -883,7 +900,7 @@ export default function ClientHomeUI() {
               <section style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "24px", width: "100%", maxWidth: "1336px", paddingBottom: "40px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <h3 style={{ fontSize: "18px", fontWeight: 700, margin: 0, fontFamily: "'Sora', sans-serif", color: "#1A1433" }}>Recommended Freelancers</h3>
-                  <span style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>View all →</span>
+                  <span onClick={() => navigate('/client-dashbroad2/ClientSideCategoryPage')} style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>View all →</span>
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
@@ -897,7 +914,13 @@ export default function ClientHomeUI() {
                       const bgColors = ["#FF6E91", "#30B47A", "#FF6B35", "#D9A000"];
                       const avatarBg = bgColors[i % bgColors.length];
                       return (
-                        <div key={freelancer.id} style={{ background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                        <div 
+                          key={freelancer.id} 
+                          onClick={() => navigate(`/client-dashbroad2/freelancer/${freelancer.id}`)}
+                          style={{ background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s" }}
+                          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 24px rgba(0,0,0,0.08)"; }}
+                          onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+                        >
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                             <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: avatarBg, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", fontWeight: 700, fontFamily: "'Sora', sans-serif" }}>
                               {initials}
@@ -977,12 +1000,20 @@ export default function ClientHomeUI() {
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h3 style={{ fontSize: "18px", fontWeight: 700, margin: 0, fontFamily: "'Sora', sans-serif", color: "#1A1433" }}>Top Talent This Week</h3>
-                    <span style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>See all →</span>
+                    <span onClick={() => navigate('/client-dashbroad2/ClientSideCategoryPage')} style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>See all →</span>
                   </div>
                   
                   <div style={{ background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", display: "flex", flexDirection: "column", flex: 1 }}>
                     {/* Row 1 */}
-                    <div style={{ flex: 1, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #EEEDF3" }}>
+                    <div 
+                      onClick={() => {
+                        if (!topMatch) return;
+                        navigate(`/client-dashbroad2/freelancer/${topMatch.id}`);
+                      }}
+                      style={{ flex: 1, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #EEEDF3", cursor: "pointer", transition: "all 0.2s" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#F9F9FB"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
+                    >
                       <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
                         <div style={{ width: "48px", height: "48px", borderRadius: "24px", background: "#6C3EEB", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", fontWeight: 700, fontFamily: "'Sora', sans-serif" }}>
                           {topMatch ? getInitials(`${topMatch.firstName || topMatch.first_name || ""} ${topMatch.lastName || topMatch.last_name || ""}`) : "AS"}
@@ -1022,18 +1053,33 @@ export default function ClientHomeUI() {
                     </div>
                     
                     {/* Row 2 */}
-                    <div style={{ flex: 1, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div 
+                      onClick={() => {
+                        if (!secondMatch) return;
+                        navigate(`/client-dashbroad2/freelancer/${secondMatch.id}`);
+                      }}
+                      style={{ flex: 1, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", transition: "all 0.2s" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#F9F9FB"; e.currentTarget.style.borderBottomLeftRadius = "16px"; e.currentTarget.style.borderBottomRightRadius = "16px"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
+                    >
                       <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
                         <div style={{ width: "48px", height: "48px", borderRadius: "24px", background: "#FF6E91", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", fontWeight: 700, fontFamily: "'Sora', sans-serif" }}>
-                          KM
+                          {secondMatch ? getInitials(`${secondMatch.firstName || secondMatch.first_name || ""} ${secondMatch.lastName || secondMatch.last_name || ""}`) : "KM"}
                         </div>
                         <div>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <div style={{ fontWeight: 700, fontSize: "16px", color: "#1A1433", fontFamily: "'Sora', sans-serif" }}>Karan Modi</div>
+                            <div style={{ fontWeight: 700, fontSize: "16px", color: "#1A1433", fontFamily: "'Sora', sans-serif" }}>
+                              {secondMatch ? `${secondMatch.firstName || secondMatch.first_name || ""} ${secondMatch.lastName || secondMatch.last_name || ""}`.trim() : "Karan Modi"}
+                            </div>
                             <div style={{ background: "#F5F2FF", color: "#6C3EEB", padding: "2px 8px", borderRadius: "12px", fontSize: "10px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif" }}>#2 This Week</div>
                           </div>
-                          <div style={{ fontSize: "13px", color: "#8C84A8", fontFamily: "'DM Sans', sans-serif", marginTop: "2px" }}>Motion & 3D Designer</div>
-                          <div style={{ fontSize: "13px", color: "#1A1433", fontFamily: "'DM Sans', sans-serif", marginTop: "4px", fontWeight: 600 }}>₹75K<span style={{ color: "#8C84A8", fontWeight: 400 }}>/mo · Hybrid · Contract</span></div>
+                          <div style={{ fontSize: "13px", color: "#8C84A8", fontFamily: "'DM Sans', sans-serif", marginTop: "2px" }}>
+                            {secondMatch ? (secondMatch.role || secondMatch.title || "Motion & 3D Designer") : "Motion & 3D Designer"}
+                          </div>
+                          <div style={{ fontSize: "13px", color: "#1A1433", fontFamily: "'DM Sans', sans-serif", marginTop: "4px", fontWeight: 600 }}>
+                            {secondMatch ? (secondMatch.rate ? `₹${secondMatch.rate}/mo` : "₹75K/mo") : "₹75K/mo"}
+                            <span style={{ color: "#8C84A8", fontWeight: 400 }}> · Hybrid · Contract</span>
+                          </div>
                           <div style={{ display: "flex", gap: "2px", marginTop: "6px" }}>
                              <span style={{ color: "#F0E870", fontSize: "12px" }}>★</span>
                              <span style={{ color: "#F0E870", fontSize: "12px" }}>★</span>
@@ -1043,7 +1089,7 @@ export default function ClientHomeUI() {
                           </div>
                         </div>
                       </div>
-                      <button style={{ background: "#6C3EEB", color: "white", border: "none", padding: "8px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>Hire →</button>
+                      <button style={{ background: "white", color: "#1A1433", border: "1px solid #EEEDF3", padding: "8px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>View →</button>
                     </div>
                   </div>
                 </div>
@@ -1056,7 +1102,7 @@ export default function ClientHomeUI() {
                     <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#30B47A" }}></div>
                     <h3 style={{ fontSize: "16px", fontWeight: 700, margin: 0, fontFamily: "'Sora', sans-serif", color: "#1A1433" }}>Recently Active</h3>
                   </div>
-                  <span style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>View all →</span>
+                  <span onClick={() => navigate('/client-dashbroad2/ClientSideCategoryPage')} style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>View all →</span>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -1097,7 +1143,13 @@ export default function ClientHomeUI() {
                     ];
 
                     return (
-                      <div key={freelancer.id || index} style={{ background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                      <div 
+                        key={freelancer.id || index} 
+                        onClick={() => navigate(`/client-dashbroad2/freelancer/${freelancer.id}`)}
+                        style={{ background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", padding: "24px", display: "flex", flexDirection: "column", gap: "16px", cursor: "pointer", transition: "all 0.2s" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 24px rgba(108, 62, 235, 0.1)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
+                      >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                           <div style={{ display: "flex", gap: "16px" }}>
                             <div style={{ width: "48px", height: "48px", borderRadius: "24px", background: bgColor, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", fontWeight: 700, fontFamily: "'Sora', sans-serif" }}>

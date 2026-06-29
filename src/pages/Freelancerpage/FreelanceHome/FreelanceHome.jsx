@@ -50,8 +50,14 @@ import message from "../../../assets/message.png";
 import search from "../../../assets/search.png";
 
 import "./FreelanceHome.css";
-
 import { categoriesData } from "../../../data/categoriesData";
+
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+};
 
 const getCategoryIcon = (title) => {
   if (!title) return <Star size={16} />;
@@ -838,7 +844,7 @@ export default function FreelanceHome() {
 
             <div style={{ zIndex: 1 }}>
               <h2 style={{ fontSize: "32px", fontWeight: 700, margin: 0, color: "#1A1433", fontFamily: "'Sora', sans-serif", letterSpacing: "-0.5px", lineHeight: "1.2", display: "flex", alignItems: "center", gap: "10px" }}>
-                Welcome
+                {getGreeting()}, {userInfo.first_name || "Freelancer"}! 👋
               </h2>
               <p style={{ margin: "4px 0 0 0", color: "#6B6B8A", fontSize: "14px", fontFamily: "'DM Sans', sans-serif" }}>You have <strong style={{ color: "#1A1433" }}>12 new matches</strong> waiting · Last active 2h ago</p>
             </div>
