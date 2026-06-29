@@ -171,6 +171,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import backarrow from "../assets/backarrow.png";
+import { ChevronDown, ChevronUp, Search, MessageCircle } from "lucide-react";
 
 const HelpCenter = () => {
   const navigate = useNavigate();
@@ -194,7 +195,7 @@ const HelpCenter = () => {
     {
       question: "How do I create or delete my account?",
       answer:
-        "Dummy content: You can create an account by signing up on our platform. To delete your account, please contact support."
+        "You can create an account by clicking the 'Sign Up' button on our homepage and following the prompts. If you ever need to delete your account, you can do so from the Account Settings page under the 'Danger Zone' section, or by reaching out to our support team for assistance."
     },
     {
       question: "How is my personal data protected under the DPDP Act?",
@@ -204,27 +205,27 @@ const HelpCenter = () => {
     {
       question: "Can I withdraw my consent for data processing?",
       answer:
-        "Dummy content: Yes, you can withdraw your consent at any time by contacting our support team."
+        "Yes, you can withdraw your consent for data processing at any time. Simply visit your Privacy Settings or contact our support team at privacy@huzzler.com, and we will process your request promptly in accordance with applicable laws."
     },
     {
       question: "Who can see my freelancer or client profile?",
       answer:
-        "Dummy content: Your profile is visible to registered users depending on your visibility settings."
+        "Your profile visibility depends on your settings. By default, your public profile is visible to all registered users on Huzzler to help you find work or hire talent. You can adjust your privacy settings to restrict who can view your full details."
     },
     {
-      question: "Are payments handled?",
+      question: "How are payments handled?",
       answer:
-        "Dummy content: All payments are securely processed and monitored by our system."
+        "All payments are securely processed through our integrated, bank-grade payment gateway. Funds are held in escrow for fixed-price projects and released only when milestones are approved, ensuring both clients and freelancers are protected."
     },
     {
       question: "What should I do if I face an issue with another user?",
       answer:
-        "Dummy content: Contact our support team with details so we can review and resolve the issue."
+        "If you experience any issues, such as a dispute over deliverables or inappropriate behavior, please use the 'Report User' feature on their profile or contact our 24/7 support team with the details. We will review the situation and mediate if necessary."
     },
     {
       question: "Who can I contact for data or privacy concerns?",
       answer:
-        "Dummy content: Please reach out to privacy@yourapp.com for any privacy-related queries."
+        "For any privacy-related queries or to request a copy of the data we hold about you, please reach out directly to our Data Protection Officer at privacy@huzzler.com. We take your privacy seriously and aim to respond within 48 hours."
     }
   ];
 
@@ -238,7 +239,9 @@ const HelpCenter = () => {
       className="freelance-wrapper"
       style={{
         marginLeft: collapsed ? "-110px" : "50px",
-        transition: "margin-left 0.25s ease"
+        transition: "margin-left 0.25s ease",
+        background: "#F7F7F9",
+        minHeight: "100vh",
       }}
     >
       <div style={styles.page}>
@@ -248,46 +251,74 @@ const HelpCenter = () => {
             onClick={() => navigate(-1)}
             aria-label="Back"
             style={{
-              width: "36px",
-              height: "36px",
-              borderRadius: "14px",
-              border: "0.8px solid #ccc",
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              background: "#fff",
+              border: "1px solid #EEEDF3",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               cursor: "pointer",
-              fontSize: "20px",
-              opacity: 1,
-              flexShrink: 0,
-              marginBottom: "18px",
-              marginTop: "17px"
+              boxShadow: "0 2px 8px rgba(0,0,0,0.02)"
             }}
           >
-            <img src={backarrow} alt="back arrow" height={20} />
+            <img src={backarrow} alt="back arrow" height={16} />
           </div>
-
           <h2 style={styles.title}>Help Center</h2>
         </div>
 
-        {/* FAQ Section */}
-        <div style={styles.container}>
-          <h1 style={styles.heading}>Frequently Asked Questions</h1>
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          {/* Hero Section */}
+          <div style={{ textAlign: "center", margin: "40px 0 50px" }}>
+            <h1 style={{ fontSize: 36, fontWeight: 700, color: "#1A1433", fontFamily: "'Sora', sans-serif", marginBottom: 16 }}>
+              Frequently Asked Questions
+            </h1>
+            <p style={{ fontSize: 16, color: "#6B6B8A", fontFamily: "'DM Sans', sans-serif", maxWidth: 600, margin: "0 auto" }}>
+              Find answers to common questions about managing your account, privacy, payments, and making the most of Huzzler.
+            </p>
+          </div>
 
+          {/* Search/Contact Banner (Optional UI element) */}
+          <div style={{ display: "flex", gap: 16, marginBottom: 40, justifyContent: "center" }}>
+            <button style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 24px", borderRadius: 999, border: "none", background: "#6C3EEB", color: "#fff", fontWeight: 600, fontSize: 15, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+              <MessageCircle size={18} /> Contact Support
+            </button>
+          </div>
+
+          {/* FAQ Accordion */}
           <div style={styles.faqWrapper}>
             {faqs.map((item, index) => (
-              <div key={index} style={styles.faqItem}>
+              <div 
+                key={index} 
+                style={{
+                  ...styles.faqItem,
+                  borderColor: openIndex === index ? "#6C3EEB" : "#EEEDF3",
+                  boxShadow: openIndex === index ? "0 8px 24px rgba(108, 62, 235, 0.08)" : "0 2px 8px rgba(0,0,0,0.02)"
+                }}
+              >
                 <div
                   style={styles.questionRow}
                   onClick={() => toggle(index)}
                 >
-                  <span>{item.question}</span>
-                  <span style={styles.icon}>
-                    {openIndex === index ? "✕" : "+"}
+                  <span style={{ color: openIndex === index ? "#6C3EEB" : "#1A1433", fontWeight: openIndex === index ? 700 : 600 }}>
+                    {item.question}
                   </span>
+                  <div style={{ 
+                    width: 32, height: 32, borderRadius: "50%", 
+                    background: openIndex === index ? "#6C3EEB" : "#F5F2FF", 
+                    color: openIndex === index ? "#fff" : "#6C3EEB",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    flexShrink: 0
+                  }}>
+                    {openIndex === index ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </div>
                 </div>
 
                 {openIndex === index && (
-                  <div style={styles.answer}>{item.answer}</div>
+                  <div style={styles.answer}>
+                    {item.answer}
+                  </div>
                 )}
               </div>
             ))}
@@ -301,9 +332,9 @@ const HelpCenter = () => {
 /* ---------- Inline Styles ---------- */
 const styles = {
   page: {
-    fontFamily: "Arial, sans-serif",
-    minHeight: "100vh",
-    padding: "20px 40px"
+    padding: "30px 40px",
+    maxWidth: 1200,
+    margin: "0 auto"
   },
   header: {
     display: "flex",
@@ -311,49 +342,45 @@ const styles = {
     gap: "15px",
     marginBottom: "20px"
   },
-  backBtn: {
-    fontSize: "25px",
-    border: "none",
-    background: "transparent",
-    cursor: "pointer"
-  },
   title: {
-    fontSize: "22px",
-    fontWeight: "600"
-  },
-  heading: {
-    textAlign: "center",
-    marginBottom: "35px",
-    fontSize: "28px",
-    fontWeight: "600"
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#1A1433",
+    fontFamily: "'Sora', sans-serif",
+    margin: 0
   },
   faqWrapper: {
     display: "flex",
     flexDirection: "column",
-    gap: "15px"
+    gap: "16px",
+    paddingBottom: 60
   },
   faqItem: {
-    background: "#f8f5e5",
-    padding: "18px 22px",
-    borderRadius: "12px",
+    background: "#fff",
+    padding: "24px",
+    borderRadius: "20px",
+    border: "1px solid #EEEDF3",
     cursor: "pointer",
-    transition: "0.3s"
+    transition: "all 0.3s ease",
+    overflow: "hidden"
   },
   questionRow: {
     display: "flex",
     justifyContent: "space-between",
-    fontSize: "16px",
-    fontWeight: 500
-  },
-  icon: {
-    fontSize: "20px",
-    fontWeight: "bold"
+    alignItems: "center",
+    fontSize: "17px",
+    fontFamily: "'Sora', sans-serif",
+    gap: 20
   },
   answer: {
-    marginTop: "10px",
-    fontSize: "14px",
-    lineHeight: "1.5",
-    color: "#555"
+    marginTop: "16px",
+    paddingTop: "16px",
+    borderTop: "1px dashed #EEEDF3",
+    fontSize: "15px",
+    lineHeight: "1.7",
+    color: "#6B6B8A",
+    fontFamily: "'DM Sans', sans-serif",
+    animation: "fadeIn 0.3s ease"
   }
 };
 

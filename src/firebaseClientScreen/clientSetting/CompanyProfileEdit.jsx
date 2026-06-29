@@ -30,60 +30,74 @@ const styles = {
     ...globalFont,
   },
   formCard: {
-    width: isMobile() ? "90%" : "50%",
+    width: isMobile() ? "92%" : "60%",
+    maxWidth: "800px",
     margin: "40px auto",
     background: "#fff",
-    padding: "25px 20px 35px",
-    borderRadius: 20,
-    boxShadow: "0 4px 25px rgba(0,0,0,0.07)",
+    padding: isMobile() ? "24px 16px" : "32px 40px",
+    borderRadius: 24,
+    boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+    border: "1px solid #E5E7EB",
   },
   inputBlock: {
-    marginBottom: 18,
+    marginBottom: 20,
   },
   label: {
-    fontSize: 20,
-    marginBottom: 6,
+    fontSize: 14,
+    marginBottom: 8,
     display: "block",
-    fontWeight: 400,
+    fontWeight: 600,
+    color: "#4B5563",
   },
   input: {
-    width: "98%",
-    padding: "10px 12px",
-    borderRadius: 8,
-    background: "rgba(254,254,215,1)",
-    border: "1px solid #ddd",
-    fontSize: 14,
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "12px 16px",
+    borderRadius: 12,
+    background: "#F9FAFB",
+    border: "1px solid #E5E7EB",
+    fontSize: 15,
+    outline: "none",
   },
   textarea: {
-    width: "98%",
-    padding: "10px 12px",
-    borderRadius: 10,
-    border: "1px solid #ddd",
-    height: 90,
-    fontSize: 14,
-    background: "rgba(254,254,215,1)",
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "12px 16px",
+    borderRadius: 12,
+    border: "1px solid #E5E7EB",
+    height: 120,
+    fontSize: 15,
+    background: "#F9FAFB",
+    outline: "none",
+    resize: "vertical",
   },
   actionRow: {
     display: "flex",
     justifyContent: "flex-end",
-    marginTop: 25,
-    gap: 10,
+    marginTop: 30,
+    gap: 12,
+    paddingTop: 20,
+    borderTop: "1px solid #E5E7EB",
   },
   cancelBtn: {
-    padding: "10px 20px",
-    borderRadius: 10,
-    background: "#f2f2f2",
-    border: "1px solid #ddd",
+    padding: "12px 24px",
+    borderRadius: 999,
+    background: "#fff",
+    border: "1px solid #E5E7EB",
+    color: "#4B5563",
     cursor: "pointer",
+    fontWeight: 600,
+    fontSize: 14,
   },
   saveBtn: {
-    padding: "10px 20px",
-    borderRadius: 10,
-    background: "rgba(124,60,255,1)",
+    padding: "12px 32px",
+    borderRadius: 999,
+    background: "#6C3EEB",
     color: "#fff",
     border: "none",
     cursor: "pointer",
     fontWeight: 600,
+    fontSize: 14,
   },
 };
 
@@ -167,8 +181,7 @@ export default function CompanyProfileEdit() {
         location,
         profileImage: profileImageUrl,
         updated_at: serverTimestamp(),
-      });a
-
+      });
 
       navigate(-1); // back to view page
     } catch (e) {
@@ -190,14 +203,18 @@ export default function CompanyProfileEdit() {
   /* UI */
   return (
     <div
-      className="freelance-wrapper"
       style={{
-        marginLeft: collapsed ? "-110px" : "50px",
+        marginLeft: isMobile() ? 0 : collapsed ? "-110px" : "-1px",
         transition: "margin-left 0.25s ease",
+        marginTop: collapsed ? "10px" : "10px",
       }}
     >
       <div style={styles.screen}>
         <div style={styles.formCard}>
+          <div style={{ marginBottom: 32, textAlign: "center" }}>
+            <h1 style={{ fontSize: 26, fontWeight: 700, color: "#111", margin: 0 }}>Edit Company Profile</h1>
+            <p style={{ fontSize: 15, color: "#6B7280", margin: "6px 0 0 0" }}>Update your company details and information.</p>
+          </div>
           <Input label="Company Name" value={Company_name} onChange={setCompany_name} />
           <Input label="Industry" value={industry} onChange={setIndustry} />
           <Input label="Company Size" value={size} onChange={setSize} />

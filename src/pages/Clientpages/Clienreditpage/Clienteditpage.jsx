@@ -656,17 +656,18 @@ export default function ClientEditJob() {
       setIsSaving(false);
     }
   };
- const customSelectStyles = {
+  const customSelectStyles = {
     control: (provided, state) => ({
       ...provided,
-      backgroundColor: "rgb(255, 252, 209)",
-      borderRadius: "10px",
-      border: "1px solid #ddd",
-      padding: "4px",
+      backgroundColor: "#fff",
+      borderRadius: "12px",
+      border: state.isFocused ? "1px solid #7c3aed" : "1px solid #EEEDF3",
+      padding: "2px",
       boxShadow: "none",
       minHeight: "45px",
+      transition: "all 0.3s ease",
       "&:hover": {
-        border: "1px solid #ccc",
+        border: "1px solid #7c3aed",
       },
     }),
 
@@ -679,8 +680,9 @@ export default function ClientEditJob() {
 
     multiValue: (provided) => ({
       ...provided,
-      backgroundColor: "#7c6c9c20",
+      backgroundColor: "#f5f2ff",
       borderRadius: "8px",
+      border: "1px solid #e9d5ff",
     }),
 
     multiValueLabel: (provided) => ({
@@ -841,7 +843,8 @@ export default function ClientEditJob() {
           background: #ffffff;
           padding: 30px;
           border-radius: 20px;
-          box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+          box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+          border: 1px solid #EEEDF3;
         }
 
         .editJobHeader {
@@ -894,17 +897,19 @@ export default function ClientEditJob() {
 
         .formInput {
           width: 100%;
-          padding: 14px;
-            background-color: rgb(255, 252, 209);
+          padding: 14px 16px;
+          background-color: #fff;
           border-radius: 12px;
-          border: none;
+          border: 1px solid #EEEDF3;
           margin-bottom: 18px;
-          font-size: 14px;
+          font-size: 15px;
+          color: #1A1433;
           outline: none;
+          transition: all 0.3s ease;
         }
 
         .formInput:focus {
-          box-shadow: 0 0 0 2px #7c3cff40;
+          border-color: #7c3aed;
         }
 
        .btnRow {
@@ -938,24 +943,39 @@ export default function ClientEditJob() {
 
 
         
-.cancelBtn{
-   padding: 13px 25px;
-          border: 2px solid #7C3CFF;
-          color: #7C3CFF;
-          background: none;
-          border-radius: 25px;
-          cursor: pointer;
-}
-
-.saveBtn{
-   padding: 13px 25px;
-          background: #7C3CFF;
-          border: none;
-          color: white;
-          border-radius: 25px;
+.cancelBtn {
+          padding: 14px 40px;
+          border: 1px solid #EEEDF3;
+          color: #6B6B8A;
+          background: #fff;
+          border-radius: 999px;
           cursor: pointer;
           font-weight: 600;
-}
+          font-size: 15px;
+          transition: all 0.3s ease;
+        }
+        
+        .cancelBtn:hover {
+          border-color: #7c3aed;
+          color: #7c3aed;
+        }
+
+.saveBtn {
+          padding: 14px 40px;
+          background: #7c3aed;
+          border: none;
+          color: white;
+          border-radius: 999px;
+          cursor: pointer;
+          font-weight: 600;
+          font-size: 15px;
+          transition: all 0.3s ease;
+        }
+        
+        .saveBtn:hover {
+          background: #6d28d9;
+          transform: translateY(-1px);
+        }
 
       `}
       </style>

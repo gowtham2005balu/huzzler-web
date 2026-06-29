@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 
 import editicon from "../../assets/editicon.png";
+import ProfileHeader from "../../components/ProfileHeader";
 import { db } from "../../firbase/Firebase";
 import { color } from "framer-motion";
 
@@ -172,125 +173,29 @@ export default function ProfileSummary() {
       >
         <div style={{ width: "100%", maxWidth: "70%", marginTop: "20px" }}>
           {/* ================= HEADER ================= */}
-          <div
-            style={{
-              // background:
-              //   "linear-gradient(180deg, #FFFECB 0%, #FFFDE4 40%, #FFFFFF 100%)",
-              padding: isMobile ? "30px 20px 60px" : "40px 30px 80px",
-              // borderBottomLeftRadius: 30,
-              // borderBottomRightRadius: 30,
-              // borderBottom:"2px solid  #00000040",
-              position: "relative",
-              border: "1px solid #ddd",
-              marginLeft: isMobile ? "20px" : "25px",
-              width: isMobile ? "91%" : "95%",
-              borderRadius: 10,
-            }}
-          >
-
-            <button
-              onClick={() => navigate("/client-dashbroad2/companyprofileedit")}
-              style={{
-                position: "absolute",
-                right: 10,
-
-                marginTop: "180px",
-                border: "none",
-                background: "#9810FACC",
-                color: "#fff",
-                padding: "10px",
-                borderRadius: 8,
-                cursor: "pointer",
-                marginTop: isMobile ? "0px" : "10px",
-              }}
-            >Edit Profile
-            </button>
-
-
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: isMobile ? "column" : "row",
-                gap: 18,
-                alignItems: isMobile ? "flex-start" : "center",
-              }}
-            >
-              <div
-                style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: "50%",
-                  background: data?.profileImage ? "#D8D8D8" : "#6C3EEB",
-                  overflow: "hidden",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "white",
-                  fontSize: 28,
-                  fontWeight: "bold",
-                }}
-              >
-                {data?.profileImage ? (
-                  <img
-                    src={data.profileImage}
-                    alt=""
-                    style={{ width: "100%", height: "100%", objectFit: "cover",  borderRadius: "50%", }}
-                  />
-                ) : (
-                  (data?.Company_name || data?.first_name || "C")[0].toUpperCase()
-                )}
-              </div>
-              {/* <img
-                src={editicon}
-                alt="edit"
-                style={{
-                  width: isMobile ? 40 : 40,
-                  marginTop: isMobile ? "-40px" : "70px",
-                  marginLeft: isMobile ? "35px" : "-40px",
-
-                }}
-              /> */}
-              <div>
-                <div style={{ fontSize: isMobile ? 22 : 30 }}>
-                  {data?.Company_name}
-                </div>
-                <div style={{ color: "#707070", fontSize: 14 }}>
-                  {data?.email}
-                </div>
-                <div style={{ marginTop: 10 }}>
-                  {data?.industry} • {data?.location}
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProfileHeader profile={data} onEditProfile={() => navigate("/client-dashbroad2/companyprofileedit")} />
 
           {/* ================= CONTENT ================= */}
-          <div style={{ padding: isMobile ? 16 : 24, }}>
-            <Card >
-              <span style={{ fontSize: 20, fontWeight: 400, }}>About</span>
-              <div style={{ marginTop: "10px" }}>{data?.businessInfo}</div>
+          <div style={{ padding: isMobile ? "0 16px" : "0 24px", marginTop: "24px" }}>
+            <Card title="About">
+              <div style={{ lineHeight: "1.6" }}>
+                {data?.businessInfo || "No details provided."}
+              </div>
             </Card>
 
-            <Card>
-              <div style={{ marginBottom: 28, }}>
-                <span style={{ fontSize: 20, fontWeight: 400, }}>
-                  Industry
-                </span>
-                <div style={{ marginBottom: 18,fontWeight: 400,marginBottom:"25px"}}> {data?.Company_name} </div>
-
-
-                <span style={{ fontSize: 20, fontWeight: 400 ,}}>
-                  Company Size <div></div>
-                  <div style={{fontSize: 17,color:"#000000d3"}} >{profileData.team_size} members </div>
-
-                </span>
-                <div style={{ marginBottom: 18,fontWeight: 400,marginBottom:"25px" }}>{data?.team_size}</div>
-
-
+            <Card title="Company Information">
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 <div>
-                  <span style={{ fontSize: 20, fontWeight: 400 }}>Email Address</span>
-                  <div style={{ marginBottom: 18,fontWeight: 400 }}>{data?.email}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase" }}>Industry</div>
+                  <div style={{ marginTop: 6, fontWeight: 500, color: "#1F2937", fontSize: 16 }}>{data?.industry || data?.Company_name || "N/A"}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase" }}>Company Size</div>
+                  <div style={{ marginTop: 6, fontWeight: 500, color: "#1F2937", fontSize: 16 }}>{profileData?.team_size || data?.team_size || "N/A"} members</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase" }}>Email Address</div>
+                  <div style={{ marginTop: 6, fontWeight: 500, color: "#1F2937", fontSize: 16 }}>{data?.email || "N/A"}</div>
                 </div>
               </div>
             </Card>
@@ -334,8 +239,9 @@ export default function ProfileSummary() {
                 <div
                   style={{
                     ...styles.toggleButton,
-                    background: tab === "Works" ? "#9050FF" : "transparent",
-                    color: tab === "24" ? "#000  " : "#fff",
+                    background: tab === "Works" ? "#6C3EEB" : "transparent",
+                    color: tab === "Works" ? "#fff" : "#4B5563",
+                    boxShadow: tab === "Works" ? "0 2px 8px rgba(108, 62, 235, 0.3)" : "none",
                   }}
                   onClick={() => setTab("Works")}
                 >
@@ -344,8 +250,9 @@ export default function ProfileSummary() {
                 <div
                   style={{
                     ...styles.toggleButton,
-                    background: tab === "24" ? "#9050FF  " : "transparent",
-                    color: tab === "24" ? "#fff  " : "#000",
+                    background: tab === "24" ? "#6C3EEB" : "transparent",
+                    color: tab === "24" ? "#fff" : "#4B5563",
+                    boxShadow: tab === "24" ? "0 2px 8px rgba(108, 62, 235, 0.3)" : "none",
                   }}
                   onClick={() => setTab("24")}
                 >
@@ -359,6 +266,7 @@ export default function ProfileSummary() {
                     key={job.id}
                     job={job}
                     type={tab}
+                    profileData={profileData}
                   />
                 ))}
               </div>
@@ -377,24 +285,35 @@ function Card({ title, children }) {
     <div
       style={{
         background: "#fff",
-        padding: 22,
-        borderRadius: 20,
-        border: "1px solid #ddd",
+        borderRadius: 18,
+        padding: 24,
+        border: "1px solid #E5E7EB",
         marginBottom: 20,
-        fontWeight: 500,
-
       }}
     >
-      <h3 style={{ marginBottom: 10 }}>{title}</h3>
-      <div style={{ color: "#555" }}>{children}</div>
+      {title && <h3 style={{ fontSize: 18, fontWeight: 600, color: "#111", marginBottom: 16, marginTop: 0 }}>{title}</h3>}
+      <div style={{ color: "#4B5563", fontSize: 15 }}>{children}</div>
     </div>
   );
 }
 
-function JobCard({ job, type }) {
+function JobCard({ job, type, profileData }) {
   const navigate = useNavigate();
 
-  /* ---------- PAUSE / RESUME ---------- */
+  const getAvatarColor = (name) => {
+    const colors = [
+      "#8A5CFF", // Purple
+      "#3E84F8", // Blue
+      "#FF5A79", // Pink
+      "#F88A3E", // Orange
+      "#15975A", // Green
+      "#B88E00", // Yellow
+    ];
+    return colors[(name || "").length % colors.length];
+  };
+
+  const projectTitle = job?.title || "Project";
+  const avatarColor = getAvatarColor(projectTitle);
   const handlePause = async (e) => {
     e.stopPropagation();
 
@@ -430,16 +349,25 @@ function JobCard({ job, type }) {
         )
       }
       style={{
-        border: "1px solid #ddd",
-        borderRadius: 24,
-        padding: 22,
+        border: "1px solid #E5E7EB",
+        borderRadius: 20,
+        padding: 24,
         cursor: "pointer",
-
+        background: "#fff",
+        transition: "box-shadow 0.2s, border-color 0.2s",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.06)";
+        e.currentTarget.style.borderColor = "#D1D5DB";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.borderColor = "#E5E7EB";
       }}
     >
       <div style={{ display: "flex", gap: 12 }}>
-        <div style={styles.avatarBox}>
-          {(job?.title || "J").substring(0, 2).toUpperCase()}
+        <div style={{...styles.avatarBox, background: avatarColor}}>
+          {projectTitle.charAt(0).toUpperCase()}
         </div>
         <div>
           <div style={styles.jobTitle}>{job?.title}</div>
@@ -452,27 +380,33 @@ function JobCard({ job, type }) {
           </div>
         </div>
       </div>
-      <div style={{ display: "flex", marginTop: 20, justifyContent: "space-between", marginBottom: 20 }}>
-        <div style={{ color: "#7C3CFF", }}>
-          <span style={{ color: "#000", fontWeight: 400, }}>Budget</span><br />
-          ₹{job?.budget_from || job?.budget}
+      <div style={{ display: "flex", marginTop: 24, justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 24 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <span style={{ color: "#9CA3AF", fontWeight: 600, fontSize: 12, textTransform: "uppercase" }}>Budget</span>
+          <span style={{ color: "#6C3EEB", fontWeight: 700, fontSize: 16 }}>₹{job?.budget_from || job?.budget}</span>
         </div>
 
-        <div>
-          <span style={{ color: "#000", fontWeight: 400, fontSize: 16 }}>Timeline</span><br />
-          {job?.timeline || "24 hours"}
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <span style={{ color: "#9CA3AF", fontWeight: 600, fontSize: 12, textTransform: "uppercase" }}>Timeline</span>
+          <span style={{ color: "#111", fontWeight: 600, fontSize: 14 }}>{job?.timeline || "24 hours"}</span>
         </div>
-        <div >
-          <span style={{ color: "#000", fontWeight: 400 }}>Location</span><br />
-          Remote
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <span style={{ color: "#9CA3AF", fontWeight: 600, fontSize: 12, textTransform: "uppercase" }}>Location</span>
+          <span style={{ color: "#111", fontWeight: 600, fontSize: 14 }}>Remote</span>
         </div>
       </div>
       <div style={styles.buttonRow}>
-        <button style={styles.secondaryBtn} onClick={handlePause}>
+        <button style={styles.secondaryBtn} onClick={handlePause}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "#F9FAFB")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
+        >
           {job.status === "paused" ? "Resume Service" : "Pause Service"}
         </button>
 
-        <button style={styles.primaryBtn} onClick={handleEdit}>
+        <button style={styles.primaryBtn} onClick={handleEdit}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+        >
           Edit Service
         </button>
       </div>
@@ -495,60 +429,65 @@ const styles = {
     fontWeight: 700,
     color: "#fff",
   },
-  jobTitle: { fontWeight: 500, fontSize: 18 },
+  jobTitle: { fontWeight: 600, fontSize: 18, color: "#111" },
   skillChip: {
-    background: "#FFFFBE",
-    color: "#000",
-    padding: "4px 8px",
-    borderRadius: 8,
+    background: "#F3F4F6",
+    color: "#4B5563",
+    padding: "6px 12px",
+    borderRadius: 20,
     fontSize: 12,
-    marginRight: 6,
+    fontWeight: 500,
+    marginRight: 8,
   },
   toggleGroup: {
     display: "flex",
-    gap: 10,
-    background: "#fff",
+    gap: 8,
+    background: "#F3F4F6",
     padding: 6,
-    borderRadius: 14,
-    width: "100%",
-    margin: "20px 0",
-    // boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-    border:"1px solid #25202034"
+    borderRadius: 20,
+    width: "fit-content",
+    marginBottom: 24,
   },
   toggleButton: {
-    padding: "8px 16px",
-    borderRadius: 10,
+    padding: "8px 20px",
+    borderRadius: 14,
     cursor: "pointer",
     fontWeight: 600,
+    fontSize: 14,
+    transition: "all 0.2s ease",
   },
   cardsWrap: {
-
     display: "grid",
     gridTemplateColumns: "repeat(2, minmax(280px, 1fr))",
     gap: 16,
-
   },
   buttonRow: {
     display: "flex",
     gap: 12,
-    marginTop: 14,
+    marginTop: 24,
   },
   secondaryBtn: {
     flex: 1,
-    height: 38,
-    borderRadius: 30,
-    border: "1px solid #BDBDBD",
+    height: 42,
+    borderRadius: 999,
+    border: "1px solid #E5E7EB",
     background: "#fff",
+    color: "#4B5563",
     fontWeight: 600,
     cursor: "pointer",
+    fontSize: 14,
+    transition: "background 0.2s",
   },
   primaryBtn: {
     flex: 1,
-    height: 38,
-    borderRadius: 30,
-    background: "rgba(253,253,150,1)",
+    height: 42,
+    borderRadius: 999,
+    background: "#6C3EEB",
+    color: "#fff",
     border: "none",
-    fontWeight: 700,
+    fontWeight: 600,
     cursor: "pointer",
+    fontSize: 14,
+    transition: "opacity 0.2s",
   },
 };

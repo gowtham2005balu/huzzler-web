@@ -1751,150 +1751,102 @@ export default function CategoryPage({ initialTab = "Saved" })
               key={job.id}
               onClick={() => {
                 const is24 = job._type === "24H";
-
                 incrementViewOnce(is24 ? "service_24h" : "services", job.id);
-
                 if (is24) {
                   navigate(`/client-dashbroad2/service-24h/${job.id}`);
                 } else {
                   navigate(`/client-dashbroad2/service/${job.id}`);
                 }
               }}
-
-
-
               style={{
                 background: "#fff",
-                borderRadius: 20,
-                padding: "22px",
-                marginBottom: 22,
+                borderRadius: 16,
+                padding: "24px",
+                marginBottom: 20,
                 cursor: "pointer",
-                boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
-                position: "relative",
+                border: "1px solid #EEEDF3",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
+                display: "flex",
+                flexDirection: "column",
+                gap: 16,
+                transition: "all 0.2s ease"
               }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = "#D1D5DB"}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = "#EEEDF3"}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                }}
-              >
-                <h3 style={{ margin: 0, fontSize: 22, fontWeight: 600 }}>
+              {/* TOP ROW: TITLE & BUDGET */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#111827", fontFamily: "'Sora', sans-serif" }}>
                   {job.title}
                 </h3>
-
-                <div id="job-budget" className="job-budget">
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#6C3EEB", fontFamily: "'Sora', sans-serif", whiteSpace: "nowrap" }}>
                   ₹{job.budget_from || job.budget} - {job.budget_to || job.budget}
                 </div>
               </div>
-              <div
-                style={{
-                  fontSize: "14",
-                  marginTop: "10px",
-                  color: "gray",
-                  fontWeight: "400",
-                }}
-              >
-                Skills Required
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: 8,
-                  margin: "12px 0",
-                  flexWrap: "wrap",
-                }}
-              >
-                {(job.skills || []).slice(0, 3).map((s) => (
-                  <span
-                    key={s}
-                    style={{
-                      background: "#FFF085B2",
-                      padding: isMobile ? "4px 10px" : "6px 14px",
-                      borderRadius: 999,
-                      fontSize: isMobile ? 11 : 13,
-                      fontWeight: 500,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {s}
-                  </span>
-                ))}
 
-                {job.skills?.length > 3 && (
-                  <span
-                    style={{
-                      background: "#FFF085B2",
-                      padding: isMobile ? "4px 10px" : "6px 14px",
-                      borderRadius: 999,
-                      fontSize: isMobile ? 11 : 13,
-                      fontWeight: 500,
-                    }}
-                  >
-                    +{job.skills.length - 3}
-                  </span>
-                )}
-              </div>
-
-              <p
-                style={{
-                  fontSize: 14,
-                  color: "#555",
-                  lineHeight: 1.6,
-                  marginBottom: 14,
-                }}
-              >
-                {job.description?.slice(0, 320)}
-                {job.description?.length > 200 ? "..." : ""}
+              {/* DESCRIPTION */}
+              <p style={{ fontSize: 14, color: "#4B5563", lineHeight: 1.6, margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", fontFamily: "'DM Sans', sans-serif" }}>
+                {job.description}
               </p>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 18,
-                    fontSize: 13,
-                    color: "#777",
-                  }}
-                >
-                  <span
-                    style={{ display: "flex", gap: 6, alignItems: "center" }}
-                  >
-                    <FiEye /> {job.views || 0} Impression
+              {/* SKILLS */}
+              <div>
+                <div style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10, fontFamily: "'DM Sans', sans-serif" }}>
+                  Skills Required
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {(job.skills || []).slice(0, 4).map((s, idx) => {
+                    const skillColors = [
+                      { bg: "#F5F2FF", color: "#6C3EEB" },
+                      { bg: "#EBF3FF", color: "#4A90E2" },
+                      { bg: "#FFEBF0", color: "#FF6E91" },
+                      { bg: "#FFF3E5", color: "#FF8A00" },
+                    ];
+                    const sc = skillColors[idx % skillColors.length];
+                    return (
+                      <span key={s} style={{ background: sc.bg, color: sc.color, padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+                        {s}
+                      </span>
+                    );
+                  })}
+                  {job.skills?.length > 4 && (
+                    <span style={{ background: "#F3F4F6", color: "#4B5563", padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+                      +{job.skills.length - 4}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* BOTTOM ROW: STATS & BOOKMARK */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4, paddingTop: 16, borderTop: "1px solid #F3F4F6" }}>
+                <div style={{ display: "flex", gap: 20, fontSize: 13, color: "#6B7280", fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <FiEye size={16} /> {job.views || 0} Impressions
                   </span>
-                  <span
-                    style={{ display: "flex", gap: 6, alignItems: "center" }}
-                  >
-                    <Clock size={14} />
-                    {timeAgo(job.createdAt)}
+                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <Clock size={16} /> {timeAgo(job.createdAt)}
                   </span>
                 </div>
 
                 <div
-                  style={{
-                    position: "absolute",
-                    top: 60,
-                    right: 20,
-                    cursor: "pointer",
-                    zIndex: 10,
-                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleSave(job.id, savedIds.includes(job.id));
                   }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 36,
+                    height: 36,
+                    borderRadius: "50%",
+                    background: savedIds.includes(job.id) ? "#F5F2FF" : "#F3F4F6",
+                    color: savedIds.includes(job.id) ? "#6C3EEB" : "#9CA3AF",
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
                 >
-                  {savedIds.includes(job.id) ? (
-                    <BsBookmarkFill size={20} />
-                  ) : (
-                    <Bookmark size={20} />
-                  )}
+                  {savedIds.includes(job.id) ? <BsBookmarkFill size={16} /> : <Bookmark size={16} />}
                 </div>
               </div>
             </div>

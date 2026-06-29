@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../../firbase/Firebase";
 
 const AccountDetails = () => {
@@ -10,6 +11,10 @@ const AccountDetails = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  
+  const [profileImage, setProfileImage] = useState("");
+  const [isUploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -47,6 +52,7 @@ const AccountDetails = () => {
         if (snap.exists()) {
           const d = snap.data();
           
+          setProfileImage(d.profileImage || "");
           setFormData((prev) => ({
             ...prev,
             name: d.first_name ? `${d.first_name} ${d.last_name || ""}`.trim() : (d.name || ""),
@@ -73,6 +79,27 @@ const AccountDetails = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const auth = getAuth();
+      const storage = getStorage();
+      const uid = auth.currentUser.uid;
+      const imgRef = ref(storage, `users/${uid}/profile.jpg`);
+      await uploadBytes(imgRef, file);
+      const url = await getDownloadURL(imgRef);
+      await updateDoc(doc(db, "users", uid), { profileImage: url });
+      setProfileImage(url);
+    } catch (err) {
+      console.error("Image upload failed:", err);
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -132,7 +159,12 @@ const AccountDetails = () => {
                 {/* Profile Header Card */}
                 <div className="hz-ad-profile-header">
                   <div className="hz-ad-profile-info-wrap">
-                    <div className="hz-ad-avatar">CS</div>
+                    <div 
+                      className="hz-ad-avatar" 
+                      style={profileImage ? { backgroundImage: `url(${profileImage})`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' } : {}}
+                    >
+                      {formData.name ? formData.name.charAt(0).toUpperCase() : 'CS'}
+                    </div>
                     <div className="hz-ad-user-info">
                       <div className="hz-ad-user-name">Creativo Studio</div>
                       <div className="hz-ad-user-role">Pro Client · Member since Jan 2023</div>
@@ -147,7 +179,10 @@ const AccountDetails = () => {
                       </div>
                     </div>
                   </div>
-                  <button type="button" className="hz-ad-btn-outline">Edit Photo</button>
+                  <button type="button" className="hz-ad-btn-outline" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                    {isUploading ? "Uploading..." : "Edit Photo"}
+                  </button>
+                  <input type="file" ref={fileInputRef} onChange={handleImageUpload} style={{ display: 'none' }} accept="image/*" />
                 </div>
 
                 <div className="hz-ad-divider"></div>

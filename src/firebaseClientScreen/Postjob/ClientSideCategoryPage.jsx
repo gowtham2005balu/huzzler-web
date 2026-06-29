@@ -922,7 +922,7 @@ import {
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../../firbase/Firebase";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { FiEye, FiMessageCircle, FiBell, FiSearch, FiFilter } from "react-icons/fi";
 import FilterScreen, { JobFilter } from "./Filter";
 import { Bookmark, Clock } from "lucide-react";
@@ -961,8 +961,15 @@ export default function CategoryPage({ initialTab = "Work" }) {
   const user = auth.currentUser;
   const navigate = useNavigate();
 
+  const location = useLocation();
   const [tab, setTab] = useState(initialTab);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(location.state?.search || "");
+
+  useEffect(() => {
+    if (location.state?.search) {
+      setSearch(location.state.search);
+    }
+  }, [location.state?.search]);
   const [sort, setSort] = useState("");
 
   const [filter, setFilter] = useState(new JobFilter());
@@ -1153,12 +1160,21 @@ export default function CategoryPage({ initialTab = "Work" }) {
             return false;
         }
 
-        if (filter.categories.length && !filter.categories.includes(j.category))
+        if (
+          filter.categories.length &&
+          !filter.categories.some((c) => c.toLowerCase() === category)
+        )
+          return false;
+          
+        if (
+          filter.services && filter.services.length &&
+          !filter.services.some((s) => s.toLowerCase() === category)
+        )
           return false;
 
         if (
           filter.skills.length &&
-          !skills.some((s) => filter.skills.includes(s))
+          !filter.skills.some((fs) => skills.some((js) => typeof js === "string" && js.toLowerCase() === fs.toLowerCase()))
         )
           return false;
 
@@ -1282,10 +1298,10 @@ export default function CategoryPage({ initialTab = "Work" }) {
           </div>
         </div>
         <div style={{ display: "flex", gap: "12px" }}>
-          <button style={{ display: "flex", alignItems: "center", gap: "8px", background: "white", border: "1px solid #EBE5F2", padding: "10px 16px", borderRadius: "8px", color: "#1A1433", fontWeight: 600, fontSize: "14px", cursor: "pointer", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
+          <button onClick={() => setShowFilter(true)} style={{ display: "flex", alignItems: "center", gap: "8px", background: "white", border: "1px solid #EBE5F2", padding: "10px 16px", borderRadius: "8px", color: "#1A1433", fontWeight: 600, fontSize: "14px", cursor: "pointer", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
             <FiFilter size={16} color="#6B6B8A" /> Filters
           </button>
-          <button style={{ display: "flex", alignItems: "center", gap: "8px", background: "linear-gradient(90deg, #6C3EEB 0%, #8A5CFF 100%)", border: "none", padding: "10px 16px", borderRadius: "8px", color: "white", fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>
+          <button onClick={() => navigate("/client-dashbroad2/aigenerator")} style={{ display: "flex", alignItems: "center", gap: "8px", background: "linear-gradient(90deg, #6C3EEB 0%, #8A5CFF 100%)", border: "none", padding: "10px 16px", borderRadius: "8px", color: "white", fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>
             ⭐ AI Match Me
           </button>
         </div>
@@ -1347,7 +1363,7 @@ export default function CategoryPage({ initialTab = "Work" }) {
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {jobsToRender.map((job) => {
             const isSaved = savedIds.includes(job.id);
-            const companyName = job.company || job.companyName || job.company_name || job.clientName || "";
+            const companyName = job.username || job.company || job.companyName || job.company_name || job.clientName || "U";
             const jobType = job.jobType || "Full-time";
             const locationType = job.locationType || job.location || "Remote";
             const roleName = job.title || "Senior UI/UX Designer";
@@ -1371,7 +1387,7 @@ export default function CategoryPage({ initialTab = "Work" }) {
               budgetDisplay = <span style={{ fontSize: "16px", color: "#6B6B8A" }}>Negotiable</span>;
             }
 
-            const avatarColor = getAvatarColor(companyName);
+            const avatarColor = getAvatarColor(roleName);
             const is24 = job._type === "24H";
 
             return (
@@ -1410,7 +1426,7 @@ export default function CategoryPage({ initialTab = "Work" }) {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
                     <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: avatarColor, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", fontWeight: 700 }}>
-                      {companyName.charAt(0).toUpperCase()}
+                      {roleName.charAt(0).toUpperCase()}
                     </div>
                     <div>
                       <h3 style={{ margin: "0 0 4px 0", fontSize: "16px", fontWeight: 700, color: "#1A1433", fontFamily: "'Sora', sans-serif" }}>
@@ -1516,6 +1532,27 @@ export default function CategoryPage({ initialTab = "Work" }) {
           })}
         </div>
       )}
+
+      {showFilter && (
+        <div style={modalStyle}>
+          <FilterScreen
+            initialFilter={filter}
+            onClose={() => setShowFilter(false)}
+            onApply={(appliedFilter) => {
+              setFilter(appliedFilter);
+              setShowFilter(false);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
+
+const modalStyle = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(0,0,0,0.35)",
+  zIndex: 999,
+  overflowY: "auto",
+};

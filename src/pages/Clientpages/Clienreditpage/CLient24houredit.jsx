@@ -1482,14 +1482,15 @@ export default function ClientEdit24Hours() {
   const customSelectStyles = {
     control: (provided, state) => ({
       ...provided,
-      backgroundColor: "rgb(255, 252, 209)",
-      borderRadius: "10px",
-      border: "1px solid #ddd",
-      padding: "4px",
+      backgroundColor: "#fff",
+      borderRadius: "12px",
+      border: state.isFocused ? "1px solid #7c3aed" : "1px solid #EEEDF3",
+      padding: "2px",
       boxShadow: "none",
       minHeight: "45px",
+      transition: "all 0.3s ease",
       "&:hover": {
-        border: "1px solid #ccc",
+        border: "1px solid #7c3aed",
       },
     }),
 
@@ -1502,8 +1503,9 @@ export default function ClientEdit24Hours() {
 
     multiValue: (provided) => ({
       ...provided,
-      backgroundColor: "#7c6c9c20",
+      backgroundColor: "#f5f2ff",
       borderRadius: "8px",
+      border: "1px solid #e9d5ff",
     }),
 
     multiValueLabel: (provided) => ({
@@ -1644,7 +1646,8 @@ export default function ClientEdit24Hours() {
           background: #fff;
           padding: 30px;
           border-radius: 20px;
-          box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+          box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+          border: 1px solid #EEEDF3;
         }
 .editTitle{
   font-size: 24px;
@@ -1684,13 +1687,20 @@ export default function ClientEdit24Hours() {
 
         .formInput {
           width: 100%;
-          padding: 12px;
-          border-radius: 10px;
+          padding: 14px 16px;
+          border-radius: 12px;
           margin-top: 6px;
-             background-color: rgb(255, 252, 209);
-          border: 1px solid #ddd;
+          background-color: #fff;
+          border: 1px solid #EEEDF3;
+          color: #1A1433;
+          font-size: 15px;
+          outline: none;
+          transition: all 0.3s ease;
         }
-
+        
+        .formInput:focus {
+          border-color: #7c3aed;
+        }
         .btnRow {
           display: flex;
           justify-content: flex-end;
@@ -1699,22 +1709,37 @@ export default function ClientEdit24Hours() {
         }
 
         .saveBtn {
-          padding: 13px 50px;
-          background: #7C3CFF;
+          padding: 14px 40px;
+          background: #7c3aed;
           border: none;
           color: white;
-          border-radius: 25px;
+          border-radius: 999px;
           cursor: pointer;
           font-weight: 600;
+          font-size: 15px;
+          transition: all 0.3s ease;
+        }
+        
+        .saveBtn:hover {
+          background: #6d28d9;
+          transform: translateY(-1px);
         }
 
         .cancelBtn {
-          padding: 13px 40px;
-          border: 2px solid #7C3CFF;
-          color: #7C3CFF;
-          background: none;
-          border-radius: 25px;
+          padding: 14px 40px;
+          border: 1px solid #EEEDF3;
+          color: #6B6B8A;
+          background: #fff;
+          border-radius: 999px;
           cursor: pointer;
+          font-weight: 600;
+          font-size: 15px;
+          transition: all 0.3s ease;
+        }
+        
+        .cancelBtn:hover {
+          border-color: #7c3aed;
+          color: #7c3aed;
         }
       `}</style>
     </>

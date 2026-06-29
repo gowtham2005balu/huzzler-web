@@ -585,6 +585,11 @@ export default function ClientHomeUI() {
                         style={{ width: "100%", height: "100%", padding: "0 20px 0 40px", borderRadius: "9.5px", border: "1px solid #E8E6F0", background: "#F7F7F9", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", color: "#757575", boxSizing: "border-box", outline: "none", transition: "all 0.2s" }}
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && searchText.trim()) {
+                            navigate("/client-dashbroad2/ClientSideCategoryPage", { state: { search: searchText } });
+                          }
+                        }}
                       />
                     </div>
                   </div>

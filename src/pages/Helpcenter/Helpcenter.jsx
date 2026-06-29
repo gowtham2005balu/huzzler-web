@@ -606,14 +606,38 @@ export default function HelpCenter() {
   const toggleFAQ = (i) => setOpenIndex(openIndex === i ? null : i);
 
   const faqData = [
-    { question: "How do I create or delete my account?", answer: "You can manage this from account settings." },
-    { question: "How is my personal data protected under the DPDPA Act?", answer: "All users have the right to withdraw consent at any point in time by contacting the company. The DPDP Act is a law requiring Huzzler to only use data for legal purposes and the purposes we have specified in our Terms & Conditions. In order to adhere to legal provisions in the DPDP Act we ensure that the data we collect is stored and encrypted in accordance with all security provisions." },
-    { question: "Can I withdraw my consent for data processing?", answer: "Yes, via settings or email." },
-    { question: "Who can see my freelancer or client profile?", answer: "Based on your privacy settings." },
-    { question: "Are payments handled?", answer: "Payments are not handled directly." },
-    { question: "What should I do if I face an issue with another user?", answer: "Raise a ticket for investigation." },
-    { question: "Who can I contact for data or privacy concerns?", answer: "Contact our support team." },
-    { question: "Does Huzzler guarantee project completion or payments?", answer: "No guarantees are provided." },
+    { 
+      question: "How do I create or delete my account?", 
+      answer: "You can create an account by clicking the 'Sign Up' button on our homepage. If you ever need to delete your account, you can do so from the Account Settings page under the 'Danger Zone' section, or by reaching out to our support team for assistance." 
+    },
+    { 
+      question: "How is my personal data protected under the DPDPA Act?", 
+      answer: "All users have the right to withdraw consent at any point in time by contacting the company. The DPDP Act is a law requiring Huzzler to only use data for legal purposes and as described in our Terms & Disclosures. We store and protect your data according to strict security guidelines." 
+    },
+    { 
+      question: "Can I withdraw my consent for data processing?", 
+      answer: "Yes, you can withdraw your consent for data processing at any time. Simply visit your Privacy Settings or contact our support team at privacy@huzzler.com." 
+    },
+    { 
+      question: "Who can see my freelancer or client profile?", 
+      answer: "Your profile visibility depends on your settings. By default, your public profile is visible to all registered users on Huzzler to help you find work or hire talent." 
+    },
+    { 
+      question: "Are payments handled?", 
+      answer: "All payments are securely processed through our integrated, bank-grade payment gateway. Funds are held in escrow for fixed-price projects and released only when milestones are approved." 
+    },
+    { 
+      question: "What should I do if I face an issue with another user?", 
+      answer: "If you experience any issues, please use the 'Report User' feature on their profile or contact our 24/7 support team with the details. We will review the situation and mediate if necessary." 
+    },
+    { 
+      question: "Who can I contact for data or privacy concerns?", 
+      answer: "For any privacy-related queries or to request a copy of the data we hold about you, please reach out directly to our Data Protection Officer at privacy@huzzler.com." 
+    },
+    { 
+      question: "Does Huzzler guarantee project completion or payments?", 
+      answer: "While we provide escrow and milestone tracking to protect both parties, we do not guarantee project outcomes. We offer dispute resolution services to help mediate if things don't go as planned." 
+    },
   ];
 
   /* ================= MODAL ================= */
@@ -657,76 +681,108 @@ export default function HelpCenter() {
         .title {
           margin: 60px 0 50px;
           text-align: center;
-          font-size: 44px;
-          font-weight: 400;
+          font-size: 38px;
+          font-weight: 700;
+          color: #1A1433;
         }
 
         .faq-list {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 14px;
+          gap: 16px;
       }
       .faq-item {
-  width: 100%;
-  max-width: 700px;
-  background: #fdfcea;
-  border-radius: 28px;
-  padding: 12px 18px;
-  cursor: pointer;
-}
+        width: 100%;
+        max-width: 700px;
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #EEEDF3;
+        padding: 20px 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      }
+      .faq-item:hover {
+        border-color: #7c3aed;
+      }
+      .faq-item.open {
+        border-color: #7c3aed;
+        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.08);
+      }
 
         .faq-q {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          height: 52px;
-          font-size: 15px;
+          font-size: 16px;
+          font-weight: 500;
+          color: #1A1433;
+          transition: all 0.3s ease;
+        }
+        
+        .faq-item.open .faq-q {
+          color: #7c3aed;
+          font-weight: 700;
         }
 
         .plus {
-          width: 28px;
-          height: 28px;
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
-          border: 1px solid #7c3aed;
+          background: #f5f2ff;
           display: flex;
           align-items: center;
           justify-content: center;
           color: #7c3aed;
+          font-weight: bold;
+          font-size: 18px;
+          flex-shrink: 0;
+          transition: all 0.3s ease;
+        }
+        
+        .faq-item.open .plus {
+          background: #7c3aed;
+          color: #fff;
         }
 
         .faq-a {
-          font-size: 14px;
-          color: #666;
-          margin-top: 8px;
+          font-size: 15px;
+          color: #6B6B8A;
+          margin-top: 16px;
+          padding-top: 16px;
+          border-top: 1px dashed #EEEDF3;
+          line-height: 1.6;
         }
 
         .help-box {
-         
           margin-top: 80px;
           text-align: center;
         }
 
         .help-box h3 {
-          font-weight: 500;
-          margin-bottom: 16px;
+          font-weight: 600;
+          margin-bottom: 24px;
+          font-size: 24px;
+          color: #1A1433;
         }
 
        .help-actions {
-  width: 100%;
-  max-width: 700px;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
+          width: 100%;
+          max-width: 700px;
+          margin: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
 
         select {
-          padding: 14px;
+          padding: 16px;
           border-radius: 22px;
-          border: none;
-          background: #fdfcea;
+          border: 1px solid #EEEDF3;
+          background: #fff;
+          font-size: 15px;
+          outline: none;
         }
 
         .raise-btn {
@@ -759,9 +815,15 @@ export default function HelpCenter() {
 
         .close {
           position: absolute;
-          top: 14px;
-          right: 14px;
+          top: 20px;
+          right: 20px;
           cursor: pointer;
+          font-size: 24px;
+          color: #6B6B8A;
+          transition: color 0.3s ease;
+        }
+        .close:hover {
+          color: #1A1433;
         }
 
      @media (max-width: 768px) {
@@ -800,67 +862,84 @@ export default function HelpCenter() {
           /* ================= POPUP FORM STYLES ================= */
 
 .modal h3 {
-  margin-bottom: 12px;
-  font-size: 20px;
-  font-weight: 500;
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 700;
   text-align: center;
+  color: #1A1433;
 }
 
 .modal label {
   display: block;
-  font-size: 13px;
-  font-weight: 500;
-  margin: 14px 0 6px;
-  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+  color: #1A1433;
 }
 
 .modal .input {
   width: 100%;
-  padding: 12px 14px;
-  background: #fdfcea;
-  border-radius: 18px;
-  border: none;
-  font-size: 14px;
+  padding: 14px 16px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #EEEDF3;
+  font-size: 15px;
   outline: none;
+  color: #1A1433;
+  transition: border-color 0.3s ease;
+}
+
+.modal .input:focus {
+  border-color: #7c3aed;
 }
 
 .modal textarea.input {
   resize: none;
-  min-height: 90px;
+  min-height: 100px;
 }
 
 /* Dropdown list inside popup */
 .modal .dropdown-item {
   background: #fff;
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
   margin-top: 6px;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
-  border: 1px solid #eee;
+  border: 1px solid #EEEDF3;
+  color: #1A1433;
+  transition: all 0.3s ease;
 }
 
 .modal .dropdown-item:hover {
-  background: #fdfcea;
+  background: #f5f2ff;
+  border-color: #7c3aed;
 }
 
 /* Submit button inside popup */
 .modal .submit-btn {
   width: 100%;
-  margin-top: 20px;
-  padding: 14px;
-  border-radius: 28px;
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 999px;
   border: none;
   background: #7c3aed;
   color: #fff;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal .submit-btn:hover {
+  background: #6d28d9;
+  transform: translateY(-1px);
 }
 
 .modal .submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 /* Smooth popup animation */
@@ -928,10 +1007,16 @@ export default function HelpCenter() {
 
           <div className="faq-list">
             {faqData.map((f, i) => (
-              <div key={i} className="faq-item" onClick={() => toggleFAQ(i)}>
+              <div key={i} className={`faq-item ${openIndex === i ? "open" : ""}`} onClick={() => toggleFAQ(i)}>
                 <div className="faq-q">
                   {f.question}
-                  <div className="plus">{openIndex === i ? "−" : "+"}</div>
+                  <div className="plus">
+                    {openIndex === i ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    )}
+                  </div>
                 </div>
                 {openIndex === i && <div className="faq-a">{f.answer}</div>}
               </div>
@@ -1016,36 +1101,40 @@ export default function HelpCenter() {
 
   const submitTicket = async () => {
     if (!category || !subject || !description) {
-        alert("All fields required");
+      alert("All fields required");
       return;
     }
 
-      try {
-        setLoading(true);
+    try {
+      setLoading(true);
 
+      // Save to Firestore first (this is fast)
       await addDoc(collection(db, "support_tickets"), {
         ticketId,
         category,
         email,
         subject,
         description,
-        userId: user.uid,
-      status: "raised",
-      createdAt: serverTimestamp(),
+        userId: user ? user.uid : "guest",
+        status: "raised",
+        createdAt: serverTimestamp(),
       });
 
-      await fetch("https://huzzler.onrender.com/api/support/raise-ticket", {
+      // Fire off the email API in the background without awaiting
+      // so the UI doesn't hang if the Render instance is spinning up
+      fetch("https://huzzler.onrender.com/api/support/raise-ticket", {
         method: "POST",
-      headers: {"Content-Type": "application/json" },
-      body: JSON.stringify({ticketId, category, email, subject, description}),
-      });
+        headers: {"Content-Type": "application/json" },
+        body: JSON.stringify({ticketId, category, email, subject, description}),
+      }).catch(err => console.error("Mail API error:", err));
 
       alert("Ticket submitted successfully");
       onClose();
-    } catch {
-        alert("Something went wrong");
+    } catch (error) {
+      console.error("Submit ticket error:", error);
+      alert("Something went wrong: " + error.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 

@@ -7,9 +7,27 @@ export default function ProfileHeader({ profile, projectCount, onEditProfile }) 
   const fName = profile?.first_name || profile?.firstName || "";
   const lName = profile?.last_name || profile?.lastName || "";
   const combinedName = `${fName} ${lName}`.trim();
-  const fullName = combinedName || profile?.name || profile?.fullName || "User";
+  const fullName = profile?.Company_name || combinedName || profile?.name || profile?.fullName || "User";
+
+  const handleShareProfile = async () => {
+    try {
+      const url = window.location.href;
+      if (navigator.share) {
+        await navigator.share({
+          title: `${fullName}'s Profile`,
+          text: `Check out ${fullName}'s profile on Huzzler!`,
+          url: url
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        alert("Profile link copied to clipboard!");
+      }
+    } catch (err) {
+      console.error("Error sharing profile:", err);
+    }
+  };
   
-  const roleDisplay = profile?.professional_title || "UI/UX Designer • Freelancer";
+  const roleDisplay = profile?.industry || profile?.professional_title || "UI/UX Designer • Freelancer";
   const location = profile?.location || profile?.city || "Chennai, India";
   const rating = profile?.rating || "4.9";
   let initials = "U";
@@ -100,7 +118,12 @@ export default function ProfileHeader({ profile, projectCount, onEditProfile }) 
           >
             Edit Profile
           </button>
-          <button style={{ padding: "8px 24px", borderRadius: 999, border: "none", background: "#FDE047", color: "#111", fontWeight: 600, cursor: "pointer", fontSize: 13 }}>Share Profile</button>
+          <button 
+            onClick={handleShareProfile}
+            style={{ padding: "8px 24px", borderRadius: 999, border: "none", background: "#FDE047", color: "#111", fontWeight: 700, cursor: "pointer", fontSize: 13, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
+          >
+            Share Profile
+          </button>
         </div>
       </div>
     </>

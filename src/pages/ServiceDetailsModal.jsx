@@ -151,9 +151,21 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
 
   // ── Poster user data ───────────────────────────────────────────────────────
   useEffect(() => {
-    const uid = serviceData?.userId || serviceData?.uid || serviceData?.freelancerId;
-    if (!uid) return;
     (async () => {
+      let uid = serviceData?.userId || serviceData?.uid || serviceData?.freelancerId;
+      
+      // If no UID is present but userEmail is, try to find the user by email
+      if (!uid && serviceData?.userEmail) {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", serviceData.userEmail));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          uid = snap.docs[0].id;
+        }
+      }
+
+      if (!uid) return;
+
       const snap = await getDoc(doc(db, "users", uid));
       if (snap.exists()) setUserData({ id: snap.id, ...snap.data() });
       const [s1, s2] = await Promise.all([
@@ -162,7 +174,7 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
       ]);
       setServiceCount(s1.size + s2.size);
     })();
-  }, [serviceData?.userId, serviceData?.uid, serviceData?.freelancerId]);
+  }, [serviceData?.userId, serviceData?.uid, serviceData?.freelancerId, serviceData?.userEmail]);
 
   // ── Existing hire request state ────────────────────────────────────────────
   useEffect(() => {
@@ -370,12 +382,17 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
   // ── Message ────────────────────────────────────────────────────────────────
   const handleMessage = () => {
     if (!currentUid || !serviceData) return;
-    const freelancerId = serviceData.userId || serviceData.uid || serviceData.freelancerId || "";
+    // Prefer userData.id if we fetched it, otherwise fallback
+    const freelancerId = userData?.id || serviceData.userId || serviceData.uid || serviceData.freelancerId || "";
+    if (!freelancerId) {
+      showToast("Cannot message: User ID not found.", "red");
+      return;
+    }
     const posterFirst = userData?.first_name || userData?.firstName || "";
     const posterLast = userData?.last_name || userData?.lastName || "";
     const posterName = `${posterFirst} ${posterLast}`.trim() || "Freelancer";
-    navigate("/chat", {
-      state: { currentUid, otherUid: freelancerId, otherName: posterName },
+    navigate("/client-dashbroad2/messages", {
+      state: { startChatWith: freelancerId },
     });
   };
 

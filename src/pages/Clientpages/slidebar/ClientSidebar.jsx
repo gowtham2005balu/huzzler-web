@@ -1264,7 +1264,7 @@ export default function ClientSidebar() {
               <User size={18} className="icon" />
               {!collapsed && <span className="btn-text">Talent Profile</span>}
             </button>
-            <button className={`hz-menu-btn`} onClick={() => { }}>
+            <button className={`hz-menu-btn ${isActive("/client-dashbroad2/aigenerator") ? "active-btn" : ""}`} onClick={() => handleNav("/client-dashbroad2/aigenerator")}>
               <Star size={18} className="icon" />
               {!collapsed && <span className="btn-text">AI Assistant</span>}
             </button>

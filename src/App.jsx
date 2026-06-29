@@ -295,6 +295,7 @@ export default function App() {
         <Route path="messages" element={<MessagesUI />} />
         <Route path="helpcenter" element={<HelpCenter />} />
         <Route path="helpcenter1" element={<ClientHelpCenter1 />} />
+        <Route path="aigenerator" element={<AIGenerator />} />
 
         <Route
           path="freelancerblockSreen/:userId"

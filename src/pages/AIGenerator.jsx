@@ -1,9 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Star, Sparkles, Search, Bell } from "lucide-react";
+import { auth, db } from "../firbase/Firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import "./AIGenerator.css";
 
 export default function AIGenerator() {
   const [prompt, setPrompt] = useState("");
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            setUserData(userDoc.data());
+          } else {
+            const clientDoc = await getDoc(doc(db, "clients", user.uid));
+            if (clientDoc.exists()) setUserData(clientDoc.data());
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      } else {
+        setUserData(null);
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  const getInitials = () => {
+    if (userData?.first_name || userData?.firstName) {
+      const first = (userData.first_name || userData.firstName)[0] || "";
+      const last = (userData.last_name || userData.lastName)?.[0] || "";
+      return (first + last).toUpperCase();
+    }
+    return "FL";
+  };
 
   const suggestions = ["Logo Designer", "Video Editor", "Content Writer"];
 
@@ -22,7 +56,16 @@ export default function AIGenerator() {
             <Bell size={18} />
             <span className="bell-dot"></span>
           </button>
-          <div className="header-avatar">HA</div>
+          {userData?.profileImage || userData?.profile_image ? (
+            <img 
+              src={userData.profileImage || userData.profile_image} 
+              alt="Profile" 
+              className="header-avatar"
+              style={{ objectFit: "cover" }}
+            />
+          ) : (
+            <div className="header-avatar">{getInitials()}</div>
+          )}
         </div>
       </div>
 

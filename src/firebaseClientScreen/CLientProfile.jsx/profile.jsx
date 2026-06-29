@@ -25,6 +25,7 @@ import blocked from "../../assets/blocked.png";
 import { deleteUser } from "firebase/auth";
 import { deleteDoc } from "firebase/firestore";
 import { deleteObject } from "firebase/storage";
+import { User, Bookmark, Briefcase, Users, UserPlus, Ban, Settings, HelpCircle, FileText, Shield, LogOut } from "lucide-react";
 
 
 
@@ -215,11 +216,9 @@ export default function ClientProfileMenuScreen() {
 
         </div>
 
-        {/* PROFILE CARD */}
         <div
           style={{
             ...styles.profileCard,
-            marginLeft: isMobile ? "0px" : "30px",
             flexDirection: isMobile ? "column" : "row",
             textAlign: isMobile ? "center" : "left",
           }}
@@ -246,55 +245,68 @@ export default function ClientProfileMenuScreen() {
 
         {/* MY ACCOUNT */}
         <div style={styles.section}>
-          <h3 style={styles.sectionTitle}>My Account</h3>
-          <MenuItem title="Profile Summary" icon={profilePlaceholder} onClick={() => navigate("/client-dashbroad2/companyprofileview")} />
-          <MenuItem title="Saved" icon={saved} onClick={() => navigate("/client-dashbroad2/Clientsaved")} />
-          <MenuItem title="Job Posted" icon={jobposted} onClick={() => navigate("/client-dashbroad2/PostJob")} />
-          <MenuItem title="Hiring" icon={hiring} onClick={() => navigate("/client-dashbroad2/my-hires")} />
+          <h3 style={styles.sectionTitle}>MY ACCOUNT</h3>
+          <MenuItem title="Profile Summary" icon={User} onClick={() => navigate("/client-dashbroad2/companyprofileview")} />
+          <MenuItem title="Saved" icon={Bookmark} onClick={() => navigate("/client-dashbroad2/Clientsaved")} />
+          <MenuItem title="Job Posted" icon={Briefcase} onClick={() => navigate("/client-dashbroad2/PostJob")} />
+          <MenuItem title="Hiring" icon={Users} onClick={() => navigate("/client-dashbroad2/my-hires")} />
           {/* <MenuItem title="Paused Service" icon={paused2} onClick={() => navigate("/client-dashbroad2/clientpausedjobs")} /> */}
-          <MenuItem title="Invite Friends" icon={invitefriends} />
-          <MenuItem title="Blocked" icon={blocked} onClick={() => navigate("/client-dashbroad2/clientBlock")} />
+          <MenuItem title="Blocked" icon={Ban} onClick={() => navigate("/client-dashbroad2/clientBlock")} />
         </div>
 
         {/* SUPPORT */}
         <div style={styles.section}>
-          <h3 style={styles.sectionTitle}>Support</h3>
+          <h3 style={styles.sectionTitle}>SUPPORT</h3>
           {/* <MenuItem title="Notifications" icon={notification} onClick={() => navigate("")} /> */}
-          <MenuItem title="Account Settings" icon={settings} onClick={() => navigate("/client-dashbroad2/companyprofileview")} />
-          <MenuItem title="Help Center" icon={helpcenter} onClick={() => navigate("/client-dashbroad2/helpcenter")} />
-          <MenuItem title="Terms of Service" icon={helpcenter} onClick={() => window.open("https://deva689.github.io/huzzler-privacy-policy/terms.html", "_blank")} />
-          <MenuItem title="Privacy Policy" icon={helpcenter} onClick={() => window.open("https://deva689.github.io/huzzler-privacy-policy/", "_blank")} />
+          <MenuItem title="Account Settings" icon={Settings} onClick={() => navigate("/client-dashbroad2/companyprofileview")} />
+          <MenuItem title="Help Center" icon={HelpCircle} onClick={() => navigate("/client-dashbroad2/helpcenter")} />
+          <MenuItem title="Terms of Service" icon={FileText} onClick={() => window.open("https://deva689.github.io/huzzler-privacy-policy/terms.html", "_blank")} />
+          <MenuItem title="Privacy Policy" icon={Shield} onClick={() => window.open("https://deva689.github.io/huzzler-privacy-policy/", "_blank")} />
         </div>
 
         {/* LOGOUT + DELETE */}
         <div style={styles.section}>
-          <MenuItem title="Sign out" icon={Logout} onClick={handleLogout} />
-          <div
-            style={{
-              padding: "14px 6px",
-              color: "red",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-            onClick={handleDeleteAccount}
-          >
-            Delete Account
-          </div>
-
+          <MenuItem title="Sign out" icon={LogOut} onClick={handleLogout} customStyle={{ color: "#EF4444" }} />
+          <MenuItem title="Delete Account" icon={Ban} onClick={handleDeleteAccount} customStyle={{ color: "#EF4444" }} />
         </div>
       </div>
     </div>
   );
 }
 
-function MenuItem({ title, icon, onClick }) {
+function MenuItem({ title, icon: Icon, onClick, customStyle }) {
   return (
-    <div style={styles.menuItem} onClick={onClick}>
-      <div style={styles.menuLeft}>
-        <img src={icon} width={18} />
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "12px 14px",
+        cursor: "pointer",
+        borderRadius: 10,
+        color: customStyle?.color || "#4B5563",
+        fontWeight: customStyle?.color === "#EF4444" ? 600 : 500,
+        transition: "all 0.2s ease",
+        fontSize: 15,
+        ...(customStyle || {}),
+      }}
+      onClick={onClick}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = "#F9FAFB";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = "transparent";
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {typeof Icon === "string" ? (
+          <img src={Icon} width={20} alt="" />
+        ) : (
+          Icon && <Icon size={20} color={customStyle?.color || "#6B7280"} />
+        )}
         <span>{title}</span>
       </div>
-      <img src={arrow} width={16} style={{ opacity: 0.2 }} />
+      <span style={{ color: "#9CA3AF", fontSize: 18, lineHeight: 1 }}>›</span>
     </div>
   );
 }
@@ -302,54 +314,45 @@ function MenuItem({ title, icon, onClick }) {
 const styles = {
   page: {
     minHeight: "100vh",
-    padding: 20,
+    padding: "24px 20px",
+    background: "#F7F7F9",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    fontFamily: "'Rubik', Inter, system-ui",
+    fontFamily: "'Rubik', system-ui",
   },
   titleWrap: {
     width: "100%",
     maxWidth: 1160,
     display: "flex",
     alignItems: "center",
-    marginBottom: 18,
+    marginBottom: 24,
   },
-  backBtn: {
-    width: 40,
-    height: 40,
-    background: "#fff",
-    borderRadius: 12,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-    cursor: "pointer",
-  },
-  title: { fontSize: 28, margin: 0, fontWeight: 700 },
-  subtitle: { marginTop: 6, fontSize: 13, color: "#6b7280" },
+  title: { fontSize: 26, margin: 0, fontWeight: 700, color: "#111" },
+  subtitle: { marginTop: 4, fontSize: 14, color: "#6b7280" },
   profileCard: {
     width: "100%",
     maxWidth: 1160,
     background: "#fff",
-    borderRadius: 18,
-    padding: 18,
+    borderRadius: 16,
+    padding: 24,
     display: "flex",
     alignItems: "center",
-    gap: 18,
-    boxShadow: "0 10px 30px rgba(0,0,0,0.07)",
-    marginBottom: 20,
+    gap: 20,
+    border: "1px solid #E5E7EB",
+    marginBottom: 24,
+    boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
   },
   avatar: {
-    width: 75,
-    height: 75,
+    width: 80,
+    height: 80,
     borderRadius: "50%",
     objectFit: "cover",
   },
   editBtn: {
     position: "absolute",
-    right: -5,
-    bottom: -10,
+    right: -2,
+    bottom: -2,
     cursor: "pointer",
   },
   uploadOverlay: {
@@ -362,20 +365,11 @@ const styles = {
     width: "100%",
     maxWidth: 1160,
     background: "#fff",
-    borderRadius: 18,
-    padding: 18,
-    boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
-    marginBottom: 20,
-
+    borderRadius: 16,
+    padding: "20px",
+    border: "1px solid #E5E7EB",
+    marginBottom: 24,
+    boxShadow: "none",
   },
-  sectionTitle: { fontSize: 14, color: "#6b7280" },
-  menuItem: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "12px 6px",
-    cursor: "pointer",
-    // borderTop: "1px solid rgba(15,15,15,0.05)",
-  },
-  menuLeft: { display: "flex", alignItems: "center", gap: 12 },
+  sectionTitle: { fontSize: 12, color: "#9CA3AF", fontWeight: 700, letterSpacing: 0.5, marginTop: 0, marginBottom: 12 },
 };
