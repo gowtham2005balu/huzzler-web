@@ -630,7 +630,7 @@ export default function FreelanceHome() {
     >
       {/* Top Notification Strip */}
       {showTopBanner && (
-        <div style={{ background: "linear-gradient(90deg, #6C3EEB 0%, #7C4EF5 100%)", padding: "6px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", color: "white", fontSize: "12px", width: "100%", zIndex: 50 }}>
+        <div className="fh-top-banner" style={{ background: "linear-gradient(90deg, #6C3EEB 0%, #7C4EF5 100%)", padding: "6px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", color: "white", fontSize: "12px", width: "100%", zIndex: 50 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <div style={{ width: "6px", height: "6px", background: "#F0E870", borderRadius: "3px" }}></div>
             <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
@@ -648,8 +648,8 @@ export default function FreelanceHome() {
           {/* Header & Tabs Container */}
           <div style={{ width: "100%", maxWidth: "1336px", position: "relative", zIndex: 60 }}>
             {/* Header */}
-            <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+            <header className="fh-top-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "16px" }}>
+              <div className="fh-header-welcome" style={{ display: "flex", alignItems: "center", gap: "24px" }}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <div style={{ color: "#8C84A8", fontSize: "12px", fontFamily: "'DM Sans', sans-serif", marginBottom: "2px" }}>Welcome back,</div>
                   <div style={{ fontSize: "20px", fontWeight: 700, fontFamily: "'Sora', sans-serif", color: "#1A1433" }}>{userInfo.first_name || "Freelancer"}! <PiHandWavingFill size={22} color="#F59E0B" style={{ marginBottom: "-4px" }} /></div>
@@ -657,7 +657,7 @@ export default function FreelanceHome() {
 
               </div>
 
-              <div style={{ flex: 1, display: "flex", justifyContent: "flex-start", padding: "0 24px" }}>
+              <div className="fh-header-search" style={{ flex: 1, display: "flex", justifyContent: "flex-start", padding: "0 24px" }}>
                 <div style={{ position: "relative", width: "100%", maxWidth: "500px", height: "38px" }}>
                   <FiSearch
                     style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#757575", strokeWidth: "2", cursor: "pointer", zIndex: 10 }}
@@ -689,7 +689,7 @@ export default function FreelanceHome() {
                 </div>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div className="fh-header-actions" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <button onClick={() => navigate("/freelance-dashboard/notifications")} style={{ background: "#FDFCFE", border: "1px solid #EBE5F2", borderRadius: "50%", width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
                   <FiBell color="#D9A000" size={18} />
                   <span style={{ position: "absolute", top: "10px", right: "10px", width: "6px", height: "6px", background: "#FF4B4B", borderRadius: "50%" }}></span>
@@ -839,7 +839,7 @@ export default function FreelanceHome() {
           </div>
 
           {/* Hero Section */}
-          <section style={{ background: "linear-gradient(100.35deg, rgba(245, 239, 160, 1) 0%, rgba(253, 247, 208, 1) 50%, rgba(240, 232, 168, 1) 100%)", borderRadius: "20px", padding: "24px 32px", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "244px", width: "100%", maxWidth: "1336px", boxSizing: "border-box", position: "relative", overflow: "hidden" }}>
+          <section className="fh-hero-section" style={{ background: "linear-gradient(100.35deg, rgba(245, 239, 160, 1) 0%, rgba(253, 247, 208, 1) 50%, rgba(240, 232, 168, 1) 100%)", borderRadius: "20px", padding: "24px 32px", display: "flex", flexDirection: "column", justifyContent: "space-between", width: "100%", maxWidth: "1336px", boxSizing: "border-box", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", width: "400px", height: "400px", right: "-100px", top: "-100px", background: "rgba(240, 232, 168, 0.4)", borderRadius: "200px", zIndex: 0 }}></div>
 
             <div style={{ zIndex: 1 }}>
@@ -849,7 +849,7 @@ export default function FreelanceHome() {
               <p style={{ margin: "4px 0 0 0", color: "#6B6B8A", fontSize: "14px", fontFamily: "'DM Sans', sans-serif" }}>You have <strong style={{ color: "#1A1433" }}>12 new matches</strong> waiting · Last active 2h ago</p>
             </div>
 
-            <div style={{ display: "flex", gap: "16px", zIndex: 1, width: "100%", height: "122px", boxSizing: "border-box" }}>
+            <div className="fh-quick-actions" style={{ display: "flex", gap: "16px", zIndex: 1, width: "100%", boxSizing: "border-box" }}>
               <div onClick={() => navigate("/freelance-dashboard/browse-projects")} style={{ flex: 1, height: "100%", background: "linear-gradient(106.39deg, #7C4EF5 0%, #6C3EEB 100%)", borderRadius: "20px", padding: "20px", cursor: "pointer", position: "relative", overflow: "hidden", color: "white", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "0px 4px 16px rgba(108, 62, 235, 0.15)", boxSizing: "border-box" }}>
                 <div style={{ width: "36px", height: "36px", background: "rgba(255, 255, 255, 0.2)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", color: "white" }}><Folder size={18} /></div>
                 <div>
@@ -984,7 +984,7 @@ export default function FreelanceHome() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "16px" }}>
+            <div className="fh-recommended-grid" style={{ display: "grid", gap: "16px" }}>
               {filteredJobs.slice(0, 3).map((job, index) => {
                 const isSaved = savedJobs.includes(job.id);
                 const colors = [
@@ -1115,7 +1115,7 @@ export default function FreelanceHome() {
               <h3 style={{ fontSize: "18px", fontWeight: 700, margin: 0, fontFamily: "'Sora', sans-serif", color: "#1A1433", display: "flex", alignItems: "center", gap: "8px" }}><span><Star size={18} color="#FF6E91" fill="#FF6E91" /></span> Trending Opportunities</h3>
             </div>
 
-            <div style={{ display: "flex", gap: "14px", width: "100%" }}>
+            <div className="fh-trending-grid" style={{ display: "flex", gap: "14px", width: "100%" }}>
               {filteredJobs.slice(3, 5).map((job, index) => {
                 const isUrgent = index === 0;
                 const bgGradient = isUrgent ? "linear-gradient(135deg, #4A1C98 0%, #30177A 100%)" : "linear-gradient(135deg, #3A1F92 0%, #2A1772 100%)";
@@ -1173,7 +1173,7 @@ export default function FreelanceHome() {
               <Link to="/freelance-dashboard/browse-projects" style={{ color: "#6C3EEB", fontSize: "14px", fontWeight: 700, textDecoration: "none", fontFamily: "'DM Sans', sans-serif" }}>All skills →</Link>
             </div>
 
-            <div style={{ display: "flex", gap: "14px", width: "100%", alignItems: "stretch" }}>
+            <div className="fh-trending-skills" style={{ display: "flex", gap: "14px", width: "100%", alignItems: "stretch" }}>
               {/* Main Skill Card */}
               {trendingSkills[0] && (
                 <div onClick={() => navigate("/freelance-dashboard/browse-projects", { state: { searchQuery: trendingSkills[0].name } })} style={{ flex: 1, background: "linear-gradient(135deg, #2D1B54 0%, #1A0D36 100%)", borderRadius: "24px", padding: "24px", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", cursor: "pointer", transition: "transform 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"} onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}>
