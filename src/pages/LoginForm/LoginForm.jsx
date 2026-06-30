@@ -21,13 +21,17 @@ export default function LoginForm() {
       if (!res.data || !res.data.user) {
         throw new Error("Invalid response from server");
       }
+      // Check if the user is trying to log into the wrong portal
+      if (role && res.data.user.role !== role) {
+        const actualRole = res.data.user.role === "client" ? "Client" : "Freelancer";
+        alert(`Access Denied: This email is already registered as a ${actualRole}. Please log in through the correct portal.`);
+        setLoading(false);
+        return;
+      }
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("userEmail", res.data.user.email);
-     
-
-  
       if (res.data.user.role === "client") {
         navigate("/client-dashbroad2");
       } else {
