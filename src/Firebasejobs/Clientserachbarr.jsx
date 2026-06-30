@@ -724,14 +724,11 @@ export default function ClientHomeUI() {
                       <FiSearch size={24} color="#6C3EEB" />
                       <span style={{ fontWeight: 600, fontSize: "14px", fontFamily: "'DM Sans', sans-serif" }}>Browse Talent</span>
                     </div>
-                    <div onClick={() => navigate("/client-dashbroad2/AddJobScreen")} style={{ background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "#1A1433", cursor: "pointer", padding: "20px" }}>
+                    <div onClick={() => navigate("/client-dashbroad2/AddJobScreen")} style={{ gridColumn: "span 2", background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "#1A1433", cursor: "pointer", padding: "20px" }}>
                       <span style={{ fontSize: "24px" }}>📁</span>
                       <span style={{ fontWeight: 600, fontSize: "14px", fontFamily: "'DM Sans', sans-serif" }}>My Projects</span>
                     </div>
-                    <div style={{ background: "white", border: "1px solid #EEEDF3", borderRadius: "16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "#1A1433", cursor: "pointer", padding: "20px" }}>
-                      <span style={{ fontSize: "24px" }}>⭐</span>
-                      <span style={{ fontWeight: 600, fontSize: "14px", fontFamily: "'DM Sans', sans-serif" }}>Leave Review</span>
-                    </div>
+
                   </div>
                 </div>
               </div>

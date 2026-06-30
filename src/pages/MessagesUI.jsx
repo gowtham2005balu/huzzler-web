@@ -2,7 +2,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Search, Bell, Star, MessageSquare, ArrowRight, Phone, Video, Monitor, Paperclip, Smile, Send, PenSquare, Edit } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { db as firestoreDb, auth, rtdb } from "../firbase/Firebase";
+import { db as firestoreDb, auth, rtdb, storage } from "../firbase/Firebase";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   ref as dbRef,
   onValue,
@@ -27,6 +28,7 @@ import {
   limit
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+import EmojiPicker from 'emoji-picker-react';
 
 // Helpers
 function formatTimeLabel(ts) {
@@ -61,6 +63,7 @@ export default function MessagesUI() {
   const [sidebarSearch, setSidebarSearch] = useState("");
   const [listSearch, setListSearch] = useState("");
   const [inputText, setInputText] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [activeTab, setActiveTab] = useState("All");
   const [otherPresence, setOtherPresence] = useState(null);
 
@@ -69,6 +72,7 @@ export default function MessagesUI() {
 
   const userCacheRef = useRef({});
   const scrollRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // 0. Handle opening a chat from another page via location.state
   useEffect(() => {
@@ -620,6 +624,22 @@ export default function MessagesUI() {
                       );
                     }
 
+                    // Handle File Messages
+                    if (msg.type === "image" || msg.type === "video") {
+                      return (
+                        <div key={msg.id} className={`chat-msg ${isMe ? "outgoing" : "incoming"}`}>
+                          <div className={`chat-bubble ${isMe ? "purple-bubble" : "yellow-bubble"}`} style={{ padding: "8px", maxWidth: "300px" }}>
+                            {msg.type === "image" ? (
+                              <img src={msg.fileUrl} alt={msg.fileName} style={{ width: "100%", borderRadius: "8px" }} />
+                            ) : (
+                              <video src={msg.fileUrl} controls style={{ width: "100%", borderRadius: "8px" }} />
+                            )}
+                          </div>
+                          <span className="chat-time">{formatTimeLabel(msg.timestamp)} {isMe && (msg.status === "seen" ? "✓✓" : "✓")}</span>
+                        </div>
+                      );
+                    }
+
                     // Handle Text Messages
                     return (
                       <div key={msg.id} className={`chat-msg ${isMe ? "outgoing" : "incoming"}`}>
@@ -634,19 +654,71 @@ export default function MessagesUI() {
                 </div>
 
                 {/* Chat Input Area */}
-                <div className="msg-chat-input-area">
+                <div className="msg-chat-input-area" style={{ position: "relative" }}>
+                  {showEmojiPicker && (
+                    <div style={{ position: "absolute", bottom: "100%", left: "20px", marginBottom: "10px", zIndex: 1000 }}>
+                      <EmojiPicker 
+                        onEmojiClick={(emojiData) => setInputText((prev) => prev + emojiData.emoji)} 
+                      />
+                    </div>
+                  )}
                   <div className="chat-input-wrapper">
-                    <button className="chat-input-icon"><Paperclip size={18} color="#6B7280" /></button>
-                    <button className="chat-input-icon"><Smile size={18} color="#6B7280" /></button>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      style={{ display: "none" }} 
+                      accept="image/*,video/*" 
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (file && activeChatId) {
+                          try {
+                            const fileType = file.type.startsWith("video/") ? "video" : "image";
+                            const msgId = uuidv4();
+                            const now = Date.now();
+                            const ext = file.name.split('.').pop();
+                            const sPath = `chats/${activeChatId}/${msgId}.${ext}`;
+                            const sRef = storageRef(storage, sPath);
+                            await uploadBytes(sRef, file);
+                            const url = await getDownloadURL(sRef);
+                            
+                            await set(dbRef(rtdb, `chats/${activeChatId}/messages/${msgId}`), {
+                              id: msgId, senderId: currentUid, receiverId: otherUid,
+                              type: fileType, fileUrl: url, fileName: file.name,
+                              timestamp: now, status: "sent", reactions: {}
+                            });
+                            await update(dbRef(rtdb, `userChats/${currentUid}/${activeChatId}`), {
+                              withUid: otherUid, lastMessage: `[${fileType}]`, lastMessageTime: now
+                            });
+                            await update(dbRef(rtdb, `userChats/${otherUid}/${activeChatId}`), {
+                              withUid: currentUid, lastMessage: `[${fileType}]`, lastMessageTime: now
+                            });
+                          } catch (err) {
+                            console.error("Upload error:", err);
+                            alert("Failed to upload file");
+                          }
+                          e.target.value = null;
+                        }
+                      }}
+                    />
+                    <button className="chat-input-icon" onClick={() => fileInputRef.current?.click()}><Paperclip size={18} color="#6B7280" /></button>
+                    <button className="chat-input-icon" onClick={() => setShowEmojiPicker(!showEmojiPicker)}><Smile size={18} color="#6B7280" /></button>
                     <input 
                       type="text" 
                       placeholder="Type a message..." 
                       className="chat-input-field" 
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && sendTextMessage()}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          sendTextMessage();
+                          setShowEmojiPicker(false);
+                        }
+                      }}
                     />
-                    <button className="chat-send-btn" onClick={sendTextMessage}><Send size={16} color="#ffffff" /></button>
+                    <button className="chat-send-btn" onClick={() => {
+                      sendTextMessage();
+                      setShowEmojiPicker(false);
+                    }}><Send size={16} color="#ffffff" /></button>
                   </div>
                 </div>
 

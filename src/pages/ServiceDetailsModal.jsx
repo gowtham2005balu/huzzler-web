@@ -72,24 +72,61 @@ function Toast({ message, color, onDone }) {
 }
 
 // ─── Hire Confirmation Modal ───────────────────────────────────────────────────
-function HireModal({ open, onClose, onConfirm, posterName, serviceTitle, loading }) {
+function HireModal({ open, onClose, onConfirm, posterName, loading }) {
+  const [title, setTitle] = useState("");
+  const [desc, setDesc]   = useState("");
+
   if (!open) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!title.trim() || !desc.trim()) return;
+    onConfirm(title.trim(), desc.trim());
+  };
+
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ background: "#fff", borderRadius: 20, padding: 36, maxWidth: 440, width: "90%", boxShadow: "0 20px 60px rgba(0,0,0,0.18)", fontFamily: "'Inter', sans-serif" }}>
-        <div style={{ fontSize: 32, textAlign: "center", marginBottom: 12 }}>🤝</div>
-        <h2 style={{ fontSize: 20, fontWeight: 700, color: "#1A1433", textAlign: "center", margin: "0 0 8px 0" }}>Confirm Hire Request</h2>
-        <p style={{ fontSize: 14, color: "#6B6B8A", textAlign: "center", lineHeight: 1.6, margin: "0 0 28px 0" }}>
-          You're about to send a hire request to <strong>{posterName}</strong> for <strong>"{serviceTitle}"</strong>. They'll be notified and can accept or decline.
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <div style={{ background: "#fff", borderRadius: 20, padding: 32, maxWidth: 480, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.18)", fontFamily: "'Inter', sans-serif" }}>
+        <div style={{ fontSize: 32, textAlign: "center", marginBottom: 12 }}>💼</div>
+        <h2 style={{ fontSize: 20, fontWeight: 700, color: "#1A1433", textAlign: "center", margin: "0 0 6px 0" }}>Hire {posterName}</h2>
+        <p style={{ fontSize: 13, color: "#6B6B8A", textAlign: "center", lineHeight: 1.5, margin: "0 0 24px 0" }}>
+          Provide the details of your project brief. We'll send it directly to their chat as a project card.
         </p>
-        <div style={{ display: "flex", gap: 12 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "12px", borderRadius: 10, border: "1.5px solid #EBE5F2", background: "white", color: "#1A1433", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-            Cancel
-          </button>
-          <button onClick={onConfirm} disabled={loading} style={{ flex: 1, padding: "12px", borderRadius: 10, border: "none", background: "linear-gradient(90deg,#6C3EEB,#9A5CFF)", color: "white", fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
-            {loading ? "Sending..." : "Send Hire Request →"}
-          </button>
-        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div>
+            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#1A1433", textTransform: "uppercase", marginBottom: 6 }}>Project Title</label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. Redesign Mobile App UI/UX"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1.5px solid #EBE5F2", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#1A1433", textTransform: "uppercase", marginBottom: 6 }}>Description / Brief</label>
+            <textarea
+              required
+              rows={4}
+              placeholder="Describe what needs to be done, requirements, goals..."
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1.5px solid #EBE5F2", fontSize: 14, outline: "none", resize: "none", boxSizing: "border-box", lineHeight: 1.5 }}
+            />
+          </div>
+
+          <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+            <button type="button" onClick={onClose} style={{ flex: 1, padding: "12px", borderRadius: 10, border: "1.5px solid #EBE5F2", background: "white", color: "#1A1433", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
+              Cancel
+            </button>
+            <button type="submit" disabled={loading} style={{ flex: 1, padding: "12px", borderRadius: 10, border: "none", background: "linear-gradient(90deg,#6C3EEB,#9A5CFF)", color: "white", fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+              {loading ? "Sending..." : "Send Request →"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -235,7 +272,7 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
   };
 
   // ── Hire function ──────────────────────────────────────────────────────────
-  const handleConfirmHire = async () => {
+  const handleConfirmHire = async (briefTitle, briefDesc) => {
     if (!currentUid || !serviceData) return;
     setHireLoading(true);
 
@@ -260,7 +297,7 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
     // Build the jobData payload the chat renders as a hire card
     const jobData = {
       id: jobId,
-      title: serviceData.title || "",
+      title: briefTitle || serviceData.title || "",
       category: serviceData.category || "",
       subCategory: serviceData.subCategory || "",
       budget_from: serviceData.budget_from || 0,
@@ -268,7 +305,7 @@ export default function ServiceFullDetailScreen({ jobId: propJobId }) {
       timeline: serviceData.timeline || serviceData.deliveryDuration || "",
       skills: serviceData.skills || [],
       tools: serviceData.tools || [],
-      description: serviceData.description || "",
+      description: briefDesc || serviceData.description || "",
       is24h: is24Hour,
       source: jobType,
     };

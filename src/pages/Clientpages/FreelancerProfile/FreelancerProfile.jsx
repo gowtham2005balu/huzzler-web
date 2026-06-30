@@ -210,13 +210,8 @@ export default function FreelancerProfile() {
   // ── Message function ────────────────────────────────────────────────────────
   const handleMessage = () => {
     if (!currentUid) return;
-    navigate("/chat", {
-      state: {
-        currentUid,
-        otherUid:   id,
-        otherName:  name,
-        otherImage: avatarImage,
-      },
+    navigate("/client-dashbroad2/messages", {
+      state: { startChatWith: id },
     });
   };
 

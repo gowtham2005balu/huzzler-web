@@ -1099,7 +1099,7 @@ export default function Categories() {
         unsubSnapshot = onSnapshot(userRef, (snap) => {
           let data = {};
           if (snap.exists()) data = snap.data();
-          
+
           const hasValidData = data.firstName || data.first_name || data.firstname || data.role || data.professional_title;
 
           if (snap.exists() && hasValidData) {
@@ -1107,7 +1107,7 @@ export default function Categories() {
             try {
               const stored = localStorage.getItem("freelancerOtpUser") || localStorage.getItem("clientOtpUser");
               if (stored) localData = JSON.parse(stored);
-            } catch (e) {}
+            } catch (e) { }
 
             const authDisplayName = currentUser.displayName || "";
             const authFirst = authDisplayName.split(" ")[0] || "";
@@ -1125,12 +1125,12 @@ export default function Categories() {
             unsubSnapshot2 = onSnapshot(freelancerRef, (fSnap) => {
               if (fSnap.exists()) {
                 const fData = fSnap.data();
-                
+
                 let localData = {};
                 try {
                   const stored = localStorage.getItem("freelancerOtpUser") || localStorage.getItem("clientOtpUser");
                   if (stored) localData = JSON.parse(stored);
-                } catch (e) {}
+                } catch (e) { }
 
                 const authDisplayName = currentUser.displayName || "";
                 const authFirst = authDisplayName.split(" ")[0] || "";
@@ -1292,7 +1292,7 @@ export default function Categories() {
                     margin: 0,
                     fontSize: isMobile ? "22px" : "26px",
                     fontWeight: 400,
-                    maxWidth: isMobile ? "70%" : "100%", 
+                    maxWidth: isMobile ? "70%" : "100%",
                     ...responsiveText,
                   }}
                 >
@@ -1304,7 +1304,7 @@ export default function Categories() {
                     margin: "2px 0",
                     fontSize: "32px",
                     fontWeight: 600,
-                    maxWidth: isMobile ? "100%" : "100%", 
+                    maxWidth: isMobile ? "100%" : "100%",
                   }}
                 >
                   {userInfo.first_name || "Huzzlers"}
