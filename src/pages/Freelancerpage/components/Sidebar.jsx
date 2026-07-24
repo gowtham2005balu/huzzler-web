@@ -203,7 +203,11 @@ export default function FreelanceSideBar() {
     <>
       {/* MOBILE TOPBAR */}
       <div className="mobile-topbar">
-        <div className="hz-logo-icon">H</div>
+        <img
+          src="https://res.cloudinary.com/dqsyzpxkg/image/upload/v1783590626/1000497503_dep9re.jpg"
+          alt="Logo"
+          style={{ width: "36px", height: "36px", borderRadius: "10px", objectFit: "cover" }}
+        />
         <button
           className="mobile-menu-btn"
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -225,7 +229,11 @@ export default function FreelanceSideBar() {
 
         {/* LOGO CARD */}
         <div className="hz-logo-area">
-          <div className="hz-logo-icon">H</div>
+          <img
+            src="https://res.cloudinary.com/dqsyzpxkg/image/upload/v1783590626/1000497503_dep9re.jpg"
+            alt="Logo"
+            style={{ width: "36px", height: "36px", borderRadius: "10px", objectFit: "cover" }}
+          />
           {!collapsed && (
             <span className="hz-logo-text">
               Huzzler <span style={{ color: '#7C4EF5' }}>AI</span>

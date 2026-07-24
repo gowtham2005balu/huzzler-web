@@ -703,7 +703,7 @@ line-height: 24px;
               className="role-btn white"
               disabled={loading}
               onClick={() =>
-                saveUserRole("freelancer", "/freelancer-signup")
+                navigate("/freelance-dashboard")
               }
             >
               {loading ? "Loading..." : "FREELANCER"}
@@ -713,7 +713,7 @@ line-height: 24px;
               className="role-btn purple"
               disabled={loading}
               onClick={() =>
-                saveUserRole("client", "/client-signup")
+                navigate("/client-dashbroad2")
               }
             >
               {loading ? "Loading..." : "CLIENT"}
@@ -725,7 +725,7 @@ line-height: 24px;
           Already have an account?
           <span
             className="login-btn"
-            onClick={() => navigate("/firelogin")}
+            onClick={() => navigate("/freelance-dashboard")}
           >
             Log in
           </span>

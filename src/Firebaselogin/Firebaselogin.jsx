@@ -9,6 +9,7 @@ import {
   GithubAuthProvider,
   signInWithPopup,
   linkWithCredential,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firbase/Firebase";
@@ -20,11 +21,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
-
-  const BACKEND_SEND_OTP =
-    "https://huzzler.onrender.com/api/auth/send-otp";
-
-
 
   const showMsg = (text, isError = true) => {
     setMsg({ text, isError });
@@ -126,43 +122,55 @@ export default function LoginPage() {
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      showMsg("Please enter email and password.");
+      return;
+    }
     setLoading(true);
 
     try {
       const normalizedEmail = email.trim().toLowerCase();
-      const encodedPassword = btoa(password.trim());
-
-      const q = query(
-        collection(db, "users"),
-        where("email", "==", normalizedEmail)
-      );
-      const snap = await getDocs(q);
-
-      if (snap.empty) {
-        showMsg("No account found");
+      
+      try {
+        const userCred = await signInWithEmailAndPassword(auth, normalizedEmail, password.trim());
+        const user = userCred.user;
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        const role = userSnap.exists() ? (userSnap.data().role || "").trim().toLowerCase() : "";
+        if (role === "client") {
+          navigate("/client-dashbroad2");
+        } else {
+          navigate("/freelance-dashboard");
+        }
         return;
+      } catch (authErr) {
+        const encodedPassword = btoa(password.trim());
+        const q = query(
+          collection(db, "users"),
+          where("email", "==", normalizedEmail)
+        );
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+          showMsg("No account found with this email.");
+          return;
+        }
+
+        const user = snap.docs[0].data();
+        if (user.password && user.password !== encodedPassword) {
+          showMsg("Incorrect password.");
+          return;
+        }
+
+        const role = (user.role || "").trim().toLowerCase();
+        if (role === "client") {
+          navigate("/client-dashbroad2");
+        } else {
+          navigate("/freelance-dashboard");
+        }
       }
-
-      const user = snap.docs[0].data();
-      if (user.password !== encodedPassword) {
-        showMsg("Incorrect password");
-        return;
-      }
-
-      await axios.post(BACKEND_SEND_OTP, {
-        email: normalizedEmail,
-      });
-
-      const role = (user.role || "").trim().toLowerCase();
-      role === "client"
-        ? navigate("/clientloginotp", {
-          state: { email: normalizedEmail },
-        })
-        : navigate("/freelancer-loginotp", {
-          state: { email: normalizedEmail },
-        });
     } catch {
-      showMsg("Login failed");
+      showMsg("Login failed. Please check your details.");
     } finally {
       setLoading(false);
     }

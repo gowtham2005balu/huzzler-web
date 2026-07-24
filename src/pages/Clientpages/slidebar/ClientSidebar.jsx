@@ -1153,11 +1153,11 @@ export default function ClientSidebar() {
       {/* MOBILE TOPBAR */}
       <div className="mobile-topbar">
         <div className="hz-client-sidebar-logo mobile-logo">
-          <div className="hz-client-logo-icon">
-            <svg width="18" height="24" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10.1667 1.83333L1.83333 12.8333H8.25L7.33333 20.1667L15.6667 9.16667H9.25L10.1667 1.83333Z" fill="#FFD43B" />
-            </svg>
-          </div>
+          <img
+            src="https://res.cloudinary.com/dqsyzpxkg/image/upload/v1783590626/1000497503_dep9re.jpg"
+            alt="Logo"
+            style={{ width: "36px", height: "36px", borderRadius: "10px", objectFit: "cover" }}
+          />
         </div>
         <button
           className="mobile-menu-btn"
@@ -1180,11 +1180,11 @@ export default function ClientSidebar() {
         {/* LOGO */}
         <div className="hz-client-sidebar-header">
           <div className="hz-client-sidebar-logo" style={{ cursor: "pointer" }} onClick={toggleSidebar}>
-            <div className="hz-client-logo-icon">
-              <svg width="16" height="22" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10.1667 1.83333L1.83333 12.8333H8.25L7.33333 20.1667L15.6667 9.16667H9.25L10.1667 1.83333Z" fill="#FFD43B" />
-              </svg>
-            </div>
+            <img
+              src="https://res.cloudinary.com/dqsyzpxkg/image/upload/v1783590626/1000497503_dep9re.jpg"
+              alt="Logo"
+              style={{ width: "36px", height: "36px", borderRadius: "10px", objectFit: "cover" }}
+            />
             {!collapsed && <span className="hz-client-logo-text">Huzzler</span>}
           </div>
         </div>

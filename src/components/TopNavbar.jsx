@@ -1,145 +1,509 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, Sparkles } from "lucide-react";
-import backarrow from "../assets/arrow.png";
+import { FiSearch, FiBell, FiMessageCircle, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firbase/Firebase";
+import AuthModal from "./AuthModal";
 
-export default function TopNavbar({ 
-  search = "", 
-  setSearch, 
-  profileImage, 
-  initials = "GG", 
-  onBack, 
-  isMobile = false 
+const CATEGORIES = [
+  "Graphics & Design",
+  "Programming & Tech",
+  "Video & Animation",
+  "Music & Audio",
+  "AI Services",
+  "Data",
+  "Business",
+  "Finance",
+  "Photography",
+  "Lifestyle",
+  "Consulting",
+  "Personal Growth & Hobbies",
+  "Advertising & Media Buying",
+  "Education & E-Learning Services",
+];
+
+export default function TopNavbar({
+  userName = "",
+  activeCategory = "Graphics & Design",
+  onSelectCategory,
+  searchValue = "",
+  onSearchChange,
+  onSearchSubmit,
+  profileImage = null,
+  notificationCount = 1,
+  onBellClick,
+  onMessageClick,
+  isLoggedIn: propIsLoggedIn,
+  showCategoryNav = false,
 }) {
   const navigate = useNavigate();
+  const navRef = useRef(null);
+  const [selectedCat, setSelectedCat] = useState(activeCategory);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+  const [currentUser, setCurrentUser] = useState(auth?.currentUser || null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
 
-  const handleBack = () => {
-    if (onBack) {
-      onBack();
-    } else {
-      navigate(-1);
+  const checkScrollPosition = () => {
+    if (navRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = navRef.current;
+      setShowLeftArrow(scrollLeft > 10);
+      setShowRightArrow(scrollLeft + clientWidth < scrollWidth - 10);
     }
   };
 
+  useEffect(() => {
+    const el = navRef.current;
+    if (el) {
+      checkScrollPosition();
+      el.addEventListener("scroll", checkScrollPosition);
+      window.addEventListener("resize", checkScrollPosition);
+      return () => {
+        el.removeEventListener("scroll", checkScrollPosition);
+        window.removeEventListener("resize", checkScrollPosition);
+      };
+    }
+  }, [showCategoryNav]);
+
+  const handleScrollLeft = () => {
+    if (navRef.current) {
+      navRef.current.scrollBy({ left: -250, behavior: "smooth" });
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (navRef.current) {
+      navRef.current.scrollBy({ left: 250, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    if (!auth) return;
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => {
+      if (typeof unsub === "function") unsub();
+    };
+  }, []);
+
+  const isUserAuthenticated = propIsLoggedIn !== undefined
+    ? propIsLoggedIn
+    : Boolean(
+        currentUser ||
+        auth?.currentUser ||
+        localStorage.getItem("userEmail") ||
+        localStorage.getItem("freelancerOtpUser") ||
+        localStorage.getItem("clientOtpUser")
+      );
+
+  const resolvedUserName = (() => {
+    if (userName && userName !== "James Andrew") return userName;
+    if (currentUser?.displayName) return currentUser.displayName;
+    if (currentUser?.email) return currentUser.email.split("@")[0];
+
+    try {
+      const storedF = localStorage.getItem("freelancerOtpUser");
+      if (storedF) {
+        const parsed = JSON.parse(storedF);
+        const name = parsed.first_name || parsed.firstName || parsed.name || parsed.displayName;
+        if (name) return name;
+      }
+      const storedC = localStorage.getItem("clientOtpUser");
+      if (storedC) {
+        const parsed = JSON.parse(storedC);
+        const name = parsed.first_name || parsed.firstName || parsed.name || parsed.displayName;
+        if (name) return name;
+      }
+      const storedEmail = localStorage.getItem("userEmail");
+      if (storedEmail) return storedEmail.split("@")[0];
+    } catch (e) { }
+
+    return "";
+  })();
+
+  const handleCategoryClick = (cat) => {
+    setSelectedCat(cat);
+    if (onSelectCategory) {
+      onSelectCategory(cat);
+    }
+  };
+
+  const handleOpenAuth = (mode) => {
+    setAuthMode(mode);
+    setAuthModalOpen(true);
+  };
+
+  const initials = resolvedUserName
+    ? resolvedUserName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
+    : "U";
+
   return (
-    <header
+    <div
       style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: isMobile ? "16px 20px" : "16px 40px",
-        background: "#fff",
-        borderBottom: "1px solid #E5E7EB",
-        boxSizing: "border-box",
         width: "100%",
-        height: "73px"
+        maxWidth: "1336px",
+        margin: "0 auto",
+        padding: "12px 16px 0 16px",
+        boxSizing: "border-box",
+        fontFamily: "'DM Sans', sans-serif",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 16, flex: 1, maxWidth: 600 }}>
-        
-        <div style={{ position: "relative", width: "100%", height: "40px" }}>
-          <Search style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9CA3AF" }} size={16} />
-          <input
-            type="text"
-            placeholder="Search freelancers, jobs, services..."
-            value={search}
-            onChange={(e) => setSearch && setSearch(e.target.value)}
+      {/* TOP HEADER ROW */}
+      <header
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "16px",
+          marginBottom: "16px",
+        }}
+      >
+        {/* LEFT USER GREETING */}
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span
+              style={{
+                color: "#8C84A8",
+                fontSize: "12px",
+                fontFamily: "'DM Sans', sans-serif",
+                marginBottom: "2px",
+              }}
+            >
+              {resolvedUserName ? "Welcome back," : "Welcome to Huzzler,"}
+            </span>
+            <span
+              style={{
+                fontSize: "20px",
+                fontWeight: 700,
+                fontFamily: "'Sora', sans-serif",
+                color: "#1A1433",
+              }}
+            >
+              {resolvedUserName ? `${resolvedUserName}! 👋` : "Freelancer! 👋"}
+            </span>
+          </div>
+
+          <div
             style={{
-              width: "100%",
-              height: "100%",
-              padding: "0 16px 0 42px",
-              borderRadius: "8px",
-              border: "1px solid #E5E7EB",
-              background: "#FAFAFA",
-              fontSize: "14px",
-              color: "#1F2937",
-              outline: "none",
-              boxSizing: "border-box"
+              width: "1px",
+              height: "28px",
+              background: "#EBE5F2",
+              display: "inline-block",
             }}
           />
-        </div>
-      </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        {!isMobile && (
-          <button
-            style={{
-              background: "#6C4DFF",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              padding: "8px 16px",
-              fontWeight: 600,
-              fontSize: "13px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px"
-            }}
-          >
-            <Sparkles size={14} /> AI Assistant
-          </button>
-        )}
-
-        <div
-          onClick={() => navigate("/freelance-dashboard/notifications")}
-          style={{
-            position: "relative",
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            background: "#F3F4F6",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            color: "#4B5563"
-          }}
-        >
-          <Bell size={18} />
           <span
             style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              width: "6px",
-              height: "6px",
-              background: "#EF4444",
-              borderRadius: "50%"
+              color: "#A39DBA",
+              fontSize: "13px",
+              fontFamily: "'DM Sans', sans-serif",
             }}
-          />
+          >
+            Discover projects that match your skills
+          </span>
         </div>
 
+        {/* MIDDLE SEARCH INPUT */}
         <div
-          onClick={() => {
-            if (window.location.pathname === "/freelance-dashboard/accountfreelancer") {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-              navigate("/freelance-dashboard/accountfreelancer");
-            }
-          }}
           style={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            background: "#6C3EEB",
-            color: "white",
+            flex: "1 1 300px",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            fontWeight: 700,
-            fontSize: "14px",
-            overflow: "hidden",
-            cursor: "pointer"
+            maxWidth: "480px",
           }}
         >
-          {profileImage ? (
-            <img src={profileImage} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          ) : (
-            initials
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "38px",
+            }}
+          >
+            <FiSearch
+              style={{
+                position: "absolute",
+                left: "14px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "#757575",
+                strokeWidth: "2",
+                zIndex: 1,
+              }}
+              size={16}
+            />
+            <input
+              type="text"
+              placeholder="Search freelancers, jobs, services..."
+              value={searchValue}
+              onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && onSearchSubmit) {
+                  onSearchSubmit(searchValue);
+                }
+              }}
+              style={{
+                width: "100%",
+                height: "100%",
+                padding: "0 20px 0 40px",
+                borderRadius: "9.5px",
+                border: "1px solid #E8E6F0",
+                background: "#F7F7F9",
+                fontSize: "14px",
+                fontFamily: "'DM Sans', sans-serif",
+                color: "#1A1433",
+                boxSizing: "border-box",
+                outline: "none",
+                transition: "all 0.2s",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* RIGHT ACTIONS: SIGN IN, SIGN UP + BELL, CHAT, AVATAR */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {!isUserAuthenticated && (
+            <>
+              {/* SIGN IN BUTTON */}
+              <button
+                onClick={() => handleOpenAuth("login")}
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid #7C3AED",
+                  color: "#7C3AED",
+                  borderRadius: "999px",
+                  padding: "6px 20px",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  fontFamily: "'DM Sans', sans-serif",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Sign in
+              </button>
+
+              {/* SIGN UP BUTTON */}
+              <button
+                onClick={() => handleOpenAuth("signup")}
+                style={{
+                  background: "#7C3AED",
+                  color: "#FFFFFF",
+                  border: "none",
+                  borderRadius: "999px",
+                  padding: "7px 22px",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 8px rgba(124, 58, 237, 0.3)",
+                  transition: "all 0.2s",
+                  fontFamily: "'DM Sans', sans-serif",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Sign Up
+              </button>
+            </>
+          )}
+
+          {/* BELL ICON */}
+          <button
+            onClick={onBellClick || (() => navigate("/notifications"))}
+            style={{
+              background: "#FFF9E6",
+              border: "1px solid #FCEEBF",
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative",
+              cursor: "pointer",
+            }}
+          >
+            <FiBell color="#D9A000" size={18} />
+            {notificationCount > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "10px",
+                  width: "6px",
+                  height: "6px",
+                  background: "#FF4B4B",
+                  borderRadius: "50%",
+                }}
+              />
+            )}
+          </button>
+
+          {/* CHAT ICON */}
+          <button
+            onClick={onMessageClick || (() => navigate("/messages"))}
+            style={{
+              background: "#F5F3F7",
+              border: "1px solid #EBE5F2",
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            <FiMessageCircle color="#A39DBA" size={18} />
+          </button>
+
+          {/* AVATAR */}
+          <div
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              background: "#7C3AED",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "bold",
+              fontSize: "14px",
+              fontFamily: "'Sora', sans-serif",
+              cursor: "pointer",
+              overflow: "hidden",
+            }}
+          >
+            {profileImage ? (
+              <img
+                src={profileImage}
+                alt="Avatar"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              initials
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* CATEGORY NAVBAR ROW */}
+      {showCategoryNav && (
+        <div style={{ position: "relative", display: "flex", alignItems: "center", width: "100%" }}>
+          {showLeftArrow && (
+            <button
+              onClick={handleScrollLeft}
+              style={{
+                position: "absolute",
+                left: "-8px",
+                top: "50%",
+                transform: "translateY(-65%)",
+                zIndex: 10,
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                background: "#FFFFFF",
+                border: "1px solid #E2E8F0",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "#7C3AED"
+              }}
+            >
+              <FiChevronLeft size={18} />
+            </button>
+          )}
+
+          <nav
+            ref={navRef}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "28px",
+              borderBottom: "1px solid #EBE5F2",
+              overflowX: "auto",
+              paddingBottom: "10px",
+              paddingLeft: showLeftArrow ? "32px" : "12px",
+              paddingRight: showRightArrow ? "32px" : "12px",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              width: "100%",
+              scrollBehavior: "smooth"
+            }}
+          >
+            {CATEGORIES.map((cat) => {
+              const isActive = selectedCat === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => handleCategoryClick(cat)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: "4px 0 8px 0",
+                    fontSize: "14px",
+                    fontWeight: isActive ? 700 : 500,
+                    color: isActive ? "#7C3AED" : "#555555",
+                    fontFamily: "'DM Sans', sans-serif",
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    position: "relative",
+                    borderBottom: isActive ? "2.5px solid #7C3AED" : "2.5px solid transparent",
+                    transition: "all 0.2s ease",
+                    flexShrink: 0
+                  }}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </nav>
+
+          {showRightArrow && (
+            <button
+              onClick={handleScrollRight}
+              style={{
+                position: "absolute",
+                right: "-8px",
+                top: "50%",
+                transform: "translateY(-65%)",
+                zIndex: 10,
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                background: "#FFFFFF",
+                border: "1px solid #E2E8F0",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "#7C3AED"
+              }}
+            >
+              <FiChevronRight size={18} />
+            </button>
           )}
         </div>
-      </div>
-    </header>
+      )}
+
+      {/* AUTH POPUP MODAL */}
+      <AuthModal
+        key={authMode + (authModalOpen ? "-open" : "-closed")}
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        initialMode={authMode}
+      />
+    </div>
   );
 }

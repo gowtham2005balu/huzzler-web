@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate, useParams } from "react-router-dom";
+import { Routes, Route, useNavigate, useParams, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 // Auth Pages
 import RoleSelect from "./pages/RoleSelect";
@@ -205,7 +205,7 @@ export default function App() {
     <Routes>
 
       {/* ========== Auth ========== */}
-      <Route path="/" element={<Firebaseregister />} />
+      <Route path="/" element={<Navigate to="/freelance-dashboard" replace />} />
       <Route path="/roleselect" element={<RoleSelect />} />
       <Route path="/register" element={<RegisterStep1 />} />
       <Route path="/client-register" element={<ClientRegisterStep1 />} />
@@ -527,14 +527,9 @@ export default function App() {
 
 
       <Route path="termsofservice" element={<TermsOfService />} />
-      <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-
-      <Route path="/job-full/:id" element={<ClientJobFullDetailJobScreen />} />
-
-      <Route path="/Requestmessagefreelancer" element={<RequestChatListScreen />}></Route>
-
-
-
+      <Route path="/freelance dashboard" element={<Navigate to="/freelance-dashboard" replace />} />
+      <Route path="/freelance%20dashboard" element={<Navigate to="/freelance-dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/freelance-dashboard" replace />} />
     </Routes>
     {!["/freelance-dashboard/freelancermyworks", "/freelance-dashboard/add-service-form"].includes(location.pathname) && <FloatingAssistantButton />}
     </>

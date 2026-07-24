@@ -30,6 +30,7 @@ import {
 } from "react-icons/fi";
 import { FaReact } from "react-icons/fa";
 import { PiHandWavingFill } from "react-icons/pi";
+import TopNavbar from "../../../components/TopNavbar";
 
 
 import { BsBookmarkFill } from "react-icons/bs";
@@ -176,7 +177,14 @@ export default function FreelanceHome() {
 
   const navigate = useNavigate();
   const auth = getAuth();
-  const user = auth.currentUser;
+  const [currentUser, setCurrentUser] = useState(auth?.currentUser || null);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => setCurrentUser(u));
+    return unsub;
+  }, [auth]);
+
+  const user = currentUser;
 
 
   const [collapsed, setCollapsed] = useState(
@@ -647,71 +655,26 @@ export default function FreelanceHome() {
         <div style={{ flex: 1, padding: "8px 24px 20px", display: "flex", flexDirection: "column", gap: "16px", overflowY: "auto" }}>
           {/* Header & Tabs Container */}
           <div style={{ width: "100%", maxWidth: "1336px", position: "relative", zIndex: 60 }}>
-            {/* Header */}
-            <header className="fh-top-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "16px" }}>
-              <div className="fh-header-welcome" style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <div style={{ color: "#8C84A8", fontSize: "12px", fontFamily: "'DM Sans', sans-serif", marginBottom: "2px" }}>Welcome back,</div>
-                  <div style={{ fontSize: "20px", fontWeight: 700, fontFamily: "'Sora', sans-serif", color: "#1A1433" }}>{userInfo.first_name || "Freelancer"}! <PiHandWavingFill size={22} color="#F59E0B" style={{ marginBottom: "-4px" }} /></div>
-                </div>
-
-              </div>
-
-              <div className="fh-header-search" style={{ flex: 1, display: "flex", justifyContent: "flex-start", padding: "0 24px" }}>
-                <div style={{ position: "relative", width: "100%", maxWidth: "500px", height: "38px" }}>
-                  <FiSearch
-                    style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#757575", strokeWidth: "2", cursor: "pointer", zIndex: 10 }}
-                    size={16}
-                    onClick={() => {
-                      if (searchText.trim()) {
-                        navigate("/freelance-dashboard/browse-projects", { state: { searchQuery: searchText.trim() } });
-                      } else {
-                        navigate("/freelance-dashboard/browse-projects");
-                      }
-                    }}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Search freelancers, jobs, services..."
-                    style={{ width: "100%", height: "100%", padding: "0 20px 0 40px", borderRadius: "9.5px", border: "1px solid #E8E6F0", background: "#F7F7F9", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", color: "#757575", boxSizing: "border-box", outline: "none", transition: "all 0.2s" }}
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        if (searchText.trim()) {
-                          navigate("/freelance-dashboard/browse-projects", { state: { searchQuery: searchText.trim() } });
-                        } else {
-                          navigate("/freelance-dashboard/browse-projects");
-                        }
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div className="fh-header-actions" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <button onClick={() => navigate("/freelance-dashboard/notifications")} style={{ background: "#FDFCFE", border: "1px solid #EBE5F2", borderRadius: "50%", width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
-                  <FiBell color="#D9A000" size={18} />
-                  <span style={{ position: "absolute", top: "10px", right: "10px", width: "6px", height: "6px", background: "#FF4B4B", borderRadius: "50%" }}></span>
-                </button>
-
-                <button onClick={() => navigate("/freelance-dashboard/messages")} style={{ background: "#F5F3F7", border: "1px solid #EBE5F2", borderRadius: "50%", width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                  <FiMessageCircle color="#A39DBA" size={18} />
-                </button>
-
-                <div onClick={() => navigate("/freelance-dashboard/accountfreelancer")} style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#6C3EEB", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "14px", fontFamily: "'Sora', sans-serif", cursor: "pointer", overflow: "hidden" }}>
-                  {userInfo.profileImage ? (
-                    <img
-                      src={userInfo.profileImage}
-                      alt="Profile"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                  ) : (
-                    userInfo.first_name ? userInfo.first_name.charAt(0).toUpperCase() : "JA"
-                  )}
-                </div>
-              </div>
-            </header>
+            <TopNavbar
+              userName={userInfo.first_name || ""}
+              isLoggedIn={Boolean(user || auth?.currentUser || localStorage.getItem("userEmail") || localStorage.getItem("freelancerOtpUser") || localStorage.getItem("clientOtpUser"))}
+              searchValue={searchText}
+              onSearchChange={(val) => setSearchText(val)}
+              onSearchSubmit={(val) => {
+                if (val.trim()) {
+                  navigate("/freelance-dashboard/browse-projects", { state: { searchQuery: val.trim() } });
+                } else {
+                  navigate("/freelance-dashboard/browse-projects");
+                }
+              }}
+              profileImage={userInfo.profileImage}
+              onBellClick={() => navigate("/freelance-dashboard/notifications")}
+              onMessageClick={() => navigate("/freelance-dashboard/messages")}
+              onSelectCategory={(cat) => {
+                navigate("/freelance-dashboard/browse-projects", { state: { category: cat } });
+              }}
+              showCategoryNav={false}
+            />
 
             {/* Category Tabs and Mega Menu Wrapper */}
             <div onMouseLeave={() => setShowMegaMenu(false)} style={{ position: "relative" }}>
