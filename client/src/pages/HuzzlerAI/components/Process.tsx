@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const steps = [
   {
@@ -45,50 +45,83 @@ const steps = [
   },
 ];
 
+function StepCard({
+  s,
+  index,
+}: {
+  s: (typeof steps)[number];
+  index: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        transitionDelay: `${index * 60}ms`,
+      }}
+      className={`${s.color} rounded-2xl p-6 sm:p-7 min-h-[180px] sm:min-h-[195px] h-full relative overflow-hidden flex flex-col items-start text-left transition-all duration-500 ease-out ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+        }`}
+    >
+      <span className="absolute top-3 right-4 sm:right-5 text-[28px] sm:text-[36px] font-medium text-black/10 leading-none select-none">
+        {s.num}
+      </span>
+      <span className="text-[11px] font-semibold text-gray-600/60 tracking-wide relative z-10">
+        {s.step}
+      </span>
+      <h3 className="text-[17px] sm:text-[18px] font-medium text-gray-900 mt-2 mb-2 relative z-10 pr-8">
+        {s.title}
+      </h3>
+      <p className="text-[13px] text-gray-700/70 leading-relaxed relative z-10">
+        {s.desc}
+      </p>
+    </div>
+  );
+}
+
 export default function Process() {
   return (
-    <section className="bg-[#ece7fb] py-24 px-6 md:px-12 lg:px-[100px]">
-      <div className="max-w-[1456px] mx-auto px-6 lg:px-10">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-14">
+    <section className="bg-[#ece7fb] py-16 sm:py-20 lg:py-24 px-5 sm:px-8 md:px-12 lg:px-[100px]">
+      <div className="max-w-[1456px] mx-auto sm:px-4 lg:px-10">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-14">
           <div>
-            <span className="inline-block text-[11px] font-semibold tracking-wide text-violet-600 bg-white rounded-full px-3 py-1.5 mb-5">
+            <span className="inline-block text-[11px] font-semibold tracking-wide text-violet-600 bg-white rounded-full px-3 py-1.5 mb-4 sm:mb-5">
               THE PROCESS
             </span>
-            <h2 className="text-[34px] leading-tight font-medium text-gray-900 tracking-tight">
+            <h2 className="text-[28px] sm:text-[32px] lg:text-[34px] leading-tight font-medium text-gray-900 tracking-tight">
               How Huzzler
               <br />
               Works
             </h2>
+            <br />
+            <p className="text-gray-600 text-[15px] leading-relaxed max-w-[420px] text-left">
+              From idea to delivered project — our streamlined workflow removes
+              friction at every step, powered by intelligent AI every step of
+              the way.
+            </p>
           </div>
-          <p className="text-gray-600 text-[15px] leading-relaxed max-w-[420px] text-left">
-            From idea to delivered project — our streamlined workflow removes
-            friction at every step, powered by intelligent AI every step of
-            the way.
-          </p>
+
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {steps.map((s, i) => (
-            <motion.div
-              key={s.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.06 }}
-              className={`${s.color} rounded-2xl p-7 h-[195px] relative overflow-hidden flex flex-col items-start text-left`}
-            >
-              <span className="absolute top-3 right-5 text-[36px] font-medium text-black/10 leading-none select-none">
-                {s.num}
-              </span>
-              <span className="text-[11px] font-semibold text-gray-600/60 tracking-wide relative z-10">
-                {s.step}
-              </span>
-              <h3 className="text-[18px] font-medium text-gray-900 mt-2 mb-2 relative z-10">
-                {s.title}
-              </h3>
-              <p className="text-[13px] text-gray-700/70 leading-relaxed relative z-10">
-                {s.desc}
-              </p>
-            </motion.div>
+            <StepCard key={s.title} s={s} index={i} />
           ))}
         </div>
       </div>
