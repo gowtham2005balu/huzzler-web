@@ -1664,7 +1664,6 @@ export default function Index() {
       <HeroSection />
       <Ticker items={tickerItems} />
       <CategoriesSection />
-      <CTASection />
       <WhyHuzzlerSection />
       <ReviewsSection />
       <BlogSection />
