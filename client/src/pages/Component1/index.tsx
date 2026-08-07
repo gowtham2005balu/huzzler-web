@@ -1484,13 +1484,13 @@ function JourneySection() {
               {/* Bottom Graphic 2 */}
               <div className="flex gap-2.5 mt-auto">
                 <button
-                  onClick={() => setLocation("/features")}
+                  onClick={() => window.location.href = "https://www.huzzler.app/freelance-dashboard/createservice"}
                   className="flex-1 bg-[#FFFBEB] border border-[#FDE68A] rounded-xl p-3 flex flex-col items-center justify-center gap-1 text-center transition-all hover:border-[#D97706]"
                 >
                   <span className="text-[#D97706] text-[11px] font-medium flex items-center justify-center gap-1">Use AI Assistant</span>
                 </button>
                 <button
-                  onClick={() => setLocation("/features")}
+                  onClick={() => window.location.href = "https://www.huzzler.app/freelance-dashboard/createservice"}
                   className="flex-1 bg-white border border-gray-200 rounded-xl p-3 flex flex-col items-center justify-center gap-1 text-center transition-all hover:border-gray-400"
                 >
                   <span className="text-gray-700 text-[11px] font-medium flex items-center justify-center gap-1"> Create Manually</span>
