@@ -33,9 +33,9 @@ export default function Metrics() {
     <section className="bg-black pt-36 pb-24 px-6 md:px-12 lg:px-[100px]">
       <div className="max-w-[1456px] mx-auto px-6 lg:px-10">
         <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold tracking-widest text-violet-300 bg-white/5 rounded-full px-4 py-1.5 mb-6 uppercase">
+          {/* <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold tracking-widest text-violet-300 bg-white/5 rounded-full px-4 py-1.5 mb-6 uppercase">
             <Sparkles size={14} className="text-violet-400" /> BENEFITS
-          </span>
+          </span> */}
           <h2 className="text-[42px] font-medium text-white tracking-tight mb-5">
             Built for Modern <span className="text-violet-400">Workflows</span>
           </h2>

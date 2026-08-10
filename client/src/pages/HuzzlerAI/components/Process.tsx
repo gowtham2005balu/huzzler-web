@@ -102,9 +102,9 @@ export default function Process() {
       <div className="max-w-[1456px] mx-auto sm:px-4 lg:px-10">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-14">
           <div>
-            <span className="inline-block text-[11px] font-semibold tracking-wide text-violet-600 bg-white rounded-full px-3 py-1.5 mb-4 sm:mb-5">
+            {/* <span className="inline-block text-[11px] font-semibold tracking-wide text-violet-600 bg-white rounded-full px-3 py-1.5 mb-4 sm:mb-5">
               THE PROCESS
-            </span>
+            </span> */}
             <h2 className="text-[28px] sm:text-[32px] lg:text-[34px] leading-tight font-medium text-gray-900 tracking-tight">
               How Huzzler
               <br />

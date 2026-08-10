@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { motion, useInView } from "framer-motion";
-import {
-  Zap
-} from "lucide-react";
+import { Zap, Share2, Code2, TrendingUp, Video, PenTool, Bot, Music2, BarChart3, Briefcase, Camera, Sprout, Gem } from "lucide-react";
 // ─── Constants ────────────────────────────────────────────────────────────────
 const W = "#FFFFFF";
 const P2 = "#A78BFA";
@@ -263,155 +261,26 @@ function HeroSection() {
 }
 
 // ─── Categories Section ────────────────────────────────────────────────────────
+// Add these lucide-react imports alongside your existing "Zap" import:
+// import { Zap, Share2, Code2, TrendingUp, Video, PenTool, Bot, Music2, BarChart3, Briefcase, Camera, Sprout, Gem } from "lucide-react";
+
+// ─── Categories Section (simplified icon set) ─────────────────────────────────
 const categories = [
-  {
-    name: "Graphics & Design", count: "12,400",
-    bg: "linear-gradient(135deg, #E0D8FF 0%, #C4B0FF 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" fill="#7C5CF6" />
-        <path d="M24 15.5C25.933 15.5 27.5 13.933 27.5 12C27.5 10.067 25.933 8.5 24 8.5C22.067 8.5 20.5 10.067 20.5 12C20.5 13.933 22.067 15.5 24 15.5Z" fill="#A855F7" />
-        <path d="M18 26.5C19.933 26.5 21.5 24.933 21.5 23C21.5 21.067 19.933 19.5 18 19.5C16.067 19.5 14.5 21.067 14.5 23C14.5 24.933 16.067 26.5 18 26.5Z" fill="#6D4CF5" />
-        <path d="M12 12L18 23L24 12L18 16L12 12Z" fill="#6C4CF5" fillOpacity="0.3" />
-        <path d="M9 27C15 30.3333 21 30.3333 27 27" stroke="#7C5CF6" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    name: "Programming & Tech", count: "8,200",
-    bg: "linear-gradient(135deg, #DAEEFF 0%, #A8D4FF 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M28 8H8C6.34315 8 5 9.34315 5 11V23C5 24.6569 6.34315 26 8 26H28C29.6569 26 31 24.6569 31 23V11C31 9.34315 29.6569 8 28 8Z" stroke="#3B82F6" strokeWidth="2" />
-        <path d="M5 28H31" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" />
-        <path d="M14 17L11 14L14 11" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M22 17L25 14L22 11" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M20 10L16 19" stroke="#60A5FA" strokeWidth="1.8" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    name: "Digital Marketing", count: "6,800",
-    bg: "linear-gradient(135deg, #FFE9CE 0%, #FFCF8B 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M7 26L14 18L19 22L28 10" stroke="#F97316" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M23 10H28V15" stroke="#F97316" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M10 27H8C7.44772 27 7 27.4477 7 28V32C7 32.5523 7.44772 33 8 33H10C10.5523 33 11 32.5523 11 32V28C11 27.4477 10.5523 27 10 27Z" fill="#FDBA74" />
-        <path d="M17 22H15C14.4477 22 14 22.4477 14 23V32C14 32.5523 14.4477 33 15 33H17C17.5523 33 18 32.5523 18 32V23C18 22.4477 17.5523 22 17 22Z" fill="#FB923C" />
-        <path d="M24 17H22C21.4477 17 21 17.4477 21 18V32C21 32.5523 21.4477 33 22 33H24C24.5523 33 25 32.5523 25 32V18C25 17.4477 24.5523 17 24 17Z" fill="#F97316" />
-      </svg>
-    ),
-  },
-  {
-    name: "Video & Animation", count: "4,100",
-    bg: "linear-gradient(135deg, #FFE0ED 0%, #FFAED0 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M28 9H8C6.34315 9 5 10.3431 5 12V24C5 25.6569 6.34315 27 8 27H28C29.6569 27 31 25.6569 31 24V12C31 10.3431 29.6569 9 28 9Z" stroke="#EC4899" strokeWidth="2" />
-        <path d="M5 13H31" stroke="#EC4899" strokeWidth="1.5" />
-        <path d="M15 18V26L24 22L15 18Z" fill="#F472B6" />
-      </svg>
-    ),
-  },
-  {
-    name: "Writing & Translation", count: "5,600",
-    bg: "linear-gradient(135deg, #D4F5E7 0%, #9EECC8 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M22 7L29 14L14 29H7V22L22 7Z" fill="#10B981" fillOpacity="0.12" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M19 10L26 17" stroke="#10B981" strokeWidth="2" strokeLinecap="round" />
-        <path d="M25 11C26.6569 11 28 9.65685 28 8C28 6.34315 26.6569 5 25 5C23.3431 5 22 6.34315 22 8C22 9.65685 23.3431 11 25 11Z" fill="#34D399" />
-      </svg>
-    ),
-  },
-  {
-    name: "AI Services", count: "3,200",
-    bg: "linear-gradient(135deg, #DDD8FF 0%, #B8ACFF 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M23 11H13C10.7909 11 9 12.7909 9 15V22C9 24.2091 10.7909 26 13 26H23C25.2091 26 27 24.2091 27 22V15C27 12.7909 25.2091 11 23 11Z" fill="#7C3AED" fillOpacity="0.1" stroke="#7C3AED" strokeWidth="2" />
-        <path d="M14 20.5C15.3807 20.5 16.5 19.3807 16.5 18C16.5 16.6193 15.3807 15.5 14 15.5C12.6193 15.5 11.5 16.6193 11.5 18C11.5 19.3807 12.6193 20.5 14 20.5Z" fill="#7C3AED" />
-        <path d="M22 20.5C23.3807 20.5 24.5 19.3807 24.5 18C24.5 16.6193 23.3807 15.5 22 15.5C20.6193 15.5 19.5 16.6193 19.5 18C19.5 19.3807 20.6193 20.5 22 20.5Z" fill="#7C3AED" />
-        <path d="M14 22C16.6667 24 19.3333 24 22 22" stroke="#7C3AED" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M14 11V8M22 11V8M9 19H6M30 19H27" stroke="#7C3AED" strokeWidth="1.8" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    name: "Music & Audio", count: "2,900",
-    bg: "linear-gradient(135deg, #D0F4F0 0%, #93E6DE 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M13 31C15.2091 31 17 29.2091 17 27C17 24.7909 15.2091 23 13 23C10.7909 23 9 24.7909 9 27C9 29.2091 10.7909 31 13 31Z" fill="#0D9488" fillOpacity="0.12" stroke="#0D9488" strokeWidth="2" />
-        <path d="M27 28C29.2091 28 31 26.2091 31 24C31 21.7909 29.2091 20 27 20C24.7909 20 23 21.7909 23 24C23 26.2091 24.7909 28 27 28Z" fill="#0D9488" fillOpacity="0.12" stroke="#0D9488" strokeWidth="2" />
-        <path d="M17 27V12L31 9V24" stroke="#0D9488" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M17 16L31 13" stroke="#14B8A6" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    name: "Data & Analytics", count: "1,800",
-    bg: "linear-gradient(135deg, #FFDDE6 0%, #FFA8BF 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M10.5 22H8.5C7.67157 22 7 22.6716 7 23.5V29.5C7 30.3284 7.67157 31 8.5 31H10.5C11.3284 31 12 30.3284 12 29.5V23.5C12 22.6716 11.3284 22 10.5 22Z" fill="#F43F5E" />
-        <path d="M18.5 15H16.5C15.6716 15 15 15.6716 15 16.5V29.5C15 30.3284 15.6716 31 16.5 31H18.5C19.3284 31 20 30.3284 20 29.5V16.5C20 15.6716 19.3284 15 18.5 15Z" fill="#FB7185" />
-        <path d="M26.5 9H24.5C23.6716 9 23 9.67157 23 10.5V29.5C23 30.3284 23.6716 31 24.5 31H26.5C27.3284 31 28 30.3284 28 29.5V10.5C28 9.67157 27.3284 9 26.5 9Z" fill="#F43F5E" />
-        <path d="M7 8L9.5 22L18 12L28 4" stroke="#F43F5E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
-    name: "Business", count: "2,400",
-    bg: "linear-gradient(135deg, #D8EDFF 0%, #A5CFFF 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M27 16H9C7.34315 16 6 17.3431 6 19V28C6 29.6569 7.34315 31 9 31H27C28.6569 31 30 29.6569 30 28V19C30 17.3431 28.6569 16 27 16Z" fill="#2563EB" fillOpacity="0.08" stroke="#2563EB" strokeWidth="2" />
-        <path d="M13 16V13C13 11 14.6667 10 18 10C21.3333 10 23 11 23 13V16" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" />
-        <path d="M6 23C14 26.3333 22 26.3333 30 23" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M20 20H16C15.4477 20 15 20.4477 15 21V24C15 24.5523 15.4477 25 16 25H20C20.5523 25 21 24.5523 21 24V21C21 20.4477 20.5523 20 20 20Z" fill="#3B82F6" />
-      </svg>
-    ),
-  },
-  {
-    name: "Photography", count: "1,600",
-    bg: "linear-gradient(135deg, #EBE6FF 0%, #CABFFF 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M28.5 12H7.5C5.567 12 4 13.567 4 15.5V27.5C4 29.433 5.567 31 7.5 31H28.5C30.433 31 32 29.433 32 27.5V15.5C32 13.567 30.433 12 28.5 12Z" fill="#6C4CF5" fillOpacity="0.08" stroke="#6C4CF5" strokeWidth="2" />
-        <path d="M13 12L14.5 8H21.5L23 12" stroke="#6C4CF5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M18 26C20.7614 26 23 23.7614 23 21C23 18.2386 20.7614 16 18 16C15.2386 16 13 18.2386 13 21C13 23.7614 15.2386 26 18 26Z" fill="#6C4CF5" fillOpacity="0.12" stroke="#6C4CF5" strokeWidth="2" />
-        <path d="M27 17.5C27.8284 17.5 28.5 16.8284 28.5 16C28.5 15.1716 27.8284 14.5 27 14.5C26.1716 14.5 25.5 15.1716 25.5 16C25.5 16.8284 26.1716 17.5 27 17.5Z" fill="#8B6FF8" />
-      </svg>
-    ),
-  },
-  {
-    name: "Personal Growth", count: "980",
-    bg: "linear-gradient(135deg, #D5F5E8 0%, #8FE0BE 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M18 29V16" stroke="#059669" strokeWidth="2.2" strokeLinecap="round" />
-        <path d="M18 20C22 16 25.3333 13.3333 28 12" stroke="#059669" strokeWidth="2" strokeLinecap="round" />
-        <path d="M18 23C14 19 10.6667 16.3333 8 15" stroke="#34D399" strokeWidth="2" strokeLinecap="round" />
-        <path d="M18 32C19.6569 32 21 30.6569 21 29C21 27.3431 19.6569 26 18 26C16.3431 26 15 27.3431 15 29C15 30.6569 16.3431 32 18 32Z" fill="#059669" />
-      </svg>
-    ),
-  },
-  {
-    name: "Finance", count: "1,200",
-    bg: "linear-gradient(135deg, #FFF0D0 0%, #FFD47A 100%)",
-    icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M18 6C22 6 24.6667 7.66667 26 11L28 18C28 22 24.6667 26 18 30C11.3333 26 8 22 8 18L10 11C11.3333 7.66667 14 6 18 6Z" fill="#D97706" fillOpacity="0.1" stroke="#D97706" strokeWidth="2" />
-        <path d="M18 12V24" stroke="#D97706" strokeWidth="1.8" strokeLinecap="round" />
-        <path d="M15 15C15 13 16 12 18 12C20 12 21 13 21 15C21 16.3333 20 17.3333 18 18C20 18 21 19 21 21C21 23 20 24 18 24C16 24 15 23 15 21" stroke="#D97706" strokeWidth="1.8" strokeLinecap="round" />
-      </svg>
-    ),
-  },
+  { name: "Graphics & Design", icon: <Share2 size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Programming & Tech", icon: <Code2 size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Digital Marketing", icon: <TrendingUp size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Video & Animation", icon: <Video size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Writing & Translation", icon: <PenTool size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "AI Services", icon: <Bot size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Music & Audio", icon: <Music2 size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Data & Analytics", icon: <BarChart3 size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Business", icon: <Briefcase size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Photography", icon: <Camera size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Personal Growth", icon: <Sprout size={30} strokeWidth={1.75} color="#6C4CF5" /> },
+  { name: "Finance", icon: <Gem size={30} strokeWidth={1.75} color="#6C4CF5" /> },
 ];
 
-// ─── Spades Card Deal Animation Grid ─────────────────────────────────────────
+// ─── Simplified Category Card Grid (flat icon, no count, no arrow) ────────────
 function SpadesCardGrid({
   categories,
   handleNavigate,
@@ -420,127 +289,35 @@ function SpadesCardGrid({
   handleNavigate: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [offsets, setOffsets] = useState<{ x: number; y: number }[]>([]);
-  const [ready, setReady] = useState(false);
   const isInView = useInView(containerRef, { once: true, margin: "-40px" });
-
-  useEffect(() => {
-    const computeOffsets = () => {
-      if (!containerRef.current) return;
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const centerX = containerRect.left + containerRect.width / 2;
-      const centerY = containerRect.top + containerRect.height / 2;
-
-      const newOffsets = cardRefs.current.map((cardEl) => {
-        if (!cardEl) return { x: 0, y: 0 };
-        const cardRect = cardEl.getBoundingClientRect();
-        const cardCenterX = cardRect.left + cardRect.width / 2;
-        const cardCenterY = cardRect.top + cardRect.height / 2;
-        return {
-          x: centerX - cardCenterX,
-          y: centerY - cardCenterY,
-        };
-      });
-
-      setOffsets(newOffsets);
-      setReady(true);
-    };
-
-    computeOffsets();
-    const timer = setTimeout(computeOffsets, 60);
-    window.addEventListener("resize", computeOffsets);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("resize", computeOffsets);
-    };
-  }, []);
 
   return (
     <div
       ref={containerRef}
-      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-5 py-4 relative min-h-[360px]"
+      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-5 py-4"
     >
-      {categories.map((cat, i) => {
-        const offset = offsets[i] || { x: 0, y: 0 };
-        const initialRotate = (i - 5.5) * 3.5; // fanned deck angle in center
-
-        return (
-          <motion.div
-            key={cat.name}
-            ref={(el) => { cardRefs.current[i] = el; }}
-            initial={{
-              x: offset.x,
-              y: offset.y,
-              rotate: initialRotate,
-              scale: 0.45,
-              opacity: 0,
-            }}
-            animate={
-              isInView && ready
-                ? {
-                  x: 0,
-                  y: 0,
-                  rotate: 0,
-                  scale: 1,
-                  opacity: 1,
-                }
-                : {
-                  x: offset.x,
-                  y: offset.y,
-                  rotate: initialRotate,
-                  scale: 0.45,
-                  opacity: 0,
-                }
-            }
-            transition={{
-              duration: 0.55,
-              delay: i * 0.12, // Deals distinctly ONE BY ONE sequentially
-              ease: [0.25, 1, 0.35, 1],
-            }}
-            whileHover={{ y: -6, boxShadow: "0 12px 32px rgba(10,15,44,0.12)" }}
-            onClick={handleNavigate}
-            className="relative rounded-[18px] sm:rounded-[22px] border border-[#EAEBF0] bg-white shadow-[0_2px_12px_0_rgba(10,15,44,0.06)] overflow-hidden cursor-pointer transform-gpu"
-            style={{ aspectRatio: "1 / 1.06" }}
-          >
-            <div
-              className="absolute inset-0 opacity-100 rounded-[18px] sm:rounded-[22px]"
-              style={{
-                background:
-                  "linear-gradient(137deg, rgba(108,76,245,0.05) 0%, rgba(108,76,245,0.00) 60%)",
-              }}
-            />
-            <div className="relative h-full flex flex-col items-center justify-center gap-2 sm:gap-3 p-3 sm:p-4">
-              <div
-                className="w-[56px] h-[56px] sm:w-[76px] sm:h-[76px] rounded-full flex items-center justify-center"
-                style={{ background: cat.bg }}
-              >
-                {cat.icon}
-              </div>
-              <div className="text-center">
-                <p className="text-[#0A0F2C] font-medium text-[12px] sm:text-[15px] leading-[1.3]">
-                  {cat.name}
-                </p>
-              </div>
-              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-[#6C4CF5]/30 flex items-center justify-center">
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                  <path
-                    d="M3 7.5H12M8.5 11L12 7.5L8.5 4"
-                    stroke="#6C4CF5"
-                    strokeWidth="1.7"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            </div>
-          </motion.div>
-        );
-      })}
+      {categories.map((cat, i) => (
+        <motion.div
+          key={cat.name}
+          initial={{ opacity: 0, y: 16 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.4, delay: i * 0.05, ease: "easeOut" }}
+          whileHover={{ y: -4, boxShadow: "0 12px 28px rgba(10,15,44,0.08)" }}
+          onClick={handleNavigate}
+          className="relative rounded-[20px] sm:rounded-[24px] border border-[#EDEDF3] bg-gradient-to-br from-white to-[#F6F5FC] shadow-[0_2px_10px_0_rgba(10,15,44,0.04)] overflow-hidden cursor-pointer transform-gpu"
+          style={{ aspectRatio: "1 / 1" }}
+        >
+          <div className="relative h-full flex flex-col items-center justify-center gap-4 p-3 sm:p-4">
+            {cat.icon}
+            <p className="text-[#0A0F2C] font-medium text-[13px] sm:text-[16px] leading-[1.3] text-center">
+              {cat.name}
+            </p>
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 }
-
 function CategoriesSection() {
   // All category cards + the "All Categories" button navigate here
   const NAVIGATE_URL = "https://huzzler.app/freelance-dashboard/browse-projects";
@@ -631,7 +408,7 @@ function WhyHuzzlerSection() {
       <div className="max-w-[1380px] mx-auto px-5 sm:px-8 xl:px-16 flex flex-col gap-10">
         <FadeUp>
           <div className="flex flex-col items-center gap-3 pb-8 border-b border-[#E4E4E4]">
-            <span className="text-[#6C5CE7] text-xs font-medium tracking-[1.32px] uppercase">Why Huzzler?</span>
+            {/* <span className="text-[#6C5CE7] text-xs font-medium tracking-[1.32px] uppercase">Why Huzzler?</span> */}
             <h2 className="text-[#0A0F2C] font-medium text-[clamp(30px,8vw,64px)] lg:text-[clamp(36px,5vw,64px)] leading-[1.04] tracking-[-1.5px] sm:tracking-[-2px] text-center">Built for modern workflows</h2>
           </div>
         </FadeUp>
@@ -961,9 +738,9 @@ function ReviewsSection() {
     <section id="reviews" className="py-16 sm:py-24 bg-[#FAFAFC] border-t border-[#EAEBF0] overflow-hidden">
       <div className="max-w-[1380px] mx-auto px-5 sm:px-6 mb-12 text-center">
         <FadeUp>
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#6C5CE7]/10 text-[#6C5CE7] text-xs font-medium tracking-wide uppercase mb-4">
+          {/* <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#6C5CE7]/10 text-[#6C5CE7] text-xs font-medium tracking-wide uppercase mb-4">
             Trusted by People
-          </div>
+          </div> */}
           <h2 className="text-[#0A0F2C] font-medium text-[clamp(30px,8vw,56px)] lg:text-[clamp(36px,5vw,56px)] leading-tight tracking-[-1px] sm:tracking-[-1.5px] mb-4">
             What Our Users Say
           </h2>
@@ -1088,7 +865,7 @@ function ReviewsSection() {
 const blogPosts = [
   { date: "Apr 12, 2026", title: "Revolutionizing Team Collaboration: The Huzzler Way", excerpt: "Discover how Huzzler's AI-precision matching is changing the game in team collaboration, boosting productivity and sparking creativity.", img: "https://api.builder.io/api/v1/image/assets/TEMP/d76c3468add629a8c3a14b2207afdc3d6edfd7ca?width=809" },
   { date: "Mar 28, 2026", title: "Unleashing Creativity: How Our Talent Inspires Innovation", excerpt: "Explore how our strict vetting process nurtures a culture of elite independence, empowering experts to unleash their potential.", img: "https://api.builder.io/api/v1/image/assets/TEMP/2db3eace711f28cfd3f982bb1b43c1d9f11781b9?width=809" },
-  // { date: "Feb 15, 2026", title: "Efficiency Redefined: The Power of AI Matching", excerpt: "Learn how Huzzler's precise AI matching algorithms streamline workflows, increase efficiency, and keep your most critical projects moving forward.", img: "https://api.builder.io/api/v1/image/assets/TEMP/59b552b65c375c1f84b1ced7e7e18e9a3ab67b64?width=809" },
+  { date: "Mar 28, 2026", title: "Unleashing Creativity: How Our Talent Inspires Innovation", excerpt: "Explore how our strict vetting process nurtures a culture of elite independence, empowering experts to unleash their potential.", img: "https://api.builder.io/api/v1/image/assets/TEMP/2db3eace711f28cfd3f982bb1b43c1d9f11781b9?width=809" },
 ];
 
 function BlogSection() {
@@ -1099,7 +876,7 @@ function BlogSection() {
         <FadeUp>
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
             <div className="flex flex-col gap-4">
-              <span className="text-[#6C5CE7] text-xs font-medium tracking-[1.44px] uppercase">Insights & Stories</span>
+              {/* <span className="text-[#6C5CE7] text-xs font-medium tracking-[1.44px] uppercase">Insights & Stories</span> */}
               <h2 className="text-[#0A0F2C] font-medium text-[clamp(34px,7.5vw,72px)] lg:text-[clamp(44px,5vw,72px)] leading-[1.02] tracking-[-1.5px] sm:tracking-[-2.8px]">
                 Discover the<br />Huzzler advantage
               </h2>
@@ -1112,9 +889,9 @@ function BlogSection() {
             </button>
           </div>
         </FadeUp>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {blogPosts.map((post, i) => (
-            <FadeUp key={post.title} delay={i * 0.1}>
+            <FadeUp key={post.title + i} delay={i * 0.1}>
               <motion.div whileHover={{ y: -6 }} className="rounded-[24px] sm:rounded-[32px] border border-[#EAEBF0] bg-white overflow-hidden cursor-pointer shadow-[0_2px_16px_rgba(10,15,44,0.04)]">
                 <div className="h-[240px] sm:h-[320px] lg:h-[360px] overflow-hidden">
                   <img src={post.img} alt={post.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy" />
@@ -1132,7 +909,6 @@ function BlogSection() {
     </section>
   );
 }
-
 // ─── How It Works ─────────────────────────────────────────────────────────────
 const howItWorksSteps = [
   {
@@ -1264,9 +1040,9 @@ function HowItWorksSection() {
         {/* Section Header */}
         <FadeUp>
           <div className="text-center max-w-[680px] mx-auto mb-16">
-            <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#6C5CE7]/10 text-[#6C5CE7] text-xs font-medium uppercase tracking-wider mb-4">
+            {/* <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#6C5CE7]/10 text-[#6C5CE7] text-xs font-medium uppercase tracking-wider mb-4">
               <span>✦</span> HOW IT WORKS
-            </div>
+            </div> */}
             <h2 className="text-[#0A0F2C] font-medium text-[clamp(30px,8vw,56px)] lg:text-[clamp(36px,5vw,56px)] leading-tight tracking-[-1px] sm:tracking-[-1.5px] mb-4">
               How <span className="text-[#6C5CE7]">Huzzler</span> Works
             </h2>
@@ -1390,9 +1166,9 @@ function JourneySection() {
         {/* Section Header */}
         <FadeUp>
           <div className="text-center max-w-[640px] mx-auto mb-16">
-            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#6C5CE7]/10 text-[#6C5CE7] text-xs font-medium uppercase tracking-wider mb-4">
+            {/* <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#6C5CE7]/10 text-[#6C5CE7] text-xs font-medium uppercase tracking-wider mb-4">
               YOUR WORKFLOW
-            </div>
+            </div> */}
             <h2 className="text-[#0A0F2C] font-medium text-[clamp(30px,8vw,56px)] lg:text-[clamp(36px,5vw,56px)] leading-tight tracking-[-1px] sm:tracking-[-1.5px] mb-4">
               Your Freelance Journey<br />
               Starts with <span className="text-[#6C5CE7]">Huzzler</span>
@@ -1664,12 +1440,14 @@ export default function Index() {
       <HeroSection />
       <Ticker items={tickerItems} />
       <CategoriesSection />
+      <CTASection />
       <WhyHuzzlerSection />
-      <ReviewsSection />
+
       <BlogSection />
       <HowItWorksSection />
       <JourneySection />
-      <CTASection />
+
+      <ReviewsSection />
     </div>
   );
 }

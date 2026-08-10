@@ -29,7 +29,7 @@ const C = {
   card: { background: W, border: "1px solid " + BORDER, borderRadius: 16, padding: "1.5rem", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" },
   cardOnDark: { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "1.5rem" },
   h1: { fontSize: 64, fontWeight: 500, lineHeight: 1.1, letterSpacing: "-2px", margin: "0 0 1.5rem" },
-  h2: { fontSize: 42, fontWeight: 500, letterSpacing: "-1px", margin: "0 0 1rem", lineHeight: 1.15, color: INK },
+  h2: { fontSize: 42, fontWeight: 500, letterSpacing: "-1px", margin: "0 0 1rem", lineHeight: 1.15, color: "#7C3AED" },
   label: { color: P, fontSize: 13, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 12 },
   btn: (outline) => ({ padding: "8px 20px", borderRadius: 8, border: outline ? "1px solid " + BORDER : "none", background: outline ? "transparent" : P, color: outline ? INK : W, fontSize: 14, cursor: "pointer", fontWeight: outline ? 500 : 600 }),
   btnLg: (outline) => ({ padding: "14px 28px", borderRadius: 10, border: outline ? "1px solid rgba(255,255,255,0.25)" : "none", background: outline ? "transparent" : W, color: outline ? W : P, fontSize: 16, cursor: "pointer", fontWeight: outline ? 500 : 600, display: "flex", alignItems: "center", gap: 8 }),
@@ -205,42 +205,82 @@ const Hero = () => (
   </section>
 );
 
+const OverviewCard = ({ icon, title, desc }) => (
+  <div
+    className="hz-hover-lift"
+    style={{
+      background: W,
+      border: "1px solid " + BORDER,
+      borderRadius: 24,
+      padding: "2.25rem 1.75rem",
+      textAlign: "center",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+    }}
+  >
+    <div
+      style={{
+        width: 56,
+        height: 56,
+        borderRadius: 16,
+        background: "rgba(124,58,237,0.1)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 20,
+      }}
+    >
+      {icon}
+    </div>
+    <div style={{ fontSize: 19, fontWeight: 700, marginBottom: 10, color: P }}>{title}</div>
+    <div style={{ fontSize: 14.5, color: G, lineHeight: 1.7 }}>{desc}</div>
+  </div>
+);
+
 const Overview = () => (
   <section style={{ ...C.sec(OFFWHITE), textAlign: "center" }}>
-    <Reveal variant="up"><div style={{ ...C.label, display: "inline-flex", alignItems: "center", gap: 6, justifyContent: "center", width: "100%" }}><LayoutGrid size={14} />Platform Overview</div></Reveal>
-    <Reveal variant="up" delay={0.05}><h2 style={{ ...C.h2, textAlign: "center" }}>Built For <span style={{ color: P }}>Modern Teams</span></h2></Reveal>
-    <Reveal variant="up" delay={0.1}><p style={{ color: G, fontSize: 18, maxWidth: 560, margin: "0 auto 3rem" }}>Eight powerful modules that work together seamlessly.</p></Reveal>
+    <Reveal variant="up">
+      <h2 style={{ ...C.h2, textAlign: "center", fontWeight: 600, fontSize: 46 }}>
+        Built For Modern Teams
+      </h2>
+    </Reveal>
+    <Reveal variant="up" delay={0.05}>
+      <p style={{ color: G, fontSize: 18, maxWidth: 560, margin: "0 auto 3rem" }}>
+        Eight powerful modules that work together seamlessly.
+      </p>
+    </Reveal>
     <div style={C.grid(4)}>
-      {[[<Bot size={22} color={P} />, "AI Talent Matching", "Smart algorithms connect you with the most qualified professionals."],
-      [<Briefcase size={22} color={P} />, "Project Marketplace", "Browse thousands of verified experts across every discipline."],
-      [<FileText size={22} color={P} />, "Smart Proposals", "AI-powered proposal generator crafts winning pitches in seconds."],
-      [<BarChart3 size={22} color={P} />, "Project Analytics", "Rich dashboards surface insights that drive smarter hiring."],
-      [<MessageSquare size={22} color={P} />, "Real-Time Messaging", "Built-in chat, file sharing, and video meetings in one place."],
-      [<Shield size={22} color={P} />, "Portfolio Management", "Showcase your best work and keep your portfolio updated in one place."],
-      [<Zap size={22} color={P} />, "AI Assistant", "Get smart suggestions to create profiles, write proposals, and find relevant opportunities."],
-      [<TrendingUp size={22} color={P} />, "Team Collaboration", "Work together, share updates, and manage projects with your team in one place."],
+      {[
+        [<Bot size={26} color={P} />, "AI Talent Matching", "Smart algorithms connect you with the most qualified professionals."],
+        [<Briefcase size={26} color={P} />, "Project Marketplace", "Browse thousands of verified experts across every discipline."],
+        [<FileText size={26} color={P} />, "Smart Proposals", "AI-powered proposal generator crafts winning pitches in seconds."],
+        [<BarChart3 size={26} color={P} />, "Project Analytics", "Rich dashboards surface insights that drive smarter hiring."],
+        [<MessageSquare size={26} color={P} />, "Real-Time Messaging", "Built-in chat, file sharing, and video meetings in one place."],
+        [<Shield size={26} color={P} />, "Portfolio Management", "Showcase your best work and keep your portfolio updated in one place."],
+        [<Zap size={26} color={P} />, "AI Assistant", "Get smart suggestions to create profiles, write proposals, and find relevant opportunities."],
+        [<TrendingUp size={26} color={P} />, "Team Collaboration", "Work together, share updates, and manage projects with your team in one place."],
       ].map(([icon, title, desc], idx) => (
         <Reveal key={title} variant="up" delay={idx * 0.07}>
-          <SmCard icon={icon} title={title} desc={desc} />
+          <OverviewCard icon={icon} title={title} desc={desc} />
         </Reveal>
       ))}
     </div>
   </section>
 );
-
 const AIMatching = () => (
   <section style={{ ...C.sec("#FBFBFE"), padding: "6rem 100px", display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: 60, alignItems: "center" }}>
 
     {/* Left Column: Heading & Feature Details */}
     <Reveal variant="left">
       {/* Feature 01 Badge */}
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 999, background: "#F3E8FF", color: "#6C5CE7", fontSize: 12, fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 20 }}>
+      {/* <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 999, background: "#F3E8FF", color: "#6C5CE7", fontSize: 12, fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 20 }}>
         <Sparkles size={14} color="#6C5CE7" /> FEATURE 01 • AI MATCHING
-      </div>
+      </div> */}
 
       {/* Heading */}
-      <h2 style={{ fontSize: "clamp(34px, 4vw, 48px)", fontWeight: 500, lineHeight: 1.15, letterSpacing: "-1px", color: INK, margin: "0 0 20px" }}>
-        Find the Right<br />
+      <h2 style={{ fontSize: "clamp(34px, 4vw, 48px)", fontWeight: 600, lineHeight: 1.15, letterSpacing: "-1px", color: "#6C5CE7", margin: "0 0 20px" }}>
+        Find the Right
         Freelancer<br />
         in <span style={{ color: "#6C5CE7" }}>Seconds</span>
       </h2>
@@ -278,22 +318,22 @@ const AIMatching = () => (
         {/* 3 Freelancer Cards */}
         {[
           {
-            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-            name: "Ravi Sharma",
+            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+            name: "Sarah Chen",
             role: "UI/UX Designer",
             badge: "★ Best Match",
             badgeBg: "#DCFCE7",
             badgeColor: "#15803D",
-            tags: ["Figma", "UI Design", "Prototyping"]
+            tags: ["UI/UX", "Figma", "Mobile"]
           },
           {
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-            name: "Meera Nair",
-            role: "Web Developer",
+            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+            name: "Marcus Roy",
+            role: "React Developer",
             badge: "★ Great Match",
             badgeBg: "#FEF3C7",
             badgeColor: "#B45309",
-            tags: ["React", "JavaScript", "Node.js"]
+            tags: ["React", "TypeScript", "Node"]
           },
           {
             avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
@@ -343,6 +383,114 @@ const AIMatching = () => (
   </section>
 );
 
+const BuildDreamTeam = () => {
+  return (
+    <section style={{ ...C.sec(LILAC), padding: "6rem 100px", display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, alignItems: "center" }}>
+
+      {/* Left Column: Content */}
+      <Reveal variant="left">
+        {/* Badge */}
+        {/* <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 999, background: "#E8E7FF", color: "#6C5CE7", fontSize: 12, fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 20 }}>
+          <Users size={14} color="#6C5CE7" /> FEATURE 02 • COLLABORATION
+        </div> */}
+
+        {/* Heading */}
+        <h2 style={{ fontSize: "clamp(34px, 4vw, 48px)", fontWeight: 500, lineHeight: 1.15, letterSpacing: "-1px", color: INK, margin: "0 0 20px" }}>
+          Build Your Dream Team,<br />
+          <span style={{}}>Deliver Together</span>
+        </h2>
+
+        {/* Paragraph */}
+        <p style={{ color: "#6B7280", fontSize: "16px", lineHeight: "1.7", marginBottom: "32px", maxWidth: "480px" }}>
+          Post projects, invite freelancers, and collaborate together on a single platform. Huzzler helps you manage requirements, milestones, and deliverables to ensure your project's success.
+        </p>
+
+        {/* CTA Button */}
+        <button
+          onClick={() => window.open("https://huzzler.app/", "_blank")}
+          className="hz-btn-anim"
+          style={{ padding: "12px 24px", borderRadius: "12px", border: "none", background: "#7C3AED", color: W, fontSize: "14px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px", boxShadow: "0 8px 24px rgba(124, 58, 237, 0.4)" }}
+        >
+          Get Matching <ArrowRight size={15} />
+        </button>
+      </Reveal>
+
+      {/* Right Column: Card Graphic Mockup */}
+      <Reveal variant="right" delay={0.1}>
+        <div style={{ background: "#FFFFFF", borderRadius: 28, border: "1px solid #EAEBF0", padding: "32px", boxShadow: "0 10px 40px rgba(0,0,0,0.03)", maxWidth: "440px", margin: "0 auto" }}>
+
+          {/* Card Header */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: G, textTransform: "uppercase", letterSpacing: "0.5px" }}>Design Phase</div>
+              <div style={{ fontSize: 20, fontWeight: 600, color: INK, marginTop: 4 }}>Project: Mobile App</div>
+            </div>
+            <span style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10B981", fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 999 }}>
+              Active
+            </span>
+          </div>
+
+          {/* Team Members Section */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ fontSize: 14, fontWeight: 500, color: G, marginBottom: 12 }}>Team Members</div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {/* Overlapping Avatars */}
+              <div style={{ display: "flex", marginRight: 12 }}>
+                {[
+                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+                  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+                  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80"
+                ].map((avatar, idx) => (
+                  <img
+                    key={idx}
+                    src={avatar}
+                    alt={`Team member ${idx + 1}`}
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: "50%",
+                      border: `2.5px solid ${W}`,
+                      marginLeft: idx > 0 ? -10 : 0,
+                      objectFit: "cover",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
+                    }}
+                  />
+                ))}
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 500, color: INK }}>+3 Team Members</span>
+            </div>
+          </div>
+
+          {/* Progress Section */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: G }}>Progress</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: P }}>75% Completed</span>
+            </div>
+            {/* Custom Progress Bar */}
+            <div style={{ width: "100%", height: 8, background: "#F3F4F6", borderRadius: 999, overflow: "hidden" }}>
+              <div style={{ width: "75%", height: "100%", background: P, borderRadius: 999 }} />
+            </div>
+          </div>
+
+          {/* Card Footer */}
+          <div style={{ borderTop: "1px solid #F3F4F6", paddingTop: 16, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <Calendar size={15} color={G} />
+              <span style={{ fontSize: 13, color: G }}>Target Date: <strong style={{ color: INK }}>Dec 20</strong></span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#10B981", fontSize: 12, fontWeight: 500 }}>
+              <CheckCircle2 size={14} color="#10B981" /> Target met
+            </div>
+          </div>
+
+        </div>
+      </Reveal>
+
+    </section>
+  );
+};
+
 const Marketplace = () => {
   const [active, setActive] = useState("All");
   const filtered = active === "All" ? FREELANCERS : FREELANCERS.filter(f => f.cat === active);
@@ -386,9 +534,9 @@ const AIAssistant = () => (
     {/* Left Column: Heading & 6 Dark Feature Cards Grid */}
     <Reveal variant="left">
       {/* Feature 03 Badge */}
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#A78BFA", fontSize: 13, fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 16 }}>
+      {/* <div style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#A78BFA", fontSize: 13, fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 16 }}>
         <Zap size={14} color="#A78BFA" /> FEATURE 03
-      </div>
+      </div> */}
 
       {/* Heading */}
       <h2 style={{ fontSize: "clamp(34px, 4vw, 48px)", fontWeight: 500, lineHeight: 1.15, letterSpacing: "-1px", color: W, margin: "0 0 20px" }}>
@@ -504,8 +652,8 @@ const Messaging = () => (
       </div>
     </Reveal>
     <Reveal variant="right" delay={0.1}>
-      <div style={{ ...C.label, display: "inline-flex", alignItems: "center", gap: 6 }}><MessageSquare size={14} />Feature 04</div>
-      <h2 style={C.h2}>Collaborate In <span style={{ color: P }}>Real Time</span></h2>
+      {/* <div style={{ ...C.label, display: "inline-flex", alignItems: "center", gap: 6 }}><MessageSquare size={14} />Feature 04</div> */}
+      <h2 style={C.h2}>Collaborate In <span style={{ color: "#7C3AED" }}>Real Time</span></h2>
       <p style={{ color: G, fontSize: 16, marginBottom: 28 }}>Built-in messaging, file sharing, and video meetings — stay aligned without switching tabs.</p>
       {[[<MessageSquare size={20} />, "Threaded project chat with @mentions"], [<Folder size={20} />, "Drag-and-drop file sharing with previews"], [<Video size={20} />, "One-click video meetings via Zoom/Meet"], [<Bell size={20} />, "Smart notifications — only what matters"]].map(([icon, text], idx) => (
         <Reveal key={text} variant="right" delay={0.15 + idx * 0.06} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}><span>{icon}</span><span style={{ color: "#374151", fontSize: 15 }}>{text}</span></Reveal>
@@ -520,12 +668,10 @@ const Analytics = () => (
     {/* Left Column: Heading & Checklist */}
     <Reveal variant="left">
       {/* Feature 05 Badge */}
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 999, background: "#F3E8FF", color: "#6C5CE7", fontSize: 12, fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 20 }}>
-        <User size={14} color="#6C5CE7" /> FEATURE 05 • PROFILE BUILDER
-      </div>
+
 
       {/* Heading */}
-      <h2 style={{ fontSize: "clamp(34px, 4vw, 48px)", fontWeight: 500, lineHeight: 1.15, letterSpacing: "-1px", color: INK, margin: "0 0 20px" }}>
+      <h2 style={{ fontSize: "clamp(34px, 4vw, 48px)", fontWeight: 500, lineHeight: 1.15, letterSpacing: "-1px", color: "#6C5CE7", margin: "0 0 20px" }}>
         Build a Profile<br />
         That <span style={{ color: "#6C5CE7" }}>Stands Out</span>
       </h2>
@@ -569,13 +715,13 @@ const Analytics = () => (
             </div>
             <div>
               <div style={{ fontSize: 15, fontWeight: 500, color: "#0A0F2C" }}>{title}</div>
-              <div style={{ fontSize: 12.5, color: "#6B7280", marginTop: 2, lineHeight: "1.4" }}>{desc}</div>
+              <div style={{ fontSize: 12.5, fontWeight: 500, color: "#6B7280", marginTop: 2, lineHeight: "1.4" }}>{desc}</div>
             </div>
           </div>
         ))}
 
         {/* Bottom Banner */}
-        <div style={{ background: "rgba(243, 232, 255, 0.6)", border: "1px solid #EBE7FF", borderRadius: 16, padding: "14px 18px", display: "flex", alignItems: "center", gap: 10, color: "#6C5CE7", fontSize: 13, fontWeight: 600, marginTop: 4 }}>
+        <div style={{ background: "rgba(243, 232, 255, 0.6)", border: "1px solid #EBE7FF", borderRadius: 16, padding: "14px 18px", display: "flex", alignItems: "center", gap: 10, color: "#6C5CE7", fontSize: 13, fontWeight: 500, marginTop: 4 }}>
           <Sparkles size={16} color="#6C5CE7" style={{ flexShrink: 0 }} /> Profile optimization increases your profile views and client inquiries by up to 3x.
         </div>
 
@@ -584,19 +730,37 @@ const Analytics = () => (
 
   </section>
 );
-
 const WhyHuzzler = () => (
   <section style={{ ...C.sec(NAVY), textAlign: "center", color: W }}>
-    <Reveal variant="up"><div style={{ ...C.label, color: P2, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Heart size={14} />Why Huzzler</div></Reveal>
-    <Reveal variant="up" delay={0.05}><h2 style={{ ...C.h2, textAlign: "center", color: W }}>Why Teams Love <span style={C.grad}>Huzzler</span></h2></Reveal>
-    <Reveal variant="up" delay={0.1}><p style={{ color: "#9CA3AF", fontSize: 18, maxWidth: 520, margin: "0 auto 3rem" }}>Join 15,000+ teams that have transformed how they hire.</p></Reveal>
-    <div style={{ ...C.grid(3), marginBottom: 20 }}>
-      {[[<Users size={32} color={P2} />, "50K+", "Verified Freelancers", "Across 200+ skill categories worldwide"], [<Briefcase size={32} color={P2} />, "15K+", "Projects Completed", "From MVPs to enterprise builds"], [<CheckCircle2 size={32} color={P2} />, "98%", "Satisfaction Rate", "Clients rate their experience 5 stars"], [<Globe size={32} color={P2} />, "120+", "Countries Served", "Global talent, local compliance"], [<Zap size={32} color={P2} />, "24/7", "AI Support", "Always-on AI plus human support"], [<Lock size={32} color={P2} />, "SOC2", "Enterprise Security", "SOC2 Type II + GDPR + SSO"]].map(([icon, num, title, desc], idx) => (
-        <Reveal key={title} variant="scale" delay={idx * 0.07} className="hz-hover-lift" style={C.cardOnDark}>
-          <div style={{ marginBottom: 8, display: "flex", justifyContent: "center" }}>{icon}</div>
-          <div style={{ fontSize: 40, fontWeight: 500, color: P2 }}>{num}</div>
-          <div style={{ fontSize: 16, fontWeight: 500, margin: "8px 0 4px", color: W }}>{title}</div>
-          <div style={{ fontSize: 13, color: "#9CA3AF" }}>{desc}</div>
+    <Reveal variant="up">
+      <h2 style={{ ...C.h2, textAlign: "center", color: W }}>
+        Everything You Need to <span style={C.grad}>Build Great Teams</span>
+      </h2>
+    </Reveal>
+    <Reveal variant="up" delay={0.05}>
+      <p style={{ color: "#9CA3AF", fontSize: 18, maxWidth: 680, margin: "0 auto 3rem", lineHeight: 1.6 }}>
+        Huzzler brings businesses and skilled professionals together through AI-powered matching, seamless collaboration, and an intelligent workspace designed to help projects move from idea to execution faster.
+      </p>
+    </Reveal>
+    <div style={C.grid(3)}>
+      {[
+        [<Zap size={26} color={P2} />, "AI-Powered Talent Matching", "Our intelligent matching engine recommends the most relevant freelancers based on your project requirements, skills, experience, availability, and industry expertise."],
+        [<Shield size={26} color={P2} />, "Verified Talent Network", "Browse trusted professionals with verified profiles, portfolios, and expertise across design, development, AI, marketing, content creation, business consulting, and more."],
+        [<MessageSquare size={26} color={P2} />, "Smart Project Workspace", "Manage project requirements, track milestones, organize files, communicate with freelancers, and keep every project moving from one centralized workspace."],
+        [<TrendingUp size={26} color={P2} />, "Seamless Collaboration", "Work together effortlessly with built-in messaging, task updates, document sharing, feedback, and project discussions—all without leaving the platform."],
+        [<Globe size={26} color={P2} />, "Faster Hiring Process", "Post projects, discover qualified professionals, invite the right talent, and start collaborating in less time with AI-assisted recommendations."],
+        [<Briefcase size={26} color={P2} />, "Built for Modern Work", "Whether you're a startup, agency, enterprise, or independent professional, Huzzler helps you connect, collaborate, and deliver high-quality work from anywhere."],
+      ].map(([icon, title, desc], idx) => (
+        <Reveal
+          key={title}
+          variant="up"
+          delay={idx * 0.06}
+          className="hz-hover-lift"
+          style={{ ...C.cardOnDark, textAlign: "left", padding: "1.75rem" }}
+        >
+          <div style={{ marginBottom: 18 }}>{icon}</div>
+          <div style={{ fontSize: 19, fontWeight: 500, marginBottom: 10, color: W }}>{title}</div>
+          <div style={{ fontSize: 14.5, lineHeight: 1.7, color: "#9CA3AF" }}>{desc}</div>
         </Reveal>
       ))}
     </div>
@@ -681,9 +845,9 @@ const HowItWorks = () => (
   <section style={C.sec(W)}>
     <div style={{ textAlign: "center", marginBottom: "3rem" }}>
       <Reveal variant="up">
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(108,92,231,0.1)", color: "#6C5CE7", padding: "6px 16px", borderRadius: 999, fontWeight: 500, fontSize: 11, letterSpacing: "1px", textTransform: "uppercase" }}>
+        {/* <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(108,92,231,0.1)", color: "#6C5CE7", padding: "6px 16px", borderRadius: 999, fontWeight: 500, fontSize: 11, letterSpacing: "1px", textTransform: "uppercase" }}>
           ✦ HOW IT WORKS
-        </div>
+        </div> */}
       </Reveal>
       <Reveal variant="up" delay={0.05}>
         <h2 style={{ ...C.h2, textAlign: "center", fontSize: 40, fontWeight: 500, marginTop: 14, marginBottom: 12 }}>
@@ -826,7 +990,7 @@ const CTA = () => (
         >
           Get Started Free <ArrowRight size={16} />
         </button>
-        <button
+        {/* <button
           onClick={() => window.open("https://huzzler.app/freelance-dashboard/browse-projects", "_blank")}
           className="hz-btn-anim"
           style={{ padding: "12px 26px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.12)", color: W, fontSize: 14, fontWeight: 600, cursor: "pointer", backdropFilter: "blur(8px)" }}
@@ -839,7 +1003,7 @@ const CTA = () => (
           style={{ padding: "12px 26px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.12)", color: W, fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, backdropFilter: "blur(8px)" }}
         >
           <Calendar size={15} /> Book Demo
-        </button>
+        </button> */}
       </Reveal>
     </div>
   </section>
@@ -854,12 +1018,13 @@ export default function Features() {
       <Hero />
       <Overview />
       <AIMatching />
-      <Marketplace />
+      <BuildDreamTeam />
+      {/* <Marketplace /> */}
       <AIAssistant />
       <Messaging />
       <Analytics />
       <WhyHuzzler />
-      <HowItWorks />
+      {/* <HowItWorks /> */}
       <CTA />
       <style>{`
         @media (max-width: 600px) {

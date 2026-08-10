@@ -610,7 +610,7 @@ export default function Home() {
 
       {/* What can we help */}
       <div style={{ padding: "48px 100px 32px", textAlign: "center" }}>
-        <Reveal className="hz-reveal"><div style={{ color: "#7c3aed", fontSize: 11, fontWeight: 500, letterSpacing: "0.1em", marginBottom: 8 }}>COMMON HELP</div></Reveal>
+        {/* <Reveal className="hz-reveal"><div style={{ color: "#7c3aed", fontSize: 11, fontWeight: 500, letterSpacing: "0.1em", marginBottom: 8 }}>COMMON HELP</div></Reveal> */}
         <Reveal className="hz-reveal" style={{ transitionDelay: "0.05s" }}><h2 style={{ fontSize: 26, fontWeight: 500, margin: "0 0 8px" }}>What can we <span style={{ color: "#7c3aed" }}>help you with?</span></h2></Reveal>
         <Reveal className="hz-reveal" style={{ transitionDelay: "0.1s" }}><p style={{ color: "#6b7280", fontSize: 13, margin: "0 0 32px" }}>Select a category for the answer you need — navigating Huzzler is simplified & beyond.</p></Reveal>
         <div className="hz-faq-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
@@ -628,7 +628,7 @@ export default function Home() {
       {/* Browse All Answers */}
       <div style={{ padding: "40px 100px", background: "#f8f8ff" }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <Reveal className="hz-reveal"><div style={{ color: "#7c3aed", fontSize: 11, fontWeight: 500, letterSpacing: "0.1em", marginBottom: 8 }}>ALL ANSWERS</div></Reveal>
+          {/* <Reveal className="hz-reveal"><div style={{ color: "#7c3aed", fontSize: 11, fontWeight: 500, letterSpacing: "0.1em", marginBottom: 8 }}>ALL ANSWERS</div></Reveal> */}
           <Reveal className="hz-reveal" style={{ transitionDelay: "0.05s" }}><h2 style={{ fontSize: 26, fontWeight: 500, margin: "0 0 8px" }}>Browse <span style={{ color: "#7c3aed" }}>all answers</span></h2></Reveal>
           <Reveal className="hz-reveal" style={{ transitionDelay: "0.1s" }}><p style={{ color: "#6b7280", fontSize: 13 }}>Organized by topic for easy navigation. Use the sidebar to jump to any category.</p></Reveal>
         </div>

@@ -39,9 +39,9 @@ export default function Advantage() {
     <section className="bg-black py-24 px-6 md:px-12 lg:px-[100px]">
       <div className="max-w-[1456px] mx-auto px-6 lg:px-10">
         <div className="text-center mb-14">
-          <span className="inline-block text-[11px] font-semibold tracking-wide text-violet-300 bg-white/10 rounded-full px-3 py-1.5 mb-5">
+          {/* <span className="inline-block text-[11px] font-semibold tracking-wide text-violet-300 bg-white/10 rounded-full px-3 py-1.5 mb-5">
             THE ADVANTAGE
-          </span>
+          </span> */}
           <h2 className="text-[36px] font-medium text-white tracking-tight mb-4">
             The Huzzler Advantage
           </h2>

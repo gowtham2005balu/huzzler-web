@@ -50,17 +50,17 @@ export default function Impact() {
 
           {/* Right Content Section */}
           <div className="flex flex-col">
-            <div className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-wider text-violet-300 bg-white/[0.04] border border-white/5 rounded-full px-4 py-2 w-max mb-6">
+            {/* <div className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-wider text-violet-300 bg-white/[0.04] border border-white/5 rounded-full px-4 py-2 w-max mb-6">
               <Users size={12} className="text-violet-400" />
               COMMUNITY IMPACT
-            </div>
-            
+            </div> */}
+
             <h2 className="text-[44px] leading-[1.1] font-medium text-white tracking-tight mb-10 text-left">
               Results That
               <br />
               Make an Impact
             </h2>
-            
+
             <div className="flex flex-col gap-4">
               {stats.map((s, i) => (
                 <motion.div

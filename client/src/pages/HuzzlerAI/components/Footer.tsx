@@ -87,6 +87,37 @@ const Footer: React.FC = () => {
               </div>
             </div>
 
+            {/* Categories */}
+            <div>
+              <div className="flex items-center gap-2 text-white font-thin text-base mb-5">
+                Categories
+              </div>
+              <ul className="space-y-3.5 text-sm text-[#94A3B8]">
+                {[
+                  "Graphics & Design",
+                  "Programming & Tech",
+                  "Digital Marketing",
+                  "Video & Animation",
+                  "Writing & Translation",
+                  "AI Services",
+                  "Music & Audio",
+                  "Data & Analytics",
+                  "Business",
+                  "Photography",
+                  "Personal Growth",
+                  "Finance"
+                ].map((cat) => (
+                  <li
+                    key={cat}
+                    onClick={() => window.open("https://huzzler.app/freelance-dashboard/browse-projects", "_blank")}
+                    className="hover:text-white cursor-pointer transition-colors max-w-[160px]"
+                  >
+                    {cat}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
             {/* Platform */}
             <div>
               <div className="flex items-center gap-2 text-white font-thin text-base mb-5">
@@ -147,58 +178,10 @@ const Footer: React.FC = () => {
                 ))}
               </ul>
             </div>
-
-            {/* Legal */}
-            <div>
-              <div className="flex items-center gap-2 text-white font-thin text-base mb-5">
-                Legal
-              </div>
-              <ul className="space-y-3.5 text-sm text-[#94A3B8]">
-                <li className="flex items-center justify-between hover:text-white cursor-pointer transition-colors group max-w-[140px]">
-                  <a href="https://deva689.github.io/huzzler-privacy-policy/" target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-between">
-                    <span>Privacy Policy</span>
-                    <span className="text-xs text-[#475569] group-hover:text-white transition-colors">›</span>
-                  </a>
-                </li>
-                <li className="flex items-center justify-between hover:text-white cursor-pointer transition-colors group max-w-[140px]">
-                  <a href="https://deva689.github.io/huzzler-privacy-policy/terms.html" target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-between">
-                    <span>Terms of Service</span>
-                    <span className="text-xs text-[#475569] group-hover:text-white transition-colors">›</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Popular Categories Row */}
-          <div className="border-t border-[#1E2235] py-5 flex flex-wrap items-center gap-y-2 gap-x-2.5 text-sm text-[#94A3B8]">
-            <div className="flex items-center gap-1.5 text-white font-medium mr-2">
-              Popular Categories
-            </div>
-            {[
-              "UI/UX Design",
-              "Web Development",
-              "Mobile Apps",
-              "Graphic Design",
-              "Content Writing",
-              "Digital Marketing",
-              "Video Editing",
-              "AI Services"
-            ].map((cat, idx, arr) => (
-              <React.Fragment key={cat}>
-                <span
-                  className="hover:text-white cursor-pointer transition-colors"
-                  onClick={() => window.open("https://huzzler.app/freelance-dashboard/browse-projects", "_blank")}
-                >
-                  {cat}
-                </span>
-                {idx < arr.length - 1 && <span className="text-[#334155] font-medium">•</span>}
-              </React.Fragment>
-            ))}
           </div>
 
           {/* Bottom Copyright Bar */}
-          <div className="border-t border-[#1E2235] pt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-[#94A3B8] gap-4">
+          <div className="border-t border-[#1E2235] pt-6 pb-6 flex flex-col sm:flex-row justify-between items-center text-sm text-[#94A3B8] gap-4">
             <span>© 2026 Huzzler. All rights reserved.</span>
             <div className="flex items-center gap-6">
               <a href="https://deva689.github.io/huzzler-privacy-policy/" target="_blank" rel="noopener noreferrer" className="hover:text-white cursor-pointer transition-colors">Privacy Policy</a>
