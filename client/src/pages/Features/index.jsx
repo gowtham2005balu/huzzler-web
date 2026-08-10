@@ -176,7 +176,7 @@ const Hero = () => (
         </p>
 
         {/* CTA Buttons */}
-        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+        {/* <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
           <button
             onClick={() => window.open("https://huzzler.app/freelance-dashboard/browse-projects", "_blank")}
             className="hz-btn-anim"
@@ -198,7 +198,7 @@ const Hero = () => (
           >
             <Play size={14} /> Watch Demo
           </button>
-        </div>
+        </div> */}
       </Reveal>
 
     </div>
