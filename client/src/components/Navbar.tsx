@@ -40,8 +40,8 @@ export default function Navbar() {
               key={item.path}
               onClick={() => setLocation(item.path)}
               className={`text-base transition-colors ${isActive(item.path)
-                  ? "font-semibold text-[#6D4AFF]"
-                  : "font-medium text-gray-600 hover:text-gray-900"
+                ? "font-semibold text-[#6D4AFF]"
+                : "font-medium text-gray-600 hover:text-gray-900"
                 }`}
             >
               {item.name}
@@ -86,8 +86,8 @@ export default function Navbar() {
                   setIsMobileMenuOpen(false);
                 }}
                 className={`text-left text-lg ${isActive(item.path)
-                    ? "font-semibold text-[#6D4AFF]"
-                    : "font-medium text-gray-600"
+                  ? "font-semibold text-[#6D4AFF]"
+                  : "font-medium text-gray-600"
                   }`}
               >
                 {item.name}

@@ -147,7 +147,11 @@ const Footer: React.FC = () => {
                   <li
                     key={item}
                     onClick={() => {
-                      if (item === "Blog") setLocation("/blog");
+                      if (item === "Blog") {
+                        window.location.href = "https://huzzler-blog.vercel.app/";
+                      } else if (item === "Help Center") {
+                        setLocation("/faq");
+                      }
                     }}
                     className="flex items-center justify-between hover:text-white cursor-pointer transition-colors group max-w-[140px]"
                   >
@@ -168,7 +172,13 @@ const Footer: React.FC = () => {
                   <li
                     key={item}
                     onClick={() => {
-                      if (item === "About Us") setLocation("/about");
+                      if (item === "About Us") {
+                        setLocation("/about");
+                      } else if (item === "Contact") {
+                        setLocation("/faq");
+                      } else if (item === "Careers") {
+                        setLocation("/features");
+                      }
                     }}
                     className="flex items-center justify-between hover:text-white cursor-pointer transition-colors group max-w-[140px]"
                   >
