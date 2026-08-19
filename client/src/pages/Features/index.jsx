@@ -1012,6 +1012,12 @@ const CTA = () => (
 
 
 export default function Features() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }, []);
+
   return (
     <div style={C.body} className="hz-features-wrapper">
       <AnimationStyles />

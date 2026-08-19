@@ -403,6 +403,8 @@ function CategoriesSection() {
 
 // ─── Why Huzzler ──────────────────────────────────────────────────────────────
 function WhyHuzzlerSection() {
+  const [, setLocation] = useLocation();
+
   return (
     <section id="why-huzzler" className="py-16 sm:py-24 bg-[#FAFAFC] border-t border-[#EAEBF0]">
       <div className="max-w-[1380px] mx-auto px-5 sm:px-8 xl:px-16 flex flex-col gap-10">
@@ -418,7 +420,11 @@ function WhyHuzzlerSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4.5 items-stretch">
             {/* Card 1: Woman Image */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] overflow-hidden min-h-[320px] sm:min-h-[360px] relative cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] overflow-hidden min-h-[320px] sm:min-h-[360px] relative cursor-pointer shadow-sm"
+              >
                 <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" alt="Huzzler Freelancer" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-7">
@@ -430,7 +436,11 @@ function WhyHuzzlerSection() {
 
             {/* Card 2: Built For Connection */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] bg-[#F5E8FF] border border-[#E9D5FF]/60 p-7 flex flex-col justify-between min-h-[320px] sm:min-h-[360px] relative cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] bg-[#F5E8FF] border border-[#E9D5FF]/60 p-7 flex flex-col justify-between min-h-[320px] sm:min-h-[360px] relative cursor-pointer shadow-sm"
+              >
                 <div>
                   <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#E9D5FF] text-[#7E22CE] text-[10px] font-medium uppercase tracking-wider">
                     BUILT FOR CONNECTION
@@ -455,7 +465,11 @@ function WhyHuzzlerSection() {
 
             {/* Card 3: Man Image */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] overflow-hidden min-h-[320px] sm:min-h-[360px] relative cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] overflow-hidden min-h-[320px] sm:min-h-[360px] relative cursor-pointer shadow-sm"
+              >
                 <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80" alt="Huzzler Client" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-7">
@@ -467,7 +481,11 @@ function WhyHuzzlerSection() {
 
             {/* Card 4: Quality You Can Trust */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] bg-[#E6F9F3] border border-[#BBF7D0]/60 p-7 flex flex-col justify-between min-h-[320px] sm:min-h-[360px] relative cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] bg-[#E6F9F3] border border-[#BBF7D0]/60 p-7 flex flex-col justify-between min-h-[320px] sm:min-h-[360px] relative cursor-pointer shadow-sm"
+              >
                 <div>
                   <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#BBF7D0] text-[#15803D] text-[10px] font-medium uppercase tracking-wider">
                     QUALITY YOU CAN TRUST
@@ -490,7 +508,11 @@ function WhyHuzzlerSection() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5 items-stretch">
             {/* Card 5: Verified Freelancers */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] bg-[#E0ECFF] border border-[#BFDBFE]/60 p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] bg-[#E0ECFF] border border-[#BFDBFE]/60 p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm"
+              >
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <span className="inline-block px-3 py-1 rounded-full bg-[#BFDBFE] text-[#1D4ED8] text-[10px] font-medium uppercase tracking-wider mb-4">
@@ -516,7 +538,11 @@ function WhyHuzzlerSection() {
 
             {/* Card 6: Find The Right Match */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] bg-white border border-[#E5E7EB] p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] bg-white border border-[#E5E7EB] p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm"
+              >
                 <div>
                   <h3 className="text-[#0A0F2C] font-medium text-xl leading-snug tracking-tight mb-4">
                     Find the right match<br />for your project
@@ -543,7 +569,11 @@ function WhyHuzzlerSection() {
 
             {/* Card 7: Pure Connections */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] bg-[#EDE4FF] border border-[#E9D5FF]/60 p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] bg-[#EDE4FF] border border-[#E9D5FF]/60 p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm"
+              >
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <span className="inline-block px-3 py-1 rounded-full bg-[#E9D5FF] text-[#7E22CE] text-[10px] font-medium uppercase tracking-wider mb-4">
@@ -574,7 +604,11 @@ function WhyHuzzlerSection() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5 items-stretch">
             {/* Card 8: Opportunities For Every Skill */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] bg-[#FEF7D0] border border-[#FEF08A]/60 p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] bg-[#FEF7D0] border border-[#FEF08A]/60 p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm"
+              >
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="text-[#713F12] font-medium text-xl leading-snug tracking-tight">
                     Opportunities for<br />every skill and<br />industry.
@@ -595,7 +629,11 @@ function WhyHuzzlerSection() {
 
             {/* Card 9: Built For Freelancers & Clients */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] bg-[#D4F7E5] border border-[#BBF7D0]/60 p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] bg-[#D4F7E5] border border-[#BBF7D0]/60 p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm"
+              >
                 <div>
                   <span className="inline-block px-3 py-1 rounded-full bg-[#BBF7D0] text-[#15803D] text-[10px] font-medium uppercase tracking-wider mb-4">
                     BUILT FOR FREELANCERS & CLIENTS
@@ -623,7 +661,11 @@ function WhyHuzzlerSection() {
 
             {/* Card 10: A Growing Community */}
             <FlipChild>
-              <motion.div whileHover={{ y: -4 }} className="rounded-[28px] sm:rounded-[32px] bg-white border border-[#E5E7EB] p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm">
+              <motion.div
+                onClick={() => setLocation("/features")}
+                whileHover={{ y: -4 }}
+                className="rounded-[28px] sm:rounded-[32px] bg-white border border-[#E5E7EB] p-7 flex flex-col justify-between min-h-[290px] cursor-pointer shadow-sm"
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-[#F3E8FF] text-[#7E22CE] flex items-center justify-center flex-shrink-0">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1034,6 +1076,8 @@ const chatbotFeatures = [
 ];
 
 function HowItWorksSection() {
+  const [, setLocation] = useLocation();
+
   return (
     <section id="how-it-works" className="py-16 sm:py-24 bg-white border-t border-[#EAEBF0]">
       <div className="max-w-[1380px] mx-auto px-5 sm:px-6">
@@ -1060,6 +1104,7 @@ function HowItWorksSection() {
                 <motion.div
                   whileHover={{ y: -6, boxShadow: "0 16px 32px -8px rgba(108, 92, 231, 0.15)", borderColor: "#6C5CE7" }}
                   transition={{ duration: 0.25 }}
+                  onClick={() => setLocation("/features")}
                   className="bg-white rounded-[24px] border border-[#EAEBF0] p-5 flex flex-col items-center text-center relative w-full justify-between shadow-[0_2px_12px_rgba(10,15,44,0.03)] cursor-pointer transition-all"
                 >
                   {/* Step Number Badge */}
@@ -1111,7 +1156,10 @@ function HowItWorksSection() {
 
         {/* AI Chatbot Smart Assistant Banner */}
         <FadeUp delay={0.3}>
-          <div className="rounded-[24px] sm:rounded-[28px] bg-[#F6F4FF] border border-[#EBE7FF] p-6 sm:p-8 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-[0_4px_20px_rgba(108,92,231,0.05)]">
+          <div
+            onClick={() => setLocation("/features")}
+            className="rounded-[24px] sm:rounded-[28px] bg-[#F6F4FF] border border-[#EBE7FF] p-6 sm:p-8 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-[0_4px_20px_rgba(108,92,231,0.05)] cursor-pointer hover:border-[#6C5CE7]/50 transition-all hover:shadow-[0_8px_30px_rgba(108,92,231,0.12)]"
+          >
             {/* Left AI Info */}
             <div className="flex items-start md:items-center gap-5 max-w-[560px]">
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[20px] bg-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0 shadow-[0_8px_20px_rgba(108,92,231,0.3)]">
