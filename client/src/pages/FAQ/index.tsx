@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { UserCircle2, CreditCard, Bot, ShieldCheck, FolderKanban, Headset, MessageCircle, Mail, Phone, BookOpen, PenLine, Globe, Link2, Zap, Search, Plus } from "lucide-react";
+import SEO from "@/components/SEO";
+import { PAGE_SEO_MAP } from "@/lib/seoData";
 
 const W = "#FFFFFF";
 const P2 = "#A78BFA";
@@ -358,11 +360,17 @@ function AccordionItem({ question, answer }: { question: string; answer: string 
 }
 
 export default function Home() {
+  const seo = PAGE_SEO_MAP["/faq"];
   const [activeCategory, setActiveCategory] = useState("all");
   const filteredSections = activeCategory === "all" ? faqSections : faqSections.filter(s => s.id === activeCategory);
 
   return (
     <div className="hz-faq-wrapper" style={{ fontFamily: "'Inter','Segoe UI',sans-serif", color: "#111", background: "#fff" }}>
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        slug={seo.slug}
+      />
       <style>{`
         @keyframes hzFadeUp {
           from { opacity: 0; transform: translateY(18px); }

@@ -9,10 +9,18 @@ import Impact from "./components/Impact";
 import Testimonials from "./components/Testimonials";
 import JoinMission from "./components/JoinMission";
 import CTA from "./components/CTA";
+import SEO from "@/components/SEO";
+import { PAGE_SEO_MAP } from "@/lib/seoData";
 
 export default function HuzzlerAI() {
+  const seo = PAGE_SEO_MAP["/about"];
   return (
     <div className="bg-white huzzler-ai-page">
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        slug={seo.slug}
+      />
       <Hero />
       <Journey />
       <StandFor />

@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { motion, useInView } from "framer-motion";
 import { Zap, Share2, Code2, TrendingUp, Video, PenTool, Bot, Music2, BarChart3, Briefcase, Camera, Sprout, Gem } from "lucide-react";
+import SEO from "@/components/SEO";
+import { PAGE_SEO_MAP } from "@/lib/seoData";
 // ─── Constants ────────────────────────────────────────────────────────────────
 const W = "#FFFFFF";
 const P2 = "#A78BFA";
@@ -1472,6 +1474,7 @@ function CTASection() {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function Index() {
+  const seo = PAGE_SEO_MAP["/"];
   const tickerItems = [
     "Huzzler. Freelance Made Simple",
     "AI-Powered Matching",
@@ -1485,6 +1488,11 @@ export default function Index() {
 
   return (
     <div className="font-sans hz-comp1-wrapper overflow-x-hidden">
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        slug={seo.slug}
+      />
       <HeroSection />
       <Ticker items={tickerItems} />
       <CategoriesSection />

@@ -2,11 +2,11 @@ import { Route, Switch } from "wouter";
 import MainLayout from "@/layouts/MainLayout";
 
 import Home from "@/pages/FAQ"; // FAQ
-import DesignJS from "@/pages/DesignJS"; // Browse Talent
+import DesignJS from "@/pages/DesignJS"; // Browse Talent / Blog
 import HuzzlerAI from "@/pages/HuzzlerAI"; // About
 import Component1 from "@/pages/Component1"; // Landing Page
- // Dashboard
 import Features from "@/pages/Features";
+import FeatureDetail from "@/pages/Features/FeatureDetail";
 import NotFound from "@/pages/NotFound";
 
 export default function AppRoutes() {
@@ -32,12 +32,22 @@ export default function AppRoutes() {
         )}
       />
 
-      {/* Features */}
+      {/* Main Features Overview */}
       <Route
         path="/features"
         component={() => (
           <MainLayout>
             <Features />
+          </MainLayout>
+        )}
+      />
+
+      {/* Individual Feature Module Slugs */}
+      <Route
+        path="/features/:slug"
+        component={() => (
+          <MainLayout>
+            <FeatureDetail />
           </MainLayout>
         )}
       />
@@ -71,7 +81,6 @@ export default function AppRoutes() {
           </MainLayout>
         )}
       />
-      
 
       {/* 404 */}
       <Route path="/404" component={NotFound} />

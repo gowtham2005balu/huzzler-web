@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "wouter";
+import SEO from "@/components/SEO";
+import { FEATURE_MODULES_SEO, PAGE_SEO_MAP } from "@/lib/seoData";
 import {
   Bot, Briefcase, FileText, BarChart3, MessageSquare, Shield, Zap, TrendingUp,
   Palette, Code, PenLine, Clapperboard, Settings, CheckCircle2, Check, Lightbulb,
@@ -205,8 +208,9 @@ const Hero = () => (
   </section>
 );
 
-const OverviewCard = ({ icon, title, desc }) => (
+const OverviewCard = ({ icon, title, desc, slug, alt, onClick }) => (
   <div
+    onClick={onClick}
     className="hz-hover-lift"
     style={{
       background: W,
@@ -217,9 +221,14 @@ const OverviewCard = ({ icon, title, desc }) => (
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
+      cursor: "pointer",
+      height: "100%",
+      boxSizing: "border-box"
     }}
   >
     <div
+      role="img"
+      aria-label={alt}
       style={{
         width: 56,
         height: 56,
@@ -234,40 +243,55 @@ const OverviewCard = ({ icon, title, desc }) => (
       {icon}
     </div>
     <div style={{ fontSize: 19, fontWeight: 700, marginBottom: 10, color: P }}>{title}</div>
-    <div style={{ fontSize: 14.5, color: G, lineHeight: 1.7 }}>{desc}</div>
+    <div style={{ fontSize: 14, color: G, lineHeight: 1.6, marginBottom: 16 }}>{desc}</div>
+    <div style={{ fontSize: 13, fontWeight: 600, color: "#6C5CE7", display: "flex", alignItems: "center", gap: 4, marginTop: "auto" }}>
+      View Module <ArrowRight size={14} />
+    </div>
   </div>
 );
 
-const Overview = () => (
-  <section style={{ ...C.sec(OFFWHITE), textAlign: "center" }}>
-    <Reveal variant="up">
-      <h2 style={{ ...C.h2, textAlign: "center", fontWeight: 600, fontSize: 46 }}>
-        Built For Modern Teams
-      </h2>
-    </Reveal>
-    <Reveal variant="up" delay={0.05}>
-      <p style={{ color: G, fontSize: 18, maxWidth: 560, margin: "0 auto 3rem" }}>
-        Eight powerful modules that work together seamlessly.
-      </p>
-    </Reveal>
-    <div style={C.grid(4)}>
-      {[
-        [<Bot size={26} color={P} />, "AI Talent Matching", "Smart algorithms connect you with the most qualified professionals."],
-        [<Briefcase size={26} color={P} />, "Project Marketplace", "Browse thousands of verified experts across every discipline."],
-        [<FileText size={26} color={P} />, "Smart Proposals", "AI-powered proposal generator crafts winning pitches in seconds."],
-        [<BarChart3 size={26} color={P} />, "Project Analytics", "Rich dashboards surface insights that drive smarter hiring."],
-        [<MessageSquare size={26} color={P} />, "Real-Time Messaging", "Built-in chat, file sharing, and video meetings in one place."],
-        [<Shield size={26} color={P} />, "Portfolio Management", "Showcase your best work and keep your portfolio updated in one place."],
-        [<Zap size={26} color={P} />, "AI Assistant", "Get smart suggestions to create profiles, write proposals, and find relevant opportunities."],
-        [<TrendingUp size={26} color={P} />, "Team Collaboration", "Work together, share updates, and manage projects with your team in one place."],
-      ].map(([icon, title, desc], idx) => (
-        <Reveal key={title} variant="up" delay={idx * 0.07}>
-          <OverviewCard icon={icon} title={title} desc={desc} />
-        </Reveal>
-      ))}
-    </div>
-  </section>
-);
+const Overview = () => {
+  const [, setLocation] = useLocation();
+  const iconMap = {
+    "ai-talent-matching": <Bot size={26} color={P} />,
+    "project-marketplace": <Briefcase size={26} color={P} />,
+    "smart-proposals": <FileText size={26} color={P} />,
+    "project-analytics": <BarChart3 size={26} color={P} />,
+    "real-time-messaging": <MessageSquare size={26} color={P} />,
+    "portfolio-management": <Shield size={26} color={P} />,
+    "ai-assistant": <Zap size={26} color={P} />,
+    "team-collaboration": <TrendingUp size={26} color={P} />,
+  };
+
+  return (
+    <section style={{ ...C.sec(OFFWHITE), textAlign: "center" }}>
+      <Reveal variant="up">
+        <h2 style={{ ...C.h2, textAlign: "center", fontWeight: 600, fontSize: 46 }}>
+          Built For Modern Teams
+        </h2>
+      </Reveal>
+      <Reveal variant="up" delay={0.05}>
+        <p style={{ color: G, fontSize: 18, maxWidth: 560, margin: "0 auto 3rem" }}>
+          Eight powerful modules that work together seamlessly. Click any module to explore in-depth.
+        </p>
+      </Reveal>
+      <div style={C.grid(4)}>
+        {FEATURE_MODULES_SEO.map((module, idx) => (
+          <Reveal key={module.id} variant="up" delay={idx * 0.07}>
+            <OverviewCard
+              icon={iconMap[module.id] || <Bot size={26} color={P} />}
+              title={module.name}
+              desc={module.description.slice(0, 110) + "..."}
+              slug={module.slug}
+              alt={module.imageAlt}
+              onClick={() => setLocation(module.slug)}
+            />
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+};
 const AIMatching = () => (
   <section style={{ ...C.sec("#FBFBFE"), padding: "6rem 100px", display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: 60, alignItems: "center" }}>
 
@@ -1012,6 +1036,7 @@ const CTA = () => (
 
 
 export default function Features() {
+  const seo = PAGE_SEO_MAP["/features"];
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     if (document.documentElement) document.documentElement.scrollTop = 0;
@@ -1020,6 +1045,11 @@ export default function Features() {
 
   return (
     <div style={C.body} className="hz-features-wrapper">
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        slug={seo.slug}
+      />
       <AnimationStyles />
       <Hero />
       <Overview />

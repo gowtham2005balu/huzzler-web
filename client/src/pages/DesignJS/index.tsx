@@ -2,6 +2,8 @@ import { useState } from "react";
 import {
   Zap
 } from "lucide-react";
+import SEO from "@/components/SEO";
+import { PAGE_SEO_MAP } from "@/lib/seoData";
 
 const W = "#ffffff";
 const P2 = "#a78bfa";
@@ -81,10 +83,16 @@ const TagBadge = ({ text, color }: { text: string; color: string }) => (
 );
 
 export default function DesignJS() {
+  const seo = PAGE_SEO_MAP["/blog"];
   const [activeSubTab, setActiveSubTab] = useState(0);
 
   return (
     <div className="hz-blog-wrapper" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif", background: "#f5f6fa", minHeight: "100vh", color: "#1a1a2e" }}>
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        slug={seo.slug}
+      />
       {/* HERO */}
       <div className="hz-blog-hero" style={{
         background: "linear-gradient(120deg, #100c33 0%, #241578 45%, #3a1f9e 75%, #1c1050 100%)",
